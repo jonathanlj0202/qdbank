@@ -1,7 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from './router'
-import './assets/scss/init.css'
+import 'lib-flexible'
+import './assets/css/init.css'
 
 Vue.config.productionTip = false;
 
