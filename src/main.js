@@ -1,10 +1,15 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from './router'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+
 import 'lib-flexible'
 import './assets/css/init.css'
+import 'swiper/css/swiper.css'
 
 Vue.config.productionTip = false;
+
+Vue.use(VueAwesomeSwiper)
 
 // 接收
 console.info(221, window.ipcRenderer);
