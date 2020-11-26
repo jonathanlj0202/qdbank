@@ -11,6 +11,10 @@
       <router-view name="v3" class="view"></router-view>
       <router-view name="v4" class="view"></router-view>
     </div>
+    <div class="close-dialog-box" v-show="closeDialogBoo">
+      <div class="close-dialog"></div>
+    </div>
+    <div class="close-btn" @click="closeDialogFn()"></div>
   </div>
 </template>
 
@@ -22,6 +26,7 @@ export default {
     return {
       nowDate: "", // 当前日期
       nowTime: "", // 当前时间
+      closeDialogBoo: false,
     };
   },
   created() {},
@@ -40,6 +45,9 @@ export default {
           : new Date().getMinutes();
       this.nowTime = hh + ":" + mf;
       this.nowDate = yy + "/" + mm + "/" + dd;
+    },
+    closeDialogFn() {
+      this.closeDialogBoo = true;
     },
   },
   mounted() {
@@ -106,5 +114,35 @@ export default {
   width: 800px;
   height: 1000px;
   float: left;
+}
+
+.close-dialog-box {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.close-dialog {
+  width: 1000px;
+  height: 1000px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -500px;
+  margin-left: -500px;
+  z-index: 10;
+  border-radius: 30px;
+    background-color: #0ff;
+}
+
+.close-btn {
+  width: 20px; /*no*/
+  height: 20px; /*no*/
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
 </style>

@@ -1,47 +1,11 @@
 "use strict";
 
 import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import getMAC from 'getmac'
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
-// import { machineId, machineIdSync } from "node-machine-id";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
-
-
-ipcMain.on('getMsg', (sys, msg) => {
-  console.log(msg)  //接收窗口传来的消息
-})
-console.info(2233, path.join(__dirname.substring(0,__dirname.length - 13), "src/preload.js"));
-
-// window.ipcRenderer = ipcRenderer
-// const path = require('path');
-// global.mac = "1234";
-
-// ipcMain.on('msg-a', function (event, msg) {
-//   // 接收数据
-//   console.log(msg);
-
-//   // 发送数据的两种方法
-//   // 1.
-//   event.sender.send('msg-b', 'HMCXY');
-//   // 2. 利用窗口的webContents
-//   //  win.webContents.send('msg-b','HMCXY');
-
-// })
-
-// machineId().then(id => {
-//   console.info("id", id);
-// });
-
-// // Syncronous call
-
-// let id1 = machineIdSync();
-
-// console.info("id1", id1);
-// console.info(12, process.cwd() + '/src/preload.js')
-
-
-// remote.getGlobal( "MyGlobalVariable" );
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -59,8 +23,7 @@ async function createWindow() {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
-      nodeIntegration: true,
-      preload: path.join(__dirname.substring(0,__dirname.length - 13), "src/preload.js"),
+      nodeIntegration: true
     }
   });
 
@@ -70,7 +33,10 @@ async function createWindow() {
   //   item.setSavePath(filePath);
   // });
   // win.webContents.downloadURL("http://searchbox.bj.bcebos.com/miniapp/demo-1.0.1.zip");
-  win.webContents.send("mac", "Hi There!");
+  // win.webContents.send("mac", "Hi There111!");
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('mac', getMAC())
+  })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

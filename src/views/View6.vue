@@ -2,9 +2,8 @@
   <div class="container">
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <div class="box">
+      <!-- <div class="box">
         <swiper :options="swiperOption" ref="mySwiper">
-        <!-- <swiper class="swiper-boxT"> -->
           <swiper-slide v-for="(item, index) of 5" :key="index">
             <img
               class="swiper-img"
@@ -13,6 +12,24 @@
           </swiper-slide>
           <div class="swiper-pagination" slot="pagination"></div>
         </swiper>
+      </div> -->
+
+      <div class="box">
+        <carousel-3d
+          :autoplay="false"
+          :perspective="35"
+          :display="5"
+          :animationSpeed="1000"
+          :width="100"
+          :height="120"
+        >
+          <slide v-for="(item, i) in slides" :index="i" :key="i">
+            <!--通过插槽作用域可以拿到点击的图片的索引-->
+            <template>
+              <img class="slide-logo" :src="item.src" alt="" />
+            </template>
+          </slide>
+        </carousel-3d>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
@@ -81,7 +98,6 @@
 </template>
 <script>
 import Flipper from "vue-flipper";
-// import Swiper from "vue-awesome-swiper";
 
 export default {
   name: "View4",
@@ -94,25 +110,13 @@ export default {
       isRight: false,
       titleText: "文化剧场",
       flippedArr: [false, false],
-      swiperOption: {
-        loop: true,
-        autoplay: true,
-        speed: 300,
-        effect: "coverflow",
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: 1.5,
-        coverflowEffect: {
-          //修改其中的数值，即可
-          rotate: 0, //旋转
-          stretch: 80, //拉伸
-          depth: 150, //深度
-          modifier: 1,
-          slideShadows: true,
-        },
-        observer: true, //修改swiper自己或子元素时，自动初始化swiper
-        observeParents: true, //修改swiper的父元素时，自动初始化swiper
-      },
+      slides: [
+        require("../assets/img/video1.png"),
+        require("../assets/img/video2.png"),
+        require("../assets/img/video3.png"),
+        require("../assets/img/video4.png"),
+        require("../assets/img/video5.png"),
+      ],
     };
   },
   methods: {
@@ -175,6 +179,16 @@ export default {
 .swiper-img {
   width: 100%;
   height: 270px;
+}
+
+/* .slide-logo {
+  width: 100%;
+  height: 270px;
+} */
+
+.carousel-3d-slider {
+  width: 200px !important;
+  height: 200px !important;
 }
 
 /*rightview*/

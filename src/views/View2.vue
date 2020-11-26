@@ -116,6 +116,8 @@
   </div>
 </template>
 <script>
+import { getPersonData } from "../api";
+
 export default {
   name: "View2",
   components: {},
@@ -127,7 +129,21 @@ export default {
       titleText: "网点导览",
     };
   },
+  created() {
+    console.info(33);
+    this.getPerson();
+  },
   methods: {
+    getPerson() {
+      getPersonData({
+        terminal_no: "cs001"
+      }).then((res) => {
+        if (res.data) {
+          this.productData = res.data;
+          this.loadingBoo = false;
+        }
+      });
+    },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;

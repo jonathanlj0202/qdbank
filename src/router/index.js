@@ -4,6 +4,7 @@ import View1 from "../views/View1.vue";
 import View2 from "../views/View2.vue";
 import View3 from "../views/View3.vue";
 import View4 from "../views/View4.vue";
+import Notfound from "../views/Notfound.vue";
 
 Vue.use(VueRouter);
 
@@ -16,6 +17,10 @@ const routes = [
       v3: View3,
       v4: View4
     }
+  },{
+    path: '/notfound',
+    name: 'NotFound',
+    component: Notfound
   }
 ];
 
