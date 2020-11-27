@@ -18,6 +18,8 @@ export default {
 .container {
   width: 100%;
   height: 100vh;
+  background: url("../assets/img/bg.png") no-repeat;
+  background-size: 100% 100%;
   overflow: hidden;
 }
 .tips {

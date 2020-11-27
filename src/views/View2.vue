@@ -2,7 +2,9 @@
   <div class="container">
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <div class="map-content"></div>
+      <div class="map-content">
+        <img v-show="GuideUrl" :src="GuideUrl" />
+      </div>
       <div
         :class="[
           clickNum === 1 ? 'map-btn map-choose-btn first' : 'map-btn first',
@@ -54,45 +56,13 @@
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="user-item">
+      <div class="user-item" v-for="(item, i) in personArr" :key="i">
         <div class="avatar-box">
-          <img class="user-avatar" src="../assets/img/n1.png" />
+          <img class="user-avatar" :src="item.personimage" />
         </div>
-        <div class="user-name">赵远东</div>
-        <div class="user-desc">职位：行长</div>
-        <div class="user-desc">工龄：16年</div>
-      </div>
-      <div class="user-item">
-        <div class="avatar-box">
-          <img class="user-avatar" src="../assets/img/n2.png" />
-        </div>
-        <div class="user-name">赵远东</div>
-        <div class="user-desc">职位：行长</div>
-        <div class="user-desc">工龄：16年</div>
-      </div>
-      <div class="user-item">
-        <div class="avatar-box">
-          <img class="user-avatar" src="../assets/img/n3.png" />
-        </div>
-        <div class="user-name">赵远东</div>
-        <div class="user-desc">职位：行长</div>
-        <div class="user-desc">工龄：16年</div>
-      </div>
-      <div class="user-item">
-        <div class="avatar-box">
-          <img class="user-avatar" src="../assets/img/n4.png" />
-        </div>
-        <div class="user-name">赵远东</div>
-        <div class="user-desc">职位：行长</div>
-        <div class="user-desc">工龄：16年</div>
-      </div>
-      <div class="user-item">
-        <div class="avatar-box">
-          <img class="user-avatar" src="../assets/img/n5.png" />
-        </div>
-        <div class="user-name">赵远东</div>
-        <div class="user-desc">职位：行长</div>
-        <div class="user-desc">工龄：16年</div>
+        <div class="user-name">{{ item.personname }}</div>
+        <div class="user-desc">职位：{{ item.position }}</div>
+        <div class="user-desc">工龄：{{ item.workeyear }}年</div>
       </div>
     </div>
     <div
@@ -116,7 +86,7 @@
   </div>
 </template>
 <script>
-import { getPersonData } from "../api";
+import { getPersonData, getGuideData } from "../api";
 
 export default {
   name: "View2",
@@ -127,20 +97,31 @@ export default {
       isRight: false,
       clickNum: 4,
       titleText: "网点导览",
+      personArr: [],
+      GuideUrl: "",
     };
   },
   created() {
-    console.info(33);
+    console.info("view222");
+    this.getGuide();
     this.getPerson();
   },
   methods: {
     getPerson() {
       getPersonData({
-        terminal_no: "cs001"
+        terminal_no: "cs001",
       }).then((res) => {
-        if (res.data) {
-          this.productData = res.data;
-          this.loadingBoo = false;
+        if (res.data && res.code === "0000") {
+          this.personArr = res.data;
+        }
+      });
+    },
+    getGuide() {
+      getGuideData({
+        terminal_no: "cs001",
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.GuideUrl = res.data[0].guideimage;
         }
       });
     },
@@ -191,8 +172,13 @@ export default {
   width: 468px;
   height: 296px;
   margin: 220px auto 0px;
-  background: url("../assets/img/map.png") no-repeat;
-  background-size: 100% 100%;
+  overflow:hidden;
+  text-align: center;
+}
+
+.map-content img {
+  width: 468px;
+  height: 296px;
 }
 
 .map-btn {

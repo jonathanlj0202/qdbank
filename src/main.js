@@ -12,13 +12,14 @@ Vue.config.productionTip = false;
 
 Vue.use(VueAwesomeSwiper)
 
-ipcRenderer.on('mac', (event, mac) => {
-  console.log(2233, mac);
-})
+window.MAC = ipcRenderer.sendSync('mac');
+window.MAC = "cs001";
 
 new Vue({
   router,
   render: h => h(App)
 }).$mount("#app");
+
+
 
 

@@ -7,10 +7,17 @@ import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 
+ipcMain.on('mac', (event) => {
+  // console.log(arg) // prints "ping11111"
+  event.returnValue = getMAC();
+})
+
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } }
 ]);
+
+
 
 async function createWindow() {
   // Create the browser window.
@@ -31,12 +38,15 @@ async function createWindow() {
   // win.webContents.session.on('will-download', (event, item, webContents) => {
   //   const filePath = path.join(app.getPath('downloads'), item.getFilename());
   //   item.setSavePath(filePath);
+  //   console.info("savepath", filePath);
   // });
-  // win.webContents.downloadURL("http://searchbox.bj.bcebos.com/miniapp/demo-1.0.1.zip");
+  // win.webContents.downloadURL("http://192.168.2.30:8089/bankmanage/upload/2020-11-27/4D93AAD2C211403BB499EF77F53A9364.mp4");
   // win.webContents.send("mac", "Hi There111!");
-  win.webContents.on('did-finish-load', () => {
-    win.webContents.send('mac', getMAC())
-  })
+  // console.info(2233, getMAC());
+  // win.webContents.send('mac', getMAC())
+  // win.webContents.on('did-finish-load', () => {
+  //   win.webContents.send('mac', getMAC())
+  // })
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
