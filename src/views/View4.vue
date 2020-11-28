@@ -81,6 +81,7 @@
 </template>
 <script>
 import Flipper from "vue-flipper";
+const { ipcRenderer } = window.require("electron");
 // import Swiper from "vue-awesome-swiper";
 
 export default {
@@ -114,6 +115,10 @@ export default {
         observeParents: true, //修改swiper的父元素时，自动初始化swiper
       },
     };
+  },
+  created() {
+    var result = ipcRenderer.sendSync('videolist');
+    console.info("videolist", result);
   },
   methods: {
     chooseFn(str) {

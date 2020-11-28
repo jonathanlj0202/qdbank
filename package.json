@@ -17,6 +17,8 @@
     "core-js": "^3.6.5",
     "getmac": "^5.17.0",
     "lib-flexible": "^0.3.2",
+    "sockjs-client": "^1.5.0",
+    "stompjs": "^2.3.3",
     "swiper": "^5.4.5",
     "vue": "^2.6.11",
     "vue-awesome-swiper": "^4.1.1",

@@ -4,12 +4,45 @@ import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import getMAC from 'getmac'
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+import { getCultureData } from "./api";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
+const fs = require("fs");
+const pathName = app.getPath('downloads');
+//连接SockJS的endpoint名称为"endpoint-websocket"
+// const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
+const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
+// 获取STOMP子协议的客户端对象
+let stompClient = Stomp.over(socket);
+
+let dirs = [];
 
 ipcMain.on('mac', (event) => {
   // console.log(arg) // prints "ping11111"
   event.returnValue = getMAC();
+})
+
+ipcMain.on('videolist', (event) => {
+  let videolistArr = [];
+  fs.readdir(pathName, function (err, files) {
+    (function iterator(i) {
+      if (i == files.length) {
+        event.returnValue = videolistArr;
+        return;
+      }
+      fs.stat(path.join(pathName, files[i]), function (err, data) {
+        if (data.isFile()) {
+          if (files[i].indexOf('mp4') > -1) {
+            videolistArr.push(files[i]);
+          }
+        }
+        iterator(i + 1);
+      });
+    })(0);
+  });
+  
 })
 
 // Scheme must be registered before the app is ready
@@ -34,19 +67,58 @@ async function createWindow() {
     }
   });
 
-  // win.webContents.send('msg-b', 'HMCXY');
-  // win.webContents.session.on('will-download', (event, item, webContents) => {
-  //   const filePath = path.join(app.getPath('downloads'), item.getFilename());
-  //   item.setSavePath(filePath);
-  //   console.info("savepath", filePath);
-  // });
-  // win.webContents.downloadURL("http://192.168.2.30:8089/bankmanage/upload/2020-11-27/4D93AAD2C211403BB499EF77F53A9364.mp4");
-  // win.webContents.send("mac", "Hi There111!");
-  // console.info(2233, getMAC());
-  // win.webContents.send('mac', getMAC())
-  // win.webContents.on('did-finish-load', () => {
-  //   win.webContents.send('mac', getMAC())
-  // })
+
+
+
+  fs.readdir(pathName, function (err, files) {
+    (function iterator(i) {
+      if (i == files.length) {
+        win.webContents.session.on('will-download', (event, item, webContents) => {
+          const filePath = path.join(app.getPath('downloads'), item.getFilename());
+          item.setSavePath(filePath);
+        });
+        getCultureData({
+          terminal_no: "cs001",
+        }).then((res) => {
+          if (res.data[0] && res.data[0].video[0]) {
+            res.data[0].video.forEach((ele, index) => {
+              if (dirs.length > 0) {
+                let downBoo = true;
+                dirs.forEach(element => {
+                  if (ele.video.indexOf(element) > -1) {
+                    downBoo = false;
+                  }
+                });
+                if (downBoo) {
+                  win.webContents.downloadURL(ele.video);
+                }
+              } else {
+                win.webContents.downloadURL(ele.video);
+              }
+            });
+          }
+        });
+        return;
+      }
+      fs.stat(path.join(pathName, files[i]), function (err, data) {
+        if (data.isFile()) {
+          if (files[i].indexOf('mp4') > -1) {
+            dirs.push(files[i]);
+          }
+        }
+        iterator(i + 1);
+      });
+    })(0);
+  });
+
+
+  ipcMain.on('videodownload', (event, url) => {
+    win.webContents.session.on('will-download', (event, item, webContents) => {
+      const filePath = path.join(app.getPath('downloads'), item.getFilename());
+      item.setSavePath(filePath);
+    });
+    win.webContents.downloadURL = url;
+  });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

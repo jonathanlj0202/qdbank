@@ -19,6 +19,9 @@
 </template>
 
 <script>
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
+
 export default {
   name: "ViewBox",
   components: {},
@@ -29,8 +32,29 @@ export default {
       closeDialogBoo: false,
     };
   },
-  created() {},
+  created() {
+    this.connectionSocket();
+  },
   methods: {
+    connectionSocket() {
+      //连接SockJS的endpoint名称为"endpoint-websocket"
+      const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
+      // 获取STOMP子协议的客户端对象
+      let stompClient = Stomp.over(socket);
+      // 向服务器发起websocket连接
+      stompClient.connect(
+        {},
+        () => {
+          stompClient.subscribe("/topic/service_Notice", response => {
+            let result = JSON.parse(response.body);
+            console.info(332211, result);
+          })
+        },
+        err => {
+          console.log("连接失败", err);
+        }
+      );
+    },
     currentTime() {
       setInterval(this.getDate, 500);
     },
@@ -63,6 +87,7 @@ export default {
   position: relative;
   overflow: hidden;
   background: url("../assets/img/bg.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 .top-logo {

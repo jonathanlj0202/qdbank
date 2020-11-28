@@ -102,7 +102,7 @@ export default {
     };
   },
   created() {
-    console.info("view222");
+    console.info("view22211");
     this.getGuide();
     this.getPerson();
   },
