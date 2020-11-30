@@ -10,7 +10,8 @@ import { getCultureData } from "./api";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
-const pathName = app.getPath('downloads');
+// const pathName = app.getPath('downloads');
+const pathName = 'D:/software/wamp/wamp/www';
 //连接SockJS的endpoint名称为"endpoint-websocket"
 // const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
 const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
@@ -74,7 +75,7 @@ async function createWindow() {
     (function iterator(i) {
       if (i == files.length) {
         win.webContents.session.on('will-download', (event, item, webContents) => {
-          const filePath = path.join(app.getPath('downloads'), item.getFilename());
+          const filePath = path.join(pathName, item.getFilename());
           item.setSavePath(filePath);
         });
         getCultureData({
@@ -114,7 +115,7 @@ async function createWindow() {
 
   ipcMain.on('videodownload', (event, url) => {
     win.webContents.session.on('will-download', (event, item, webContents) => {
-      const filePath = path.join(app.getPath('downloads'), item.getFilename());
+      const filePath = path.join(pathName, item.getFilename());
       item.setSavePath(filePath);
     });
     win.webContents.downloadURL = url;

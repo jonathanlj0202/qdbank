@@ -7,3 +7,5 @@ export const getPersonData = p => get('sendPersonData', p);
 export const getbranches = p => get('loadNetworkByterminalNo', p);
 
 export const getCultureData = p => get('sendCultureData', p);
+
+export const getProductData = p => get('sendProductData', p);

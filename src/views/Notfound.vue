@@ -4,13 +4,18 @@
       <div class="tips">设备已到期</div>
       <div class="connet">请<span class="highlighted">联系管理员</span></div>
     </div>
+
+    <!-- <Carousel3d></Carousel3d> -->
   </div>
 </template>
 
 <script>
+// import Carousel3d from "@/components/Carousel3d.vue";
 export default {
   name: "NotFound",
-  components: {},
+  components: {
+    // Carousel3d,
+  },
   data() {
     return {};
   },

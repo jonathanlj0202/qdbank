@@ -3,30 +3,26 @@
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
       <div class="box">
-        <div class="video-box" v-show="videoBoo">
-          <video
-            class="video"
-            :src="videoSrc"
-            autoplay
-            type="video/mp4"
-            controls="controls"
-            ref="videoRef"
-          ></video>
-        </div>
-        <div class="video-bg" v-show="!videoBoo">
-          <img :src="videoImgUrl" />
-          <div class="video-play-btn" @click="playVideo()"></div>
-        </div>
-        <div class="video-btn-box">
-          <div
-            class="video-btn"
-            v-for="(item, index) of videoArr"
-            :key="index"
-            @click="chanceVideoFn(index)"
-          >
-            <img :src="item.videoImg" />
-          </div>
-        </div>
+        <swiper :options="swiperOption" ref="mySwiper">
+          <swiper-slide v-for="(item, index) of 4" :key="index">
+            <div class="swiper-img-box" @click="playVideo(index)">
+              <img
+                class="swiper-img"
+                :src="require(`../assets/img/video${++index}.png`)"
+              />
+            </div>
+          </swiper-slide>
+        </swiper>
+      </div>
+      <div class="video-box" v-show="videoBoo">
+        <video
+          class="video"
+          :src="videoSrc"
+          autoplay
+          type="video/mp4"
+          controls="controls"
+        ></video>
+        <div class="close-video" @click="closeVideoFn()"></div>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
@@ -102,24 +98,25 @@ export default {
       baseUrl: "http://localhost/",
       videoSrc: "",
       titleText: "文化剧场",
-      videoImgUrl: require("../assets/img/video1.png"),
-      clickIndex: null,
-      videoArr: [
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video1.png"),
-        },
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video2.png"),
-        },
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video3.png"),
-        },
-      ],
       flippedArr: [],
       productArr: [],
+      swiperOption: {
+        loop: true,
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: 1.5,
+        coverflowEffect: {
+          //修改其中的数值，即可
+          rotate: 0, //旋转
+          stretch: 80, //拉伸
+          depth: 150, //深度
+          modifier: 1,
+          slideShadows: true,
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true, //修改swiper的父元素时，自动初始化swiper
+      },
     };
   },
   created() {
@@ -140,13 +137,6 @@ export default {
         }
       });
     },
-    chanceVideoFn(index) {
-      this.videoImgUrl = this.videoArr[index].videoImg;
-      if (index !== this.clickIndex) {
-        this.videoBoo = false;
-      }
-      this.clickIndex = index;
-    },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
@@ -164,7 +154,10 @@ export default {
     playVideo() {
       this.videoBoo = true;
       this.videoSrc = this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4";
-      this.$refs.videoRef.play();
+    },
+    closeVideoFn() {
+      this.videoBoo = false;
+      this.videoSrc = "";
     },
   },
 };
@@ -199,71 +192,49 @@ export default {
 }
 
 .box {
-  width: 700px;
-  height: 500px;
-  margin: 200px auto 0px;
+  width: 600px;
+  height: 270px;
+  margin: 305px auto 0px;
   position: relative;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5);
+}
+.swiper-container {
+  width: 100%;
+  height: 270px;
+  overflow: hidden;
+}
+
+.swiper-img-box {
+  width: 370px;
+  height: 260px;
+  overflow: hidden;
+}
+
+.swiper-img {
+  width: 370px;
+  height: 260px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
 .video-box {
-  width: 700px;
-  height: 400px;
+  width: 730px;
+  height: 430px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -215px;
+  margin-left: -365px;
+  overflow: hidden;
+  z-index: 10;
   background-color: rgba(0, 0, 0, 1);
 }
 
 .video-box .video {
-  width: 700px;
-  height: 400px;
+  width: 730px;
+  height: 430px;
   border: none;
   outline: 0;
-}
-
-.video-bg {
-  width: 700px;
-  height: 400px;
-  overflow: hidden;
-  position: relative;
-}
-
-.video-bg img {
-  width: 700px;
-  height: 400px;
-}
-
-.video-btn-box {
-  width: 700px;
-  height: 100px;
-  padding: 10px 50px;
-  box-sizing: border-box;
-}
-
-.video-btn {
-  width: 100px;
-  height: 80px;
-  margin-right: 30px;
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  float: left;
-}
-
-.video-btn img {
-  width: 100px;
-  height: 80px;
-}
-
-.video-play-btn {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 700px;
-  height: 400px;
-  background-color: rgba(0, 0, 0, 0.8);
-  background-image: url("../assets/img/videoplay.png");
-  background-repeat: no-repeat;
-  background-size: 100px 100px;
-  background-position: center center;
 }
 
 .close-video {

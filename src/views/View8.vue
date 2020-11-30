@@ -2,78 +2,62 @@
   <div class="container">
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <!-- <div class="box">
-        <swiper :options="swiperOption" ref="mySwiper">
-          <swiper-slide v-for="(item, index) of 5" :key="index">
-            <img
-              class="swiper-img"
-              :src="require(`../assets/img/video${++index}.png`)"
-            />
-          </swiper-slide>
-          <div class="swiper-pagination" slot="pagination"></div>
-        </swiper>
-      </div> -->
-
       <div class="box">
-        <carousel-3d
-          :autoplay="false"
-          :perspective="35"
-          :display="5"
-          :animationSpeed="1000"
-          :width="100"
-          :height="120"
-        >
-          <slide v-for="(item, i) in slides" :index="i" :key="i">
-            <!--通过插槽作用域可以拿到点击的图片的索引-->
-            <template>
-              <img class="slide-logo" :src="item.src" alt="" />
-            </template>
-          </slide>
-        </carousel-3d>
+        <Swiper>
+          <Slide v-for="(item, index) of 4" :key="index">
+            <div class="swiper-img-box" @click="playVideo(index)">
+              <img
+                class="swiper-img"
+                :src="require(`../assets/img/video${++index}.png`)"
+              />
+            </div>
+          </Slide>
+        </Swiper>
+      </div>
+      <div class="video-box" v-show="videoBoo">
+        <video
+          class="video"
+          :src="videoSrc"
+          autoplay
+          type="video/mp4"
+          controls="controls"
+        ></video>
+        <div class="close-video" @click="closeVideoFn()"></div>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
       <div class="product-box">
-        <div class="product">
+        <div class="product" v-for="(item, index) of productArr" :key="index">
           <flipper
             width="100%"
             height="100%"
-            :flipped="flippedArr[0]"
-            @click="onClick(0)"
+            :flipped="flippedArr[index]"
+            @click="onClick(index)"
           >
             <div class="product-item" slot="front">
-              <img class="item-logo" src="../assets/img/yx1top.png" />
-              <div class="item-text">
-                跳过前贴广告，设置更清晰的视频画面<br />提前观看影视，屏幕专属颜色设置。
+              <img class="item-logo" :src="item.waterbusiness" />
+              <div class="item-name" v-show="item.waterbusinessname === '商圈'">
+                {{ item.watergoodsname }}
               </div>
-              <img class="item-mini-logo" src="../assets/img/yx1bottom.png" />
+              <div class="item-text" v-html="item.businesscontent"></div>
+              <img
+                v-show="item.waterbusinessname === '商品'"
+                class="item-mini-logo"
+                :src="item.waterbusinessimage"
+              />
             </div>
             <div class="product-item" slot="back">
-              <div class="item-detail-name">优酷</div>
-              <div class="item-detail-content">
-                优酷和中国农业银行联合推出金穗优酷电子账<br />户，通过绑定六大行一类借记卡，可实时在线<br />注册开通，开通完成后即可免费获得45天优酷<br />会员权益。
-              </div>
+              <div class="item-detail-name">{{ item.watergoodsname }}</div>
+              <div class="item-detail-content" v-html="item.goodscontent"></div>
               <div class="item-detail-left-logo">
-                <img src="../assets/img/yx1bottom.png" />
+                <img :src="item.watergoodsimage" />
               </div>
               <div class="item-detail-right-logo">
-                <img src="../assets/img/code.png" />
+                <img :src="item.watercodeimage" />
               </div>
             </div>
           </flipper>
         </div>
-
-        <!-- <div class="product">
-          <flipper
-            width="100%"
-            height="100%"
-            :flipped="flippedArr[1]"
-            @click="onClick(1)"
-          >
-            <div class="product-item" slot="front">Frontface</div>
-            <div class="product-item" slot="back">Backface</div>
-          </flipper>
-        </div> -->
       </div>
     </div>
     <div
@@ -98,28 +82,64 @@
 </template>
 <script>
 import Flipper from "vue-flipper";
+import { Swiper, Slide } from "vue-swiper-component";
+const { ipcRenderer } = window.require("electron");
+import { getProductData } from "../api";
 
 export default {
   name: "View4",
   components: {
     Flipper,
+    Swiper,
+    Slide,
   },
   data() {
     return {
       isLeft: true,
       isRight: false,
+      videoBoo: false,
+      baseUrl: "http://localhost/",
+      videoSrc: "",
       titleText: "文化剧场",
-      flippedArr: [false, false],
-      slides: [
-        require("../assets/img/video1.png"),
-        require("../assets/img/video2.png"),
-        require("../assets/img/video3.png"),
-        require("../assets/img/video4.png"),
-        require("../assets/img/video5.png"),
-      ],
+      flippedArr: [],
+      productArr: [],
+      swiperOption: {
+        loop: true,
+        effect: "coverflow",
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: 1.5,
+        coverflowEffect: {
+          //修改其中的数值，即可
+          rotate: 0, //旋转
+          stretch: 80, //拉伸
+          depth: 150, //深度
+          modifier: 1,
+          slideShadows: true,
+        },
+        observer: true, //修改swiper自己或子元素时，自动初始化swiper
+        observeParents: true, //修改swiper的父元素时，自动初始化swiper
+      },
     };
   },
+  created() {
+    var result = ipcRenderer.sendSync("videolist");
+    console.info("videolist", result);
+    this.getProductDataFn();
+  },
   methods: {
+    getProductDataFn() {
+      getProductData({
+        terminal_no: "cs001",
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.productArr = res.data;
+          this.productArr.forEach(() => {
+            this.flippedArr.push(false);
+          });
+        }
+      });
+    },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
@@ -133,6 +153,14 @@ export default {
     },
     onClick(number) {
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
+    },
+    playVideo() {
+      this.videoBoo = true;
+      this.videoSrc = this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4";
+    },
+    closeVideoFn() {
+      this.videoBoo = false;
+      this.videoSrc = "";
     },
   },
 };
@@ -170,25 +198,51 @@ export default {
   width: 600px;
   height: 270px;
   margin: 305px auto 0px;
+  position: relative;
+  overflow: hidden;
 }
-.swiper-container {
-  width: 100%;
-  height: 270px;
+
+.swiper-img-box {
+  width: 600px;
+  height: 260px;
+  overflow: hidden;
 }
 
 .swiper-img {
-  width: 100%;
-  height: 270px;
+  width: 600px;
+  height: 260px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 }
 
-/* .slide-logo {
-  width: 100%;
-  height: 270px;
-} */
+.video-box {
+  width: 730px;
+  height: 430px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -215px;
+  margin-left: -365px;
+  overflow: hidden;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 1);
+}
 
-.carousel-3d-slider {
-  width: 200px !important;
-  height: 200px !important;
+.video-box .video {
+  width: 730px;
+  height: 430px;
+  border: none;
+  outline: 0;
+}
+
+.close-video {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: url("../assets/img/closevideo.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 /*rightview*/
@@ -225,6 +279,14 @@ export default {
   height: 110px;
   margin-top: 22px;
   margin-bottom: 5px;
+}
+
+.item-name {
+  width: 280px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 18px;
+  text-align: center;
 }
 
 .item-text {
