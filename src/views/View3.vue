@@ -1,115 +1,176 @@
 <template>
   <div class="container">
-    <div class="top-title">千人千面</div>
-    <div class="content-box">
-      <div
-        :class="classArr[index]"
-        v-for="(item, index) of peopleArr"
-        :key="index"
-      >
-        <img :src="item.avatorUrl" @click="showProduct(index)" />
-        <div class="close-btn" @click="closeFn(index)"></div>
+    <div class="top-title">{{ titleText }}</div>
+    <div class="content-box-left" v-show="isLeft">
+      <div class="box">
+        <div class="video-box" v-show="videoBoo">
+          <video
+            class="video"
+            :src="videoSrc"
+            autoplay
+            type="video/mp4"
+            controls="controls"
+            ref="videoRef"
+          ></video>
+        </div>
+        <div class="video-bg" v-show="!videoBoo">
+          <img :src="videoImgUrl" />
+          <div class="video-play-btn" @click="playVideo()"></div>
+        </div>
+        <div class="video-btn-box">
+          <div
+            class="video-btn"
+            v-for="(item, index) of videoArr"
+            :key="index"
+            @click="chanceVideoFn(index)"
+          >
+            <img :src="item.videoImg" />
+          </div>
+        </div>
       </div>
     </div>
-    <div class="product-box" v-show="productBoo">
-      <img :src="clickProductUrl" />
-      <div class="close-product-btn" @click="closeProductFn()"></div>
+    <div class="content-box-right" v-show="isRight">
+      <div class="product-box">
+        <div class="product" v-for="(item, index) of productArr" :key="index">
+          <flipper
+            width="100%"
+            height="100%"
+            :flipped="flippedArr[index]"
+            @click="onClick(index)"
+          >
+            <div class="product-item" slot="front">
+              <img class="item-logo" :src="item.waterbusiness" />
+              <div class="item-name" v-show="item.waterbusinessname === '商圈'">
+                {{ item.watergoodsname }}
+              </div>
+              <div class="item-text" v-html="item.businesscontent"></div>
+              <img
+                v-show="item.waterbusinessname === '商品'"
+                class="item-mini-logo"
+                :src="item.waterbusinessimage"
+              />
+            </div>
+            <div class="product-item" slot="back">
+              <div class="item-detail-name">{{ item.watergoodsname }}</div>
+              <div class="item-detail-content" v-html="item.goodscontent"></div>
+              <div class="item-detail-left-logo">
+                <img :src="item.watergoodsimage" />
+              </div>
+              <div class="item-detail-right-logo">
+                <img :src="item.watercodeimage" />
+              </div>
+            </div>
+          </flipper>
+        </div>
+      </div>
     </div>
-    <div class="bottom-btn-right">千人千面</div>
+    <div
+      :class="{
+        'bottom-btn-left choose': isLeft,
+        'bottom-btn-left nochoose': isRight,
+      }"
+      @click="chooseFn('isLeft')"
+    >
+      文化剧场
+    </div>
+    <div
+      :class="{
+        'bottom-btn-right nochoose': isLeft,
+        'bottom-btn-right choose': isRight,
+      }"
+      @click="chooseFn('isRight')"
+    >
+      互动营销
+    </div>
   </div>
 </template>
 <script>
+import Flipper from "vue-flipper";
+const { ipcRenderer } = window.require("electron");
+import { getProductData } from "../api";
+
 export default {
   name: "View3",
-  components: {},
+  components: {
+    Flipper,
+  },
   data() {
     return {
-      productBoo: false,
+      isLeft: true,
+      isRight: false,
+      videoBoo: false,
+      baseUrl: "http://localhost/",
+      videoSrc: "",
+      titleText: "文化剧场",
+      videoImgUrl: require("../assets/img/video1.png"),
       clickIndex: null,
-      clickProductUrl: null,
-      classArr: [],
-      peopleArr: [
+      videoArr: [
         {
-          avatorUrl: require("../assets/img/p1.png"),
-          productUrl: require("../assets/img/product1.png"),
+          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
+          videoImg: require("../assets/img/video1.png"),
         },
         {
-          avatorUrl: require("../assets/img/p2.png"),
-          productUrl: require("../assets/img/product2.png"),
+          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
+          videoImg: require("../assets/img/video2.png"),
         },
         {
-          avatorUrl: require("../assets/img/p3.png"),
-          productUrl: require("../assets/img/product3.png"),
-        },
-        {
-          avatorUrl: require("../assets/img/p4.png"),
-          productUrl: require("../assets/img/product1.png"),
-        },
-        {
-          avatorUrl: require("../assets/img/p5.png"),
-          productUrl: require("../assets/img/product2.png"),
+          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
+          videoImg: require("../assets/img/video3.png"),
         },
       ],
+      flippedArr: [],
+      productArr: [],
     };
   },
   created() {
-    this.randomClass();
+    var result = ipcRenderer.sendSync("videolist");
+    console.info("videolist", result);
+    this.getProductDataFn();
   },
   methods: {
-    randomClass() {
-      let arr = [
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-        "G",
-        "H",
-        "I",
-        "J",
-        "K",
-        "L",
-        "M",
-        "N",
-        "O",
-        "P",
-        "Q",
-        "R",
-        "S",
-        "T",
-      ];
-      for (let index = 0; index < 30; index++) {
-        let randomNum = Math.floor(Math.random() * 20);
-        let classStr = `face-item${arr[randomNum]} face-item`;
-        this.classArr.push(classStr);
-      }
-      this.classArr = this.unique(this.classArr);
-    },
-    unique(arr) {
-      var arr1 = []; // 新建一个数组来存放arr中的值
-      for (var i = 0, len = arr.length; i < len; i++) {
-        if (arr1.indexOf(arr[i]) === -1) {
-          arr1.push(arr[i]);
+    getProductDataFn() {
+      getProductData({
+        terminal_no: "cs001",
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.productArr = res.data;
+          this.productArr.forEach(() => {
+            this.flippedArr.push(false);
+          });
         }
+      });
+    },
+    chanceVideoFn(index) {
+      this.videoImgUrl = this.videoArr[index].videoImg;
+      if (index !== this.clickIndex) {
+        this.videoBoo = false;
       }
-      return arr1;
+      this.clickIndex = index;
     },
-    closeFn(index) {
-      this.peopleArr.splice(index, 1);
+    chooseFn(str) {
+      if (str === "isLeft") {
+        this.isLeft = true;
+        this.isRight = false;
+        this.titleText = "文化剧场";
+      } else {
+        this.isLeft = false;
+        this.isRight = true;
+        this.titleText = "互动营销";
+      }
     },
-    showProduct(index) {
-      this.productBoo = true;
-      this.clickProductUrl = this.peopleArr[index].productUrl;
+    onClick(number) {
+      this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
-    closeProductFn() {
-      this.productBoo = false;
-      this.clickProductUrl = null;
+    playVideo() {
+      this.videoBoo = true;
+      this.videoSrc = this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4";
+      this.$refs.videoRef.play();
     },
   },
 };
 </script>
-<style src="../assets/css/animate.css"></style>
+<style src="vue-flipper/dist/vue-flipper.css">
+</style>
 <style scoped>
 .container {
   width: 780px;
@@ -131,62 +192,204 @@ export default {
   text-align: center;
 }
 
-.content-box {
-  width: 720px;
-  height: 720px;
-  /* background-color: #00f; */
-  margin: 80px auto;
+.content-box-left,
+.content-box-right {
+  width: 100%;
+  overflow: hidden;
+}
+
+.box {
+  width: 700px;
+  height: 500px;
+  margin: 200px auto 0px;
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.video-box {
+  width: 700px;
+  height: 400px;
+}
+
+.video-box .video {
+  width: 700px;
+  height: 400px;
+  border: none;
+  outline: 0;
+}
+
+.video-bg {
+  width: 700px;
+  height: 400px;
+  overflow: hidden;
   position: relative;
 }
 
-.face-item {
-  width: 100px;
-  height: 100px;
-  background: url("../assets/img/faceborder.png") no-repeat;
-  background-size: 100% 100%;
-  background-position: center 5px;
-  text-align: center;
-  position: absolute;
+.video-bg img {
+  width: 700px;
+  height: 400px;
 }
 
-.face-item img {
-  width: 80px;
-  height: 80px;
-  margin-top: 15px;
+.video-btn-box {
+  width: 700px;
+  height: 100px;
+  padding: 10px 50px;
+  box-sizing: border-box;
 }
+
+.video-btn {
+  width: 100px;
+  height: 80px;
+  margin-right: 30px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  float: left;
+}
+
+.video-btn img {
+  width: 100px;
+  height: 80px;
+}
+
+.video-play-btn {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 700px;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.6);
+  background-image: url("../assets/img/videoplay.png");
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  background-position: center center;
+}
+
+.close-video {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: url("../assets/img/closevideo.png") no-repeat;
+  background-size: 100% 100%;
+}
+
+/*rightview*/
 
 .product-box {
-  width: 304px;
-  height: 464px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -232px;
-  margin-left: -152px;
+  width: 575px;
+  overflow: hidden;
+  margin: 90px auto 0px;
 }
 
-.product-box img {
-  width: 304px;
-  height: 464px;
+.product {
+  width: 280px;
+  height: 225px;
+  overflow: hidden;
 }
 
-.close-product-btn {
-  width: 40px;
-  height: 40px;
-  position: absolute;
-  background: url("../assets/img/closeproduct.png") no-repeat;
+.product:nth-child(odd) {
+  margin-right: 15px;
+  float: left;
+  margin-bottom: 20px;
+}
+
+.product-item {
+  width: 280px;
+  height: 225px;
+  background: url("../assets/img/border4.png") no-repeat;
   background-size: 100% 100%;
-  top: 425px;
-  left: 262px;
+  text-align: center;
+  color: #fff;
 }
 
-.face-item .close-btn {
-  width: 20px;
-  height: 20px;
+.item-logo {
+  width: 210px;
+  height: 110px;
+  margin-top: 22px;
+  margin-bottom: 5px;
+}
+
+.item-name {
+  width: 280px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.item-text {
+  width: 210px;
+  height: 40px;
+  margin: 0 auto;
+  line-height: 15px;
+  font-size: 10px;
+  overflow: hidden;
+}
+
+.item-mini-logo {
+  width: 95px;
+  height: 30px;
+}
+
+.item-detail-name {
+  width: 210px;
+  height: 30px;
+  line-height: 30px;
+  overflow: hidden;
+  font-size: 18px;
+  margin: 0 auto;
+  padding-top: 12px;
+  padding-bottom: 5px;
+}
+
+.item-detail-content {
+  width: 210px;
+  height: 90px;
+  margin: 0 auto;
+  line-height: 18px;
+  font-size: 10px;
+  overflow: hidden;
+}
+
+.item-detail-left-logo {
+  width: 135px;
+  height: 65px;
+  margin-left: 36px;
+  text-align: left;
+  float: left;
+}
+
+.item-detail-left-logo img {
+  width: 135px;
+  height: 40px;
+}
+
+.item-detail-right-logo {
+  width: 65px;
+  height: 80px;
+  margin-left: 16px;
+  float: left;
+}
+
+.item-detail-right-logo img {
+  width: 65px;
+  height: 65px;
+}
+
+.bottom-btn-left {
+  width: 200px;
+  height: 40px;
+  text-align: center;
+  font-size: 26px;
+  line-height: 40px;
+  color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 0px;
-  background: url("../assets/img/closebtn.png") no-repeat;
+  right: 235px;
+  letter-spacing: 4px;
+  background-repeat: no-repeat;
   background-size: 100% 100%;
 }
 
@@ -201,8 +404,15 @@ export default {
   bottom: 0px;
   right: 40px;
   letter-spacing: 4px;
-  background-image: url("../assets/img/choose.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.choose {
+  background-image: url("../assets/img/choose.png");
+}
+
+.nochoose {
+  background-image: url("../assets/img/nochoose.png");
 }
 </style>

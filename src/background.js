@@ -14,9 +14,9 @@ const fs = require("fs");
 const pathName = 'D:/software/wamp/wamp/www';
 //连接SockJS的endpoint名称为"endpoint-websocket"
 // const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
-const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
+// const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
 // 获取STOMP子协议的客户端对象
-let stompClient = Stomp.over(socket);
+// let stompClient = Stomp.over(socket);
 
 let dirs = [];
 

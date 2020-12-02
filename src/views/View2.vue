@@ -65,7 +65,7 @@
         <div class="user-desc">工龄：{{ item.workeyear }}年</div>
       </div>
     </div>
-    <div
+    <!-- <div
       :class="{
         'bottom-btn-left choose': isLeft,
         'bottom-btn-left nochoose': isRight,
@@ -73,7 +73,7 @@
       @click="chooseFn('isLeft')"
     >
       网点导览
-    </div>
+    </div> -->
     <div
       :class="{
         'bottom-btn-right nochoose': isLeft,
@@ -93,8 +93,8 @@ export default {
   components: {},
   data() {
     return {
-      isLeft: true,
-      isRight: false,
+      isLeft: false,
+      isRight: true,
       clickNum: 4,
       titleText: "网点导览",
       personArr: [],
