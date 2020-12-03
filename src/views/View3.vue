@@ -86,8 +86,10 @@
 </template>
 <script>
 import Flipper from "vue-flipper";
-const { ipcRenderer } = window.require("electron");
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 import { getProductData } from "../api";
+// const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "View3",
@@ -123,11 +125,46 @@ export default {
     };
   },
   created() {
-    var result = ipcRenderer.sendSync("videolist");
-    console.info("videolist", result);
+    // var result = ipcRenderer.sendSync("videolist");
     this.getProductDataFn();
+    this.connectionSocket();
   },
   methods: {
+    connectionSocket() {
+      //连接SockJS的endpoint名称为"endpoint-websocket"
+      const socket = new SockJS(
+        "http://192.168.2.30:8089/bankmanage/endpoint-websocket"
+      );
+      // 获取STOMP子协议的客户端对象
+      let stompClient = Stomp.over(socket);
+      // 向服务器发起websocket连接
+      stompClient.connect(
+        {},
+        () => {
+          stompClient.subscribe("/topic/service_change", (response) => {
+            let result = JSON.parse(response.body);
+            // ipcRenderer.sendSync('updatedownload');
+            console.info(888, result);
+          });
+
+          stompClient.subscribe("/topic/service_Notice", (response) => {
+            let result = JSON.parse(response.body);
+            // ipcRenderer.sendSync('updatedownload');
+            console.info(666, result);
+          });
+
+          stompClient.subscribe("/topic/service_update", (response) => {
+            let result = JSON.parse(response.body);
+            // ipcRenderer.sendSync('updatedownload');
+            console.info(555, result);
+          });
+          
+        },
+        (err) => {
+          console.log("连接失败", err);
+        }
+      );
+    },
     getProductDataFn() {
       getProductData({
         terminal_no: "cs001",

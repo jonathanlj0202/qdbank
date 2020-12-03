@@ -4,24 +4,15 @@ import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import getMAC from 'getmac'
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
-import SockJS from "sockjs-client";
-import Stomp from "stompjs";
 import { getCultureData } from "./api";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
-// const pathName = app.getPath('downloads');
 const pathName = 'D:/software/wamp/wamp/www';
-//连接SockJS的endpoint名称为"endpoint-websocket"
-// const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
-// const socket = new SockJS("http://192.168.2.30:8089/bankmanage/endpoint-websocket");
-// 获取STOMP子协议的客户端对象
-// let stompClient = Stomp.over(socket);
 
 let dirs = [];
 
 ipcMain.on('mac', (event) => {
-  // console.log(arg) // prints "ping11111"
   event.returnValue = getMAC();
 })
 
@@ -43,7 +34,7 @@ ipcMain.on('videolist', (event) => {
       });
     })(0);
   });
-  
+
 })
 
 // Scheme must be registered before the app is ready
@@ -70,7 +61,7 @@ async function createWindow() {
 
 
 
-
+  //首次调用播放列表
   fs.readdir(pathName, function (err, files) {
     (function iterator(i) {
       if (i == files.length) {
@@ -113,12 +104,14 @@ async function createWindow() {
   });
 
 
-  ipcMain.on('videodownload', (event, url) => {
+
+  //当增加视频通知更新下载
+  ipcMain.on('updatedownload', (event, url) => {
     win.webContents.session.on('will-download', (event, item, webContents) => {
       const filePath = path.join(pathName, item.getFilename());
       item.setSavePath(filePath);
     });
-    win.webContents.downloadURL = url;
+    win.webContents.downloadURL(url);
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
