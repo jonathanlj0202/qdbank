@@ -36,18 +36,24 @@
         <div class="content-bottom">
           <div class="content-title">贵金属</div>
           <div class="bottom-box">
-            <div class="item-box header-box">
+            <div class="header-box">
               <div class="item">品种</div>
               <div class="item">客户卖出价</div>
               <div class="item">客户买入价</div>
               <div class="item">报价时间</div>
             </div>
-            <div class="item-content-box">
-              <div class="item-box">
-                <div class="item">人民币账户黄金</div>
-                <div class="item">409.86</div>
-                <div class="item">410.67</div>
-                <div class="item">2020-10-22</div>
+            <div class="box-wrapper">
+              <div class="item-content-box">
+                <div
+                  class="item-box"
+                  v-for="(item, index) of goldArr"
+                  :key="index"
+                >
+                  <div class="item">{{ item.ProdName }}</div>
+                  <div class="item">{{ item.CustomerBuy }}</div>
+                  <div class="item">{{ item.CustomerSell }}</div>
+                  <div class="item">{{ item.UpdateTime }}</div>
+                </div>
               </div>
             </div>
           </div>
@@ -56,35 +62,56 @@
       <div class="content-right">
         <div class="content-title">汇率</div>
         <div class="content-box">
-          <div class="item-box header-box">
+          <div class="header-box">
             <div class="item">名称</div>
             <div class="item">现汇买入价</div>
             <div class="item">现汇卖出价</div>
             <div class="item">报价时间</div>
           </div>
-          <div
-            class="item-box"
-            v-for="(item, index) of exchangeArr"
-            :key="index"
-          >
-            <div class="item">{{ item.CurrName }}</div>
-            <div class="item">
-              {{ parseFloat(item.BuyingPrice).toFixed(2) }}
+          <div class="box-wrapper">
+            <div class="item-content-box">
+              <div
+                class="item-box"
+                v-for="(item, index) of exchangeArr"
+                :key="index"
+              >
+                <div class="item">
+                  {{ item.CurrName.substring(0, item.CurrName.indexOf("(")) }}
+                </div>
+                <div class="item">
+                  {{ parseFloat(item.BuyingPrice).toFixed(2) }}
+                </div>
+                <div class="item">
+                  {{ parseFloat(item.SellPrice).toFixed(2) }}
+                </div>
+                <div class="item">{{ item.PublishTime }}</div>
+              </div>
             </div>
-            <div class="item">21.4010</div>
-            <div class="item">2020-10-22</div>
           </div>
         </div>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="box-right-item">
-        <div class="item-name">万家行业优选(161903）</div>
-        <div class="item-type">基金产品</div>
-        <div class="item-num">0.686%</div>
-        <div class="item-unit">单位净值</div>
-        <div class="item-des1">季涨幅：24.65%</div>
-        <div class="item-des2">投资类型：股票型</div>
+      <div class="box-right" v-for="(item, index) of 6" :key="index">
+        <flipper
+          width="100%"
+          height="100%"
+          :flipped="flippedArr[index]"
+          @click="onClick(index)"
+        >
+          <div class="box-right-item" slot="front">
+            <div class="item-name">万家行业优选(161903）</div>
+            <div class="item-type">基金产品</div>
+            <div class="item-num">0.686%</div>
+            <div class="item-unit">单位净值</div>
+            <div class="item-des1">季涨幅：24.65%</div>
+            <div class="item-des2">投资类型：股票型</div>
+          </div>
+          <div class="box-right-item" slot="back">
+            <img class="code-img" src="../assets/img/code.png" />
+            <div class="tips-text">扫码购买</div>
+          </div>
+        </flipper>
       </div>
     </div>
     <div
@@ -108,12 +135,15 @@
   </div>
 </template>
 <script>
+import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 
 export default {
   name: "View1",
-  components: {},
+  components: {
+    Flipper,
+  },
   data() {
     return {
       isLeft: true,
@@ -122,19 +152,23 @@ export default {
       lilvLeftArr: [],
       lilvRightArr: [],
       exchangeArr: [],
+      goldArr: [],
+      flippedArr: [],
     };
   },
   created() {
     this.connectionSocket();
+    for (let index = 0; index < 6; index++) {
+      this.flippedArr.push(false);
+    }
   },
   methods: {
     connectionSocket() {
       //连接SockJS的endpoint名称为"endpoint-websocket"
-      const socket = new SockJS(
-        "http://192.168.2.30:8089/bankmanage/endpoint-websocket"
-      );
+      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
       // 获取STOMP子协议的客户端对象
       let stompClient = Stomp.over(socket);
+      stompClient.debug = null;
       // 向服务器发起websocket连接
       stompClient.connect(
         {},
@@ -142,16 +176,21 @@ export default {
           //贵金属
           stompClient.subscribe("/topic/service_gold", (response) => {
             let result = JSON.parse(response.body);
-            // ipcRenderer.sendSync('updatedownload');
-            console.info("贵金属11", JSON.parse(result.content));
+            this.goldArr = [];
+            this.goldArr = JSON.parse(result.content);
+            this.goldArr.forEach((ele) => {
+              this.goldArr.push(ele);
+            });
           });
 
           //汇率
           stompClient.subscribe("/topic/service_exchange", (response) => {
             let result = JSON.parse(response.body);
+            this.exchangeArr = [];
             this.exchangeArr = JSON.parse(result.content);
-            // ipcRenderer.sendSync('updatedownload');
-            // console.info("汇率", JSON.parse(result.content));
+            this.exchangeArr.forEach((ele) => {
+              this.exchangeArr.push(ele);
+            });
           });
 
           //利率
@@ -183,6 +222,9 @@ export default {
         this.isRight = true;
         this.titleText = "热销产品";
       }
+    },
+    onClick(number) {
+      this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
   },
 };
@@ -253,17 +295,18 @@ export default {
 
 .content-bottom .bottom-box {
   width: 335px;
-  height: 270px;
-  padding: 20px 10px;
+  height: 310px;
   margin-top: 12px;
   box-sizing: border-box;
-  position: relative;
   border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
   background-color: rgba(41, 68, 183, 0.5);
+  overflow: hidden;
 }
 
-.bottom-box .item-box {
+.bottom-box .header-box {
   width: 335px;
+  padding: 0 10px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -272,9 +315,59 @@ export default {
   font-size: 14px !important;
 }
 
-/* .item-content-box  */
+.bottom-box .item-box {
+  width: 335px;
+  height: 40px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.content-bottom .box-wrapper {
+  width: 335px;
+  height: 270px;
+  overflow: hidden;
+}
 
-.bottom-box .item-box .item:nth-child(1) {
+.bottom-box .item-content-box {
+  width: 335px;
+  height: 270px;
+  box-sizing: border-box;
+}
+
+.bottom-box .item-content-box::-webkit-scrollbar {
+  display: none;
+}
+
+.bottom-box .item-content-box {
+  -webkit-animation: bottomrowup 10s 1s linear infinite;
+  animation: bottomrowup 10s 1s linear infinite;
+}
+
+.bottom-box .item-content-box:hover {
+  animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+}
+
+@-webkit-keyframes bottomrowup {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, -200px, 0);
+  }
+}
+
+@keyframes bottomrowup {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -200px, 0);
+  }
+}
+
+.bottom-box .item-box .item:nth-child(1),
+.bottom-box .header-box .item:nth-child(1) {
   width: 90px;
   height: 40px;
   line-height: 40px;
@@ -282,9 +375,13 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.bottom-box .item-box .item:nth-child(2) {
+.bottom-box .item-box .item:nth-child(2),
+.bottom-box .header-box .item:nth-child(2) {
   width: 78px;
   height: 40px;
   line-height: 40px;
@@ -292,9 +389,13 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.bottom-box .item-box .item:nth-child(3) {
+.bottom-box .item-box .item:nth-child(3),
+.bottom-box .header-box .item:nth-child(3) {
   width: 76px;
   height: 40px;
   line-height: 40px;
@@ -304,7 +405,8 @@ export default {
   float: left;
 }
 
-.bottom-box .item-box .item:nth-child(4) {
+.bottom-box .item-box .item:nth-child(4),
+.bottom-box .header-box .item:nth-child(4) {
   width: 70px;
   height: 40px;
   line-height: 40px;
@@ -312,6 +414,9 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .top-left,
@@ -363,15 +468,18 @@ export default {
 
 .content-right .content-box {
   width: 335px;
-  height: 525px;
-  padding: 40px 10px 20px;
+  height: 565px;
+  margin-top: 20px;
   box-sizing: border-box;
   border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
   background-color: rgba(41, 68, 183, 0.5);
-  overflow-y: scroll;
+  overflow: hidden;
 }
 
 .content-box .header-box {
+  width: 335px;
+  padding: 0 10px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -379,8 +487,59 @@ export default {
   color: #00ffd6 !important;
   font-size: 14px !important;
 }
+.content-right .box-wrapper {
+  width: 335px;
+  height: 520px;
+  overflow: hidden;
+}
 
-.content-box .item-box .item:nth-child(1) {
+.content-box .item-content-box {
+  width: 335px;
+  height: 520px;
+  box-sizing: border-box;
+}
+
+.content-box .item-content-box {
+  -webkit-animation: rowup 10s 1s linear infinite;
+  animation: rowup 10s 1s linear infinite;
+}
+
+.content-box .item-content-box:hover {
+  animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+}
+
+@-webkit-keyframes rowup {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, -520px, 0);
+  }
+}
+
+@keyframes rowup {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -520px, 0);
+  }
+}
+
+.content-box .item-content-box::-webkit-scrollbar {
+  display: none;
+}
+
+.content-box .item-box {
+  width: 335px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.content-box .item-box .item:nth-child(1),
+.content-box .header-box .item:nth-child(1) {
   width: 60px;
   height: 40px;
   line-height: 40px;
@@ -388,9 +547,13 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.content-box .item-box .item:nth-child(2) {
+.content-box .item-box .item:nth-child(2),
+.content-box .header-box .item:nth-child(2) {
   width: 90px;
   height: 40px;
   line-height: 40px;
@@ -398,9 +561,13 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.content-box .item-box .item:nth-child(3) {
+.content-box .item-box .item:nth-child(3),
+.content-box .header-box .item:nth-child(3) {
   width: 90px;
   height: 40px;
   line-height: 40px;
@@ -408,9 +575,13 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
-.content-box .item-box .item:nth-child(4) {
+.content-box .item-box .item:nth-child(4),
+.content-box .header-box .item:nth-child(4) {
   width: 70px;
   height: 40px;
   line-height: 40px;
@@ -418,6 +589,9 @@ export default {
   font-size: 12px;
   text-align: center;
   float: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 /*rightview*/
@@ -428,7 +602,15 @@ export default {
   overflow: hidden;
 }
 
-.box-right-item:nth-child(odd) {
+.box-right {
+  width: 280px;
+  height: 210px;
+  margin-bottom: 16px;
+  float: left;
+  overflow: hidden;
+}
+
+.box-right:nth-child(odd) {
   margin-right: 18px;
 }
 
@@ -440,7 +622,19 @@ export default {
   box-sizing: border-box;
   border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
   background-color: rgba(41, 68, 183, 0.5);
-  margin-bottom: 18px;
+  text-align: center;
+}
+
+.box-right-item .code-img {
+  width: 100px;
+  height: 100px;
+  margin-top: 10px;
+}
+
+.box-right-item .tips-text {
+  color: #00ffd6;
+  font-size: 18px;
+  text-align: center;
 }
 
 .box-right-item .item-name {

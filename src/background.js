@@ -9,6 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
 const pathName = 'D:/software/wamp/wamp/www';
+let win = "";
 
 let dirs = [];
 
@@ -37,31 +38,15 @@ ipcMain.on('videolist', (event) => {
 
 })
 
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
-]);
+//当增加视频通知更新下载
+ipcMain.on('updatedownload', (event) => {
+  downloadfile();
+  event.returnValue = 11;
+  return;
+});
 
-
-
-async function createWindow() {
-  // Create the browser window.
-  const win = new BrowserWindow({
-    // width: 800,
-    // height: 600,
-    fullscreen: true,
-    autoHideMenuBar: true,
-    webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
-      nodeIntegration: true
-    }
-  });
-
-
-
-  //首次调用播放列表
+//首次调用播放列表
+function downloadfile() {
   fs.readdir(pathName, function (err, files) {
     (function iterator(i) {
       if (i == files.length) {
@@ -72,20 +57,20 @@ async function createWindow() {
         getCultureData({
           terminal_no: "cs001",
         }).then((res) => {
-          if (res.data[0] && res.data[0].video[0]) {
-            res.data[0].video.forEach((ele, index) => {
+          if (res.data && res.code === "0000") {
+            res.data.forEach((ele, index) => {
               if (dirs.length > 0) {
                 let downBoo = true;
                 dirs.forEach(element => {
-                  if (ele.video.indexOf(element) > -1) {
+                  if (ele.sourcestype === "视频" && ele.sources.indexOf(element) > -1) {
                     downBoo = false;
                   }
                 });
-                if (downBoo) {
-                  win.webContents.downloadURL(ele.video);
+                if (ele.sourcestype === "视频" && downBoo) {
+                  win.webContents.downloadURL(ele.sources);
                 }
-              } else {
-                win.webContents.downloadURL(ele.video);
+              } else if (ele.sourcestype === "视频") {
+                win.webContents.downloadURL(ele.sources);
               }
             });
           }
@@ -102,17 +87,31 @@ async function createWindow() {
       });
     })(0);
   });
+}
+
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { secure: true, standard: true } }
+]);
 
 
 
-  //当增加视频通知更新下载
-  ipcMain.on('updatedownload', (event, url) => {
-    win.webContents.session.on('will-download', (event, item, webContents) => {
-      const filePath = path.join(pathName, item.getFilename());
-      item.setSavePath(filePath);
-    });
-    win.webContents.downloadURL(url);
+async function createWindow() {
+  // Create the browser window.
+  win = new BrowserWindow({
+    // width: 800,
+    // height: 600,
+    fullscreen: true,
+    autoHideMenuBar: true,
+    webPreferences: {
+      // Use pluginOptions.nodeIntegration, leave this alone
+      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+      // nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION
+      nodeIntegration: true
+    }
   });
+
+  downloadfile();
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode

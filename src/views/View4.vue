@@ -168,6 +168,7 @@ export default {
 .product-box img {
   width: 304px;
   height: 464px;
+  border-radius: 10px;
 }
 
 .close-product-btn {

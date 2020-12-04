@@ -7,7 +7,7 @@
           <video
             class="video"
             :src="videoSrc"
-            autoplay
+            autoplay="autoplay"
             type="video/mp4"
             controls="controls"
             ref="videoRef"
@@ -15,16 +15,20 @@
         </div>
         <div class="video-bg" v-show="!videoBoo">
           <img :src="videoImgUrl" />
-          <div class="video-play-btn" @click="playVideo()"></div>
+          <div
+            class="video-play-btn"
+            @click="playVideo()"
+            v-show="swipertype === 1"
+          ></div>
         </div>
         <div class="video-btn-box">
           <div
             class="video-btn"
-            v-for="(item, index) of videoArr"
+            v-for="(item, index) of swiperArr"
             :key="index"
             @click="chanceVideoFn(index)"
           >
-            <img :src="item.videoImg" />
+            <img :src="item.bgimg" />
           </div>
         </div>
       </div>
@@ -88,8 +92,8 @@
 import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
-import { getProductData } from "../api";
-// const { ipcRenderer } = window.require("electron");
+import { getProductData, getCultureData } from "../api";
+const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "View3",
@@ -104,66 +108,82 @@ export default {
       baseUrl: "http://localhost/",
       videoSrc: "",
       titleText: "文化剧场",
-      videoImgUrl: require("../assets/img/video1.png"),
+      videoImgUrl: null,
       clickIndex: null,
-      videoArr: [
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video1.png"),
-        },
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video2.png"),
-        },
-        {
-          videoUrl: this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4",
-          videoImg: require("../assets/img/video3.png"),
-        },
-      ],
+      swipertype: null,
+      swiperArr: [],
       flippedArr: [],
       productArr: [],
     };
   },
   created() {
-    // var result = ipcRenderer.sendSync("videolist");
     this.getProductDataFn();
+    this.getCultureDataFn();
     this.connectionSocket();
+    // this.swipershowFn();
   },
   methods: {
     connectionSocket() {
       //连接SockJS的endpoint名称为"endpoint-websocket"
-      const socket = new SockJS(
-        "http://192.168.2.30:8089/bankmanage/endpoint-websocket"
-      );
+      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
       // 获取STOMP子协议的客户端对象
       let stompClient = Stomp.over(socket);
+      stompClient.debug = null;
       // 向服务器发起websocket连接
       stompClient.connect(
         {},
         () => {
           stompClient.subscribe("/topic/service_change", (response) => {
             let result = JSON.parse(response.body);
-            // ipcRenderer.sendSync('updatedownload');
-            console.info(888, result);
+            let zz = ipcRenderer.sendSync("updatedownload");
+            this.getCultureDataFn();
+            console.info(5, result, zz);
           });
-
-          stompClient.subscribe("/topic/service_Notice", (response) => {
-            let result = JSON.parse(response.body);
-            // ipcRenderer.sendSync('updatedownload');
-            console.info(666, result);
-          });
-
-          stompClient.subscribe("/topic/service_update", (response) => {
-            let result = JSON.parse(response.body);
-            // ipcRenderer.sendSync('updatedownload');
-            console.info(555, result);
-          });
-          
         },
         (err) => {
           console.log("连接失败", err);
         }
       );
+    },
+    getCultureDataFn() {
+      getCultureData({
+        terminal_no: "cs001",
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.swiperArr = [];
+          let result = ipcRenderer.sendSync("videolist");
+          res.data.forEach((ele) => {
+            if (ele.sourcestype === "视频") {
+              let localurl = "";
+              result.forEach((element) => {
+                if (ele.sources.indexOf(element) > -1) {
+                  localurl = this.baseUrl + element;
+                }
+              });
+              this.swiperArr.push({
+                //1为视频，2为图片
+                type: 1,
+                url: localurl ? localurl : ele.sources,
+                bgimg: ele.backgroundimages,
+                time: ele.timerange,
+                terminalno: ele.terminalno,
+              });
+            } else if (ele.sourcestype === "图片") {
+              this.swiperArr.push({
+                //1为视频，2为图片
+                type: 2,
+                url: ele.sources,
+                bgimg: ele.sources,
+                time: ele.timerange,
+                terminalno: ele.terminalno,
+              });
+            }
+          });
+          this.clickIndex = 0;
+          this.videoImgUrl = this.swiperArr[0].bgimg;
+          this.swipertype = this.swiperArr[0].type;
+        }
+      });
     },
     getProductDataFn() {
       getProductData({
@@ -178,10 +198,12 @@ export default {
       });
     },
     chanceVideoFn(index) {
-      this.videoImgUrl = this.videoArr[index].videoImg;
       if (index !== this.clickIndex) {
         this.videoBoo = false;
+        this.videoSrc = "";
       }
+      this.videoImgUrl = this.swiperArr[index].bgimg;
+      this.swipertype = this.swiperArr[index].type;
       this.clickIndex = index;
     },
     chooseFn(str) {
@@ -200,8 +222,26 @@ export default {
     },
     playVideo() {
       this.videoBoo = true;
-      this.videoSrc = this.baseUrl + "2F836E14792C4DC2A34865EC40F65D72.mp4";
+      this.videoSrc = this.swiperArr[this.clickIndex].url;
+      this.$refs.videoRef.load();
       this.$refs.videoRef.play();
+      this.$refs.videoRef.addEventListener(
+        "ended",
+        function () {
+          //结束
+          console.log("播放结11束");
+        },
+        false
+      );
+    },
+    swipershowFn() {
+      setInterval(() => {
+        if (this.clickIndex < this.swiperArr.length) {
+          ++this.clickIndex;
+          this.chanceVideoFn(this.clickIndex);
+          console.info(1112222, this.clickIndex, this.swiperArr);
+        }
+      }, 3000);
     },
   },
 };
@@ -278,7 +318,7 @@ export default {
 .video-btn {
   width: 100px;
   height: 80px;
-  margin-right: 30px;
+  margin-right: 20px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
   float: left;
