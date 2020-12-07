@@ -18,7 +18,6 @@
     "getmac": "^5.17.0",
     "lib-flexible": "^0.3.2",
     "sockjs-client": "^1.5.0",
-    "stompjs": "^2.3.3",
     "vue": "^2.6.11",
     "vue-flipper": "^1.0.0",
     "vue-router": "^3.4.9",
@@ -42,5 +41,6 @@
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.5",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "__npminstall_done": false
 }

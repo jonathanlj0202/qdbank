@@ -137,7 +137,7 @@
 <script>
 import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Stomp } from "../assets/js/stomp.js";
 
 export default {
   name: "View1",

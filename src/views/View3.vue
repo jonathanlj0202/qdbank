@@ -91,7 +91,7 @@
 <script>
 import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
-import Stomp from "stompjs";
+import { Stomp } from "../assets/js/stomp.js";
 import { getProductData, getCultureData } from "../api";
 const { ipcRenderer } = window.require("electron");
 
@@ -179,6 +179,7 @@ export default {
               });
             }
           });
+          console.info(6622, this.swiperArr)
           this.clickIndex = 0;
           this.videoImgUrl = this.swiperArr[0].bgimg;
           this.swipertype = this.swiperArr[0].type;

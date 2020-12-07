@@ -42,7 +42,7 @@ ipcMain.on('videolist', (event) => {
 ipcMain.on('updatedownload', (event) => {
   downloadfile();
   event.returnValue = 11;
-  return;
+  // return;
 });
 
 //首次调用播放列表
