@@ -2,78 +2,81 @@
   <div class="container">
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <div class="map-content">
-        <img v-show="GuideUrl" :src="GuideUrl" />
-      </div>
-      <div
-        :class="[
-          clickNum === 1 ? 'map-btn map-choose-btn first' : 'map-btn first',
-        ]"
-      >
-        现金<br />服务区
-      </div>
-      <div
-        :class="[
-          clickNum === 2 ? 'map-btn map-choose-btn second' : 'map-btn second',
-        ]"
-      >
-        个贷<br />业务区
-      </div>
-      <div
-        :class="[
-          clickNum === 3 ? 'map-btn map-choose-btn third' : 'map-btn third',
-        ]"
-      >
-        智能<br />服务区
-      </div>
-      <div
-        :class="[
-          clickNum === 4 ? 'map-btn map-choose-btn fourth' : 'map-btn fourth',
-        ]"
-      >
-        引导区
-      </div>
-      <div
-        :class="[
-          clickNum === 5 ? 'map-btn map-choose-btn fifth' : 'map-btn fifth',
-        ]"
-      >
-        等候区
-      </div>
-      <div
-        :class="[
-          clickNum === 6 ? 'map-btn map-choose-btn sixth' : 'map-btn sixth',
-        ]"
-      >
-        非<br />现金区
-      </div>
-      <div
-        :class="[
-          clickNum === 7 ? 'map-btn map-choose-btn seventh' : 'map-btn seventh',
-        ]"
-      >
-        理财<br />业务区
+      <div class="box">
+        <div class="video-box" v-show="videoBoo">
+          <video
+            class="video"
+            :src="videoSrc"
+            autoplay="autoplay"
+            type="video/mp4"
+            controls="controls"
+            ref="videoRef"
+          ></video>
+        </div>
+        <div class="video-bg" v-show="!videoBoo">
+          <img :src="videoImgUrl" />
+          <div
+            class="video-play-btn"
+            @click="playVideo()"
+            v-show="swipertype === 1"
+          ></div>
+        </div>
+        <div class="video-btn-box">
+          <div
+            class="video-btn"
+            v-for="(item, index) of swiperArr"
+            :key="index"
+            @click="chanceVideoFn(index)"
+          >
+            <img :src="item.bgimg" />
+          </div>
+        </div>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="user-item" v-for="(item, i) in personArr" :key="i">
-        <div class="avatar-box">
-          <img class="user-avatar" :src="item.personimage" />
+      <div class="product-box">
+        <div class="product" v-for="(item, index) of productArr" :key="index">
+          <flipper
+            width="100%"
+            height="100%"
+            :flipped="flippedArr[index]"
+            @click="onClick(index)"
+          >
+            <div class="product-item" slot="front">
+              <img class="item-logo" :src="item.waterbusiness" />
+              <div class="item-name" v-show="item.waterbusinessname === '商圈'">
+                {{ item.watergoodsname }}
+              </div>
+              <div class="item-text" v-html="item.businesscontent"></div>
+              <img
+                v-show="item.waterbusinessname === '商品'"
+                class="item-mini-logo"
+                :src="item.waterbusinessimage"
+              />
+            </div>
+            <div class="product-item" slot="back">
+              <div class="item-detail-name">{{ item.watergoodsname }}</div>
+              <div class="item-detail-content" v-html="item.goodscontent"></div>
+              <div class="item-detail-left-logo">
+                <img :src="item.watergoodsimage" />
+              </div>
+              <div class="item-detail-right-logo">
+                <img :src="item.watercodeimage" />
+              </div>
+            </div>
+          </flipper>
         </div>
-        <div class="user-name">{{ item.personname }}</div>
-        <div class="user-desc">职位：{{ item.position }}</div>
-        <div class="user-desc">工龄：{{ item.workeyear }}年</div>
       </div>
     </div>
-    <!-- <div
+    <div
       :class="{
         'bottom-btn-left choose': isLeft,
         'bottom-btn-left nochoose': isRight,
       }"
       @click="chooseFn('isLeft')"
     >
-      网点导览
-    </div> -->
+      文化剧场
+    </div>
     <div
       :class="{
         'bottom-btn-right nochoose': isLeft,
@@ -81,65 +84,219 @@
       }"
       @click="chooseFn('isRight')"
     >
-      员工信息
+      互动营销
     </div>
   </div>
 </template>
 <script>
-import { getPersonData, getGuideData } from "../api";
+import Flipper from "vue-flipper";
+import SockJS from "sockjs-client";
+import { Stomp } from "../assets/js/stomp.js";
+import { getProductData, getCultureData } from "../api";
+const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "View2",
-  components: {},
+  components: {
+    Flipper,
+  },
   data() {
     return {
-      isLeft: false,
-      isRight: true,
-      clickNum: 4,
-      titleText: "网点导览",
-      personArr: [],
-      GuideUrl: "",
+      isLeft: true,
+      isRight: false,
+      videoBoo: false,
+      baseUrl: "http://localhost/",
+      videoSrc: "",
+      titleText: "文化剧场",
+      videoImgUrl: null,
+      clickIndex: null,
+      swipertype: null,
+      swiperArr: [],
+      flippedArr: [],
+      productArr: [],
+      startvideoboo: false,
+      inter: null,
     };
   },
   created() {
-    console.info("view22211");
-    this.getGuide();
-    this.getPerson();
+    this.getProductDataFn();
+    this.getCultureDataFn();
+    this.connectionSocket();
+    // this.swipershowFn();
   },
   methods: {
-    getPerson() {
-      getPersonData({
+    connectionSocket() {
+      //连接SockJS的endpoint名称为"endpoint-websocket"
+      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
+      // 获取STOMP子协议的客户端对象
+      let stompClient = Stomp.over(socket);
+      stompClient.debug = null;
+      // 向服务器发起websocket连接
+      stompClient.connect(
+        {},
+        () => {
+          stompClient.subscribe("/topic/service_change", (response) => {
+            let result = JSON.parse(response.body);
+            let zz = ipcRenderer.sendSync("updatedownload");
+            this.getCultureDataFn();
+            console.info(
+              51,
+              result,
+              zz,
+              "timerange",
+              "2020-12-10 00:00:00 ~ 2020-12-12 00:00:00"
+            );
+          });
+        },
+        (err) => {
+          console.log("连接失败", err);
+        }
+      );
+    },
+    getCultureDataFn() {
+      getCultureData({
         terminal_no: "cs001",
       }).then((res) => {
         if (res.data && res.code === "0000") {
-          this.personArr = res.data;
+          this.swiperArr = [];
+          let result = ipcRenderer.sendSync("videolist");
+          res.data.forEach((ele) => {
+            let timeArr = "";
+            if (ele.timerange) {
+              timeArr = ele.timerange.split(" ~ ");
+              timeArr[0] = new Date(timeArr[0].replace(/-/g, "/")).getTime();
+              timeArr[1] = new Date(timeArr[1].replace(/-/g, "/")).getTime();
+            }
+            if (ele.sourcestype === "视频") {
+              let localurl = "";
+              result.forEach((element) => {
+                if (ele.sources.indexOf(element) > -1) {
+                  localurl = this.baseUrl + element;
+                }
+              });
+              this.swiperArr.push({
+                //1为视频，2为图片
+                type: 1,
+                url: localurl ? localurl : ele.sources,
+                bgimg: ele.backgroundimages,
+                time: timeArr,
+                terminalno: ele.terminalno,
+              });
+            } else if (ele.sourcestype === "图片") {
+              this.swiperArr.push({
+                //1为视频，2为图片
+                type: 2,
+                url: ele.sources,
+                bgimg: ele.sources,
+                time: timeArr,
+                terminalno: ele.terminalno,
+              });
+            }
+          });
+          this.clickIndex = 0;
+          this.videoImgUrl = this.swiperArr[0].bgimg;
+          this.swipertype = this.swiperArr[0].type;
+          this.startvideo();
+          console.info(2121, this.swiperArr);
         }
       });
     },
-    getGuide() {
-      getGuideData({
+    getProductDataFn() {
+      getProductData({
         terminal_no: "cs001",
       }).then((res) => {
         if (res.data && res.code === "0000") {
-          this.GuideUrl = res.data[0].guideimage;
+          this.productArr = res.data;
+          this.productArr.forEach(() => {
+            this.flippedArr.push(false);
+          });
         }
       });
+    },
+    chanceVideoFn(index) {
+      if (this.videoSrc !== "") {
+        console.info(221 , "clear");
+        clearInterval(this.inter);
+      }
+      if (index !== this.clickIndex) {
+        this.videoBoo = false;
+        this.videoSrc = "";
+      }
+      this.videoImgUrl = this.swiperArr[index].bgimg;
+      this.swipertype = this.swiperArr[index].type;
+      this.clickIndex = index;
     },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
         this.isRight = false;
-        this.titleText = "网点导览";
+        this.titleText = "文化剧场";
       } else {
         this.isLeft = false;
         this.isRight = true;
-        this.titleText = "员工信息";
+        this.titleText = "互动营销";
       }
+    },
+    onClick(number) {
+      this.$set(this.flippedArr, number, !this.flippedArr[number]);
+    },
+    playVideo() {
+      this.videoBoo = true;
+      this.videoSrc = this.swiperArr[this.clickIndex].url;
+      this.$refs.videoRef.load();
+      this.$refs.videoRef.play();
+      this.$refs.videoRef.addEventListener(
+        "ended",
+        () => {
+          //结束
+          this.videoSrc = "";
+          this.startvideo();
+          console.log("播放结111束");
+        },
+        false
+      );
+    },
+    startvideo() {
+      this.inter = setInterval(() => {
+        console.info(12);
+        if (this.swiperArr.length > 0) {
+          let clearinter = true;
+          this.swiperArr.forEach((element, index) => {
+            let timeStr = new Date().getTime();
+            if (
+              timeStr > element.time[0] &&
+              timeStr < element.time[1] &&
+              this.videoSrc === "" &&
+              element.type === 1
+            ) {
+              this.clickIndex = index;
+              this.playVideo();
+            }
+
+            if (element.time[1] > timeStr && element.type === 1) {
+              clearinter = false;
+            }
+          });
+          if (clearinter) {
+            clearInterval(this.inter);
+          }
+        }
+      }, 1000);
+    },
+    swipershowFn() {
+      setInterval(() => {
+        if (this.clickIndex < this.swiperArr.length) {
+          ++this.clickIndex;
+          this.chanceVideoFn(this.clickIndex);
+          console.info(11, this.clickIndex, this.swiperArr);
+        }
+      }, 3000);
     },
   },
 };
 </script>
-
+<style src="vue-flipper/dist/vue-flipper.css">
+</style>
 <style scoped>
 .container {
   width: 780px;
@@ -167,120 +324,184 @@ export default {
   overflow: hidden;
 }
 
-/*leftview*/
-.map-content {
-  width: 468px;
-  height: 296px;
-  margin: 220px auto 0px;
-  overflow:hidden;
-  text-align: center;
-}
-
-.map-content img {
-  width: 468px;
-  height: 296px;
-}
-
-.map-btn {
-  width: 82px;
-  height: 60px;
+.box {
+  width: 700px;
+  height: 500px;
+  margin: 200px auto 0px;
+  position: relative;
   overflow: hidden;
-  text-align: center;
-  background-image: url("../assets/img/ncbtn.png");
-  background-repeat: no-repeat;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.video-box {
+  width: 700px;
+  height: 400px;
+}
+
+.video-box .video {
+  width: 700px;
+  height: 400px;
+  border: none;
+  outline: 0;
+}
+
+.video-bg {
+  width: 700px;
+  height: 400px;
+  overflow: hidden;
+  position: relative;
+}
+
+.video-bg img {
+  width: 700px;
+  height: 400px;
+}
+
+.video-btn-box {
+  width: 700px;
+  height: 100px;
+  padding: 10px 50px;
+  box-sizing: border-box;
+}
+
+.video-btn {
+  width: 100px;
+  height: 80px;
+  margin-right: 20px;
   background-size: 100% 100%;
-  color: #20c9b8;
-  font-size: 14px;
+  background-repeat: no-repeat;
+  float: left;
 }
 
-.map-choose-btn {
-  background-image: url("../assets/img/cbtn.png") !important;
+.video-btn img {
+  width: 100px;
+  height: 80px;
 }
 
-.first {
-  top: 445px;
-  left: 55px;
+.video-play-btn {
   position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 700px;
+  height: 400px;
+  background-color: rgba(0, 0, 0, 0.6);
+  background-image: url("../assets/img/videoplay.png");
+  background-repeat: no-repeat;
+  background-size: 100px 100px;
+  background-position: center center;
 }
 
-.second {
-  top: 550px;
-  left: 100px;
+.close-video {
+  width: 50px;
+  height: 50px;
   position: absolute;
-}
-
-.third {
-  top: 615px;
-  left: 210px;
-  position: absolute;
-}
-
-.fourth {
-  top: 635px;
-  left: 360px;
-  position: absolute;
-}
-
-.fifth {
-  top: 615px;
-  left: 510px;
-  position: absolute;
-}
-
-.sixth {
-  top: 550px;
-  left: 620px;
-  position: absolute;
-}
-
-.seventh {
-  top: 445px;
-  left: 655px;
-  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: url("../assets/img/closevideo.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 /*rightview*/
-.content-box-right {
-  box-sizing: border-box;
-  padding: 0 100px;
-  margin-top: 200px;
+
+.product-box {
+  width: 575px;
+  overflow: hidden;
+  margin: 90px auto 0px;
+}
+
+.product {
+  width: 280px;
+  height: 225px;
   overflow: hidden;
 }
 
-.user-item {
-  width: 103px;
+.product:nth-child(odd) {
+  margin-right: 15px;
   float: left;
-  margin: 0 20px 18px;
+  margin-bottom: 20px;
+}
+
+.product-item {
+  width: 280px;
+  height: 225px;
+  background: url("../assets/img/border4.png") no-repeat;
+  background-size: 100% 100%;
+  text-align: center;
   color: #fff;
-  overflow: hidden;
+}
+
+.item-logo {
+  width: 210px;
+  height: 110px;
+  margin-top: 22px;
+  margin-bottom: 5px;
+}
+
+.item-name {
+  width: 280px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 18px;
   text-align: center;
 }
 
-.avatar-box {
-  width: 103px;
-  height: 103px;
-  background: url("../assets/img/userBorder.png") no-repeat;
-  background-size: 100% 100%;
+.item-text {
+  width: 210px;
+  height: 40px;
+  margin: 0 auto;
+  line-height: 15px;
+  font-size: 10px;
   overflow: hidden;
 }
 
-.user-avatar {
-  width: 84px;
-  height: 84px;
-  margin-top: 9.5px;
+.item-mini-logo {
+  width: 95px;
+  height: 30px;
 }
 
-.user-name {
-  font-size: 16px;
-  height: 25px;
-  line-height: 25px;
-  margin-top: 8px;
+.item-detail-name {
+  width: 210px;
+  height: 30px;
+  line-height: 30px;
+  overflow: hidden;
+  font-size: 18px;
+  margin: 0 auto;
+  padding-top: 12px;
+  padding-bottom: 5px;
 }
 
-.user-desc {
-  font-size: 12px;
-  height: 20px;
-  line-height: 20px;
+.item-detail-content {
+  width: 210px;
+  height: 90px;
+  margin: 0 auto;
+  line-height: 18px;
+  font-size: 10px;
+  overflow: hidden;
+}
+
+.item-detail-left-logo {
+  width: 135px;
+  height: 65px;
+  margin-left: 36px;
+  text-align: left;
+  float: left;
+}
+
+.item-detail-left-logo img {
+  width: 135px;
+  height: 40px;
+}
+
+.item-detail-right-logo {
+  width: 65px;
+  height: 80px;
+  margin-left: 16px;
+  float: left;
+}
+
+.item-detail-right-logo img {
+  width: 65px;
+  height: 65px;
 }
 
 .bottom-btn-left {

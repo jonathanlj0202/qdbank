@@ -91,27 +91,16 @@
         </div>
       </div>
     </div>
+    <!--  -->
+
     <div class="content-box-right" v-show="isRight">
-      <div class="box-right" v-for="(item, index) of 6" :key="index">
-        <flipper
-          width="100%"
-          height="100%"
-          :flipped="flippedArr[index]"
-          @click="onClick(index)"
-        >
-          <div class="box-right-item" slot="front">
-            <div class="item-name">万家行业优选(161903）</div>
-            <div class="item-type">基金产品</div>
-            <div class="item-num">0.686%</div>
-            <div class="item-unit">单位净值</div>
-            <div class="item-des1">季涨幅：24.65%</div>
-            <div class="item-des2">投资类型：股票型</div>
-          </div>
-          <div class="box-right-item" slot="back">
-            <img class="code-img" src="../assets/img/code.png" />
-            <div class="tips-text">扫码购买</div>
-          </div>
-        </flipper>
+      <div class="user-item" v-for="(item, i) in personArr" :key="i">
+        <div class="avatar-box">
+          <img class="user-avatar" :src="item.personimage" />
+        </div>
+        <div class="user-name">{{ item.personname }}</div>
+        <div class="user-desc">职位：{{ item.position }}</div>
+        <div class="user-desc">工龄：{{ item.workeyear }}年</div>
       </div>
     </div>
     <div
@@ -130,20 +119,18 @@
       }"
       @click="chooseFn('isRight')"
     >
-      热销产品
+      员工信息
     </div>
   </div>
 </template>
 <script>
-import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
+import { getPersonData } from "../api";
 
 export default {
   name: "View1",
-  components: {
-    Flipper,
-  },
+  components: {},
   data() {
     return {
       isLeft: true,
@@ -153,14 +140,12 @@ export default {
       lilvRightArr: [],
       exchangeArr: [],
       goldArr: [],
-      flippedArr: [],
+      personArr: [],
     };
   },
   created() {
     this.connectionSocket();
-    for (let index = 0; index < 6; index++) {
-      this.flippedArr.push(false);
-    }
+    this.getPerson();
   },
   methods: {
     connectionSocket() {
@@ -212,6 +197,15 @@ export default {
         }
       );
     },
+    getPerson() {
+      getPersonData({
+        terminal_no: "cs001",
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.personArr = res.data;
+        }
+      });
+    },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
@@ -220,11 +214,8 @@ export default {
       } else {
         this.isLeft = false;
         this.isRight = true;
-        this.titleText = "热销产品";
+        this.titleText = "员工信息";
       }
-    },
-    onClick(number) {
-      this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
   },
 };
@@ -237,7 +228,7 @@ export default {
   margin-right: 12px;
   background: url("../assets/img/border.png") no-repeat;
   background-size: 100% 100%;
-  padding: 0px 40px;
+  /* padding: 0px 40px; */
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
@@ -261,6 +252,9 @@ export default {
 }
 
 /*leftview*/
+.content-box-left {
+  padding: 0px 40px;
+}
 
 .content-left,
 .content-right {
@@ -597,94 +591,46 @@ export default {
 /*rightview*/
 
 .content-box-right {
-  padding: 0 60px;
   box-sizing: border-box;
+  padding: 0 100px;
+  margin-top: 200px;
   overflow: hidden;
 }
 
-.box-right {
-  width: 280px;
-  height: 210px;
-  margin-bottom: 16px;
+.user-item {
+  width: 103px;
   float: left;
+  margin: 0 20px 18px;
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
+}
+
+.avatar-box {
+  width: 103px;
+  height: 103px;
+  background: url("../assets/img/userBorder.png") no-repeat;
+  background-size: 100% 100%;
   overflow: hidden;
 }
 
-.box-right:nth-child(odd) {
-  margin-right: 18px;
+.user-avatar {
+  width: 84px;
+  height: 84px;
+  margin-top: 9.5px;
 }
 
-.box-right-item {
-  width: 280px;
-  height: 210px;
-  padding: 25px 0px;
-  float: left;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
-  background-color: rgba(41, 68, 183, 0.5);
-  text-align: center;
+.user-name {
+  font-size: 16px;
+  height: 25px;
+  line-height: 25px;
+  margin-top: 8px;
 }
 
-.box-right-item .code-img {
-  width: 100px;
-  height: 100px;
-  margin-top: 10px;
-}
-
-.box-right-item .tips-text {
-  color: #00ffd6;
-  font-size: 18px;
-  text-align: center;
-}
-
-.box-right-item .item-name {
-  text-align: center;
-  height: 30px;
-  line-height: 30px;
-  color: #00ffd6;
-  font-size: 14px;
-}
-
-.box-right-item .item-type {
-  text-align: center;
-  height: 20px;
-  line-height: 20px;
-  color: #fff;
-  font-size: 10px;
-}
-
-.box-right-item .item-num {
-  text-align: center;
-  height: 30px;
-  line-height: 30px;
-  font-size: 30px;
-  margin-top: 10px;
-  color: #00ffd6;
-}
-
-.box-right-item .item-unit {
-  text-align: center;
-  height: 15px;
-  line-height: 12px;
-  font-size: 10px;
-  color: #fff;
-}
-
-.box-right-item .item-des1 {
-  text-align: center;
-  height: 20px;
-  line-height: 20px;
+.user-desc {
   font-size: 12px;
-  margin-top: 15px;
-  color: #fff;
-}
-
-.box-right-item .item-des2 {
-  text-align: center;
   height: 20px;
   line-height: 20px;
-  font-size: 12px;
-  color: #fff;
 }
 
 .bottom-btn-left {

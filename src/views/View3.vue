@@ -2,81 +2,91 @@
   <div class="container">
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <div class="box">
-        <div class="video-box" v-show="videoBoo">
-          <video
-            class="video"
-            :src="videoSrc"
-            autoplay="autoplay"
-            type="video/mp4"
-            controls="controls"
-            ref="videoRef"
-          ></video>
-        </div>
-        <div class="video-bg" v-show="!videoBoo">
-          <img :src="videoImgUrl" />
-          <div
-            class="video-play-btn"
-            @click="playVideo()"
-            v-show="swipertype === 1"
-          ></div>
-        </div>
-        <div class="video-btn-box">
-          <div
-            class="video-btn"
-            v-for="(item, index) of swiperArr"
-            :key="index"
-            @click="chanceVideoFn(index)"
-          >
-            <img :src="item.bgimg" />
-          </div>
-        </div>
+      <div class="map-content">
+        <img v-show="GuideUrl" :src="GuideUrl" />
+      </div>
+      <div
+        :class="[
+          clickNum === 1 ? 'map-btn map-choose-btn first' : 'map-btn first',
+        ]"
+      >
+        现金<br />服务区
+      </div>
+      <div
+        :class="[
+          clickNum === 2 ? 'map-btn map-choose-btn second' : 'map-btn second',
+        ]"
+      >
+        个贷<br />业务区
+      </div>
+      <div
+        :class="[
+          clickNum === 3 ? 'map-btn map-choose-btn third' : 'map-btn third',
+        ]"
+      >
+        智能<br />服务区
+      </div>
+      <div
+        :class="[
+          clickNum === 4 ? 'map-btn map-choose-btn fourth' : 'map-btn fourth',
+        ]"
+      >
+        引导区
+      </div>
+      <div
+        :class="[
+          clickNum === 5 ? 'map-btn map-choose-btn fifth' : 'map-btn fifth',
+        ]"
+      >
+        等候区
+      </div>
+      <div
+        :class="[
+          clickNum === 6 ? 'map-btn map-choose-btn sixth' : 'map-btn sixth',
+        ]"
+      >
+        非<br />现金区
+      </div>
+      <div
+        :class="[
+          clickNum === 7 ? 'map-btn map-choose-btn seventh' : 'map-btn seventh',
+        ]"
+      >
+        理财<br />业务区
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="product-box">
-        <div class="product" v-for="(item, index) of productArr" :key="index">
-          <flipper
-            width="100%"
-            height="100%"
-            :flipped="flippedArr[index]"
-            @click="onClick(index)"
-          >
-            <div class="product-item" slot="front">
-              <img class="item-logo" :src="item.waterbusiness" />
-              <div class="item-name" v-show="item.waterbusinessname === '商圈'">
-                {{ item.watergoodsname }}
-              </div>
-              <div class="item-text" v-html="item.businesscontent"></div>
-              <img
-                v-show="item.waterbusinessname === '商品'"
-                class="item-mini-logo"
-                :src="item.waterbusinessimage"
-              />
-            </div>
-            <div class="product-item" slot="back">
-              <div class="item-detail-name">{{ item.watergoodsname }}</div>
-              <div class="item-detail-content" v-html="item.goodscontent"></div>
-              <div class="item-detail-left-logo">
-                <img :src="item.watergoodsimage" />
-              </div>
-              <div class="item-detail-right-logo">
-                <img :src="item.watercodeimage" />
-              </div>
-            </div>
-          </flipper>
-        </div>
+      <div class="box-right" v-for="(item, index) of 6" :key="index">
+        <flipper
+          width="100%"
+          height="100%"
+          :flipped="flippedArr[index]"
+          @click="onClick(index)"
+        >
+          <div class="box-right-item" slot="front">
+            <div class="item-name">万家行业优选(161903）</div>
+            <div class="item-type">基金产品</div>
+            <div class="item-num">0.686%</div>
+            <div class="item-unit">单位净值</div>
+            <div class="item-des1">季涨幅：24.65%</div>
+            <div class="item-des2">投资类型：股票型</div>
+          </div>
+          <div class="box-right-item" slot="back">
+            <img class="code-img" src="../assets/img/code.png" />
+            <div class="tips-text">扫码购买</div>
+          </div>
+        </flipper>
       </div>
     </div>
-    <div
+    <!-- <div
       :class="{
         'bottom-btn-left choose': isLeft,
         'bottom-btn-left nochoose': isRight,
       }"
       @click="chooseFn('isLeft')"
     >
-      文化剧场
-    </div>
+      网点导览
+    </div> -->
     <div
       :class="{
         'bottom-btn-right nochoose': isLeft,
@@ -84,16 +94,13 @@
       }"
       @click="chooseFn('isRight')"
     >
-      互动营销
+      热销产品
     </div>
   </div>
 </template>
 <script>
 import Flipper from "vue-flipper";
-import SockJS from "sockjs-client";
-import { Stomp } from "../assets/js/stomp.js";
-import { getProductData, getCultureData } from "../api";
-const { ipcRenderer } = window.require("electron");
+import { getGuideData } from "../api";
 
 export default {
   name: "View3",
@@ -102,153 +109,48 @@ export default {
   },
   data() {
     return {
-      isLeft: true,
-      isRight: false,
-      videoBoo: false,
-      baseUrl: "http://localhost/",
-      videoSrc: "",
-      titleText: "文化剧场",
-      videoImgUrl: null,
-      clickIndex: null,
-      swipertype: null,
-      swiperArr: [],
+      isLeft: false,
+      isRight: true,
+      clickNum: 4,
+      titleText: "热销产品",
+      GuideUrl: "",
       flippedArr: [],
-      productArr: [],
     };
   },
   created() {
-    this.getProductDataFn();
-    this.getCultureDataFn();
-    this.connectionSocket();
-    // this.swipershowFn();
+    this.getGuide();
+    for (let index = 0; index < 6; index++) {
+      this.flippedArr.push(false);
+    }
   },
   methods: {
-    connectionSocket() {
-      //连接SockJS的endpoint名称为"endpoint-websocket"
-      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
-      // 获取STOMP子协议的客户端对象
-      let stompClient = Stomp.over(socket);
-      stompClient.debug = null;
-      // 向服务器发起websocket连接
-      stompClient.connect(
-        {},
-        () => {
-          stompClient.subscribe("/topic/service_change", (response) => {
-            let result = JSON.parse(response.body);
-            let zz = ipcRenderer.sendSync("updatedownload");
-            this.getCultureDataFn();
-            console.info(5, result, zz);
-          });
-        },
-        (err) => {
-          console.log("连接失败", err);
-        }
-      );
-    },
-    getCultureDataFn() {
-      getCultureData({
+    getGuide() {
+      getGuideData({
         terminal_no: "cs001",
       }).then((res) => {
         if (res.data && res.code === "0000") {
-          this.swiperArr = [];
-          let result = ipcRenderer.sendSync("videolist");
-          res.data.forEach((ele) => {
-            if (ele.sourcestype === "视频") {
-              let localurl = "";
-              result.forEach((element) => {
-                if (ele.sources.indexOf(element) > -1) {
-                  localurl = this.baseUrl + element;
-                }
-              });
-              this.swiperArr.push({
-                //1为视频，2为图片
-                type: 1,
-                url: localurl ? localurl : ele.sources,
-                bgimg: ele.backgroundimages,
-                time: ele.timerange,
-                terminalno: ele.terminalno,
-              });
-            } else if (ele.sourcestype === "图片") {
-              this.swiperArr.push({
-                //1为视频，2为图片
-                type: 2,
-                url: ele.sources,
-                bgimg: ele.sources,
-                time: ele.timerange,
-                terminalno: ele.terminalno,
-              });
-            }
-          });
-          console.info(6622, this.swiperArr)
-          this.clickIndex = 0;
-          this.videoImgUrl = this.swiperArr[0].bgimg;
-          this.swipertype = this.swiperArr[0].type;
+          this.GuideUrl = res.data[0].guideimage;
         }
       });
-    },
-    getProductDataFn() {
-      getProductData({
-        terminal_no: "cs001",
-      }).then((res) => {
-        if (res.data && res.code === "0000") {
-          this.productArr = res.data;
-          this.productArr.forEach(() => {
-            this.flippedArr.push(false);
-          });
-        }
-      });
-    },
-    chanceVideoFn(index) {
-      if (index !== this.clickIndex) {
-        this.videoBoo = false;
-        this.videoSrc = "";
-      }
-      this.videoImgUrl = this.swiperArr[index].bgimg;
-      this.swipertype = this.swiperArr[index].type;
-      this.clickIndex = index;
     },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
         this.isRight = false;
-        this.titleText = "文化剧场";
+        this.titleText = "网点导览";
       } else {
         this.isLeft = false;
         this.isRight = true;
-        this.titleText = "互动营销";
+        this.titleText = "热销产品";
       }
     },
     onClick(number) {
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
-    playVideo() {
-      this.videoBoo = true;
-      this.videoSrc = this.swiperArr[this.clickIndex].url;
-      this.$refs.videoRef.load();
-      this.$refs.videoRef.play();
-      this.$refs.videoRef.addEventListener(
-        "ended",
-        function () {
-          //结束
-          console.log("播放结11束");
-        },
-        false
-      );
-    },
-    swipershowFn() {
-      setInterval(() => {
-        if (this.clickIndex < this.swiperArr.length) {
-          ++this.clickIndex;
-          this.chanceVideoFn(this.clickIndex);
-          console.info(1112222, this.clickIndex, this.swiperArr);
-        }
-      }, 3000);
-    },
   },
 };
 </script>
-<style src="vue-flipper/dist/vue-flipper.css">
-</style>
+
 <style scoped>
 .container {
   width: 780px;
@@ -276,184 +178,169 @@ export default {
   overflow: hidden;
 }
 
-.box {
-  width: 700px;
-  height: 500px;
-  margin: 200px auto 0px;
-  position: relative;
+/*leftview*/
+.map-content {
+  width: 468px;
+  height: 296px;
+  margin: 220px auto 0px;
   overflow: hidden;
-  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
 }
 
-.video-box {
-  width: 700px;
-  height: 400px;
+.map-content img {
+  width: 468px;
+  height: 296px;
 }
 
-.video-box .video {
-  width: 700px;
-  height: 400px;
-  border: none;
-  outline: 0;
-}
-
-.video-bg {
-  width: 700px;
-  height: 400px;
+.map-btn {
+  width: 82px;
+  height: 60px;
   overflow: hidden;
-  position: relative;
-}
-
-.video-bg img {
-  width: 700px;
-  height: 400px;
-}
-
-.video-btn-box {
-  width: 700px;
-  height: 100px;
-  padding: 10px 50px;
-  box-sizing: border-box;
-}
-
-.video-btn {
-  width: 100px;
-  height: 80px;
-  margin-right: 20px;
-  background-size: 100% 100%;
+  text-align: center;
+  background-image: url("../assets/img/ncbtn.png");
   background-repeat: no-repeat;
-  float: left;
-}
-
-.video-btn img {
-  width: 100px;
-  height: 80px;
-}
-
-.video-play-btn {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 700px;
-  height: 400px;
-  background-color: rgba(0, 0, 0, 0.6);
-  background-image: url("../assets/img/videoplay.png");
-  background-repeat: no-repeat;
-  background-size: 100px 100px;
-  background-position: center center;
-}
-
-.close-video {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: url("../assets/img/closevideo.png") no-repeat;
   background-size: 100% 100%;
+  color: #20c9b8;
+  font-size: 14px;
+}
+
+.map-choose-btn {
+  background-image: url("../assets/img/cbtn.png") !important;
+}
+
+.first {
+  top: 445px;
+  left: 55px;
+  position: absolute;
+}
+
+.second {
+  top: 550px;
+  left: 100px;
+  position: absolute;
+}
+
+.third {
+  top: 615px;
+  left: 210px;
+  position: absolute;
+}
+
+.fourth {
+  top: 635px;
+  left: 360px;
+  position: absolute;
+}
+
+.fifth {
+  top: 615px;
+  left: 510px;
+  position: absolute;
+}
+
+.sixth {
+  top: 550px;
+  left: 620px;
+  position: absolute;
+}
+
+.seventh {
+  top: 445px;
+  left: 655px;
+  position: absolute;
 }
 
 /*rightview*/
-
-.product-box {
-  width: 575px;
+.content-box-right {
+  padding: 0 100px;
+  box-sizing: border-box;
   overflow: hidden;
-  margin: 90px auto 0px;
+  margin-top: 150px;
 }
 
-.product {
+.box-right {
   width: 280px;
-  height: 225px;
-  overflow: hidden;
-}
-
-.product:nth-child(odd) {
-  margin-right: 15px;
+  height: 210px;
+  margin-bottom: 16px;
   float: left;
-  margin-bottom: 20px;
+  overflow: hidden;
 }
 
-.product-item {
+.box-right:nth-child(odd) {
+  margin-right: 18px;
+}
+
+.box-right-item {
   width: 280px;
-  height: 225px;
-  background: url("../assets/img/border4.png") no-repeat;
-  background-size: 100% 100%;
+  height: 210px;
+  padding: 25px 0px;
+  float: left;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
+  background-color: rgba(41, 68, 183, 0.5);
   text-align: center;
+}
+
+.box-right-item .code-img {
+  width: 100px;
+  height: 100px;
+  margin-top: 10px;
+}
+
+.box-right-item .tips-text {
+  color: #00ffd6;
+  font-size: 18px;
+  text-align: center;
+}
+
+.box-right-item .item-name {
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  color: #00ffd6;
+  font-size: 14px;
+}
+
+.box-right-item .item-type {
+  text-align: center;
+  height: 20px;
+  line-height: 20px;
+  color: #fff;
+  font-size: 10px;
+}
+
+.box-right-item .item-num {
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+  font-size: 30px;
+  margin-top: 10px;
+  color: #00ffd6;
+}
+
+.box-right-item .item-unit {
+  text-align: center;
+  height: 15px;
+  line-height: 12px;
+  font-size: 10px;
   color: #fff;
 }
 
-.item-logo {
-  width: 210px;
-  height: 110px;
-  margin-top: 22px;
-  margin-bottom: 5px;
-}
-
-.item-name {
-  width: 280px;
-  height: 30px;
-  line-height: 30px;
-  font-size: 18px;
+.box-right-item .item-des1 {
   text-align: center;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+  margin-top: 15px;
+  color: #fff;
 }
 
-.item-text {
-  width: 210px;
-  height: 40px;
-  margin: 0 auto;
-  line-height: 15px;
-  font-size: 10px;
-  overflow: hidden;
-}
-
-.item-mini-logo {
-  width: 95px;
-  height: 30px;
-}
-
-.item-detail-name {
-  width: 210px;
-  height: 30px;
-  line-height: 30px;
-  overflow: hidden;
-  font-size: 18px;
-  margin: 0 auto;
-  padding-top: 12px;
-  padding-bottom: 5px;
-}
-
-.item-detail-content {
-  width: 210px;
-  height: 90px;
-  margin: 0 auto;
-  line-height: 18px;
-  font-size: 10px;
-  overflow: hidden;
-}
-
-.item-detail-left-logo {
-  width: 135px;
-  height: 65px;
-  margin-left: 36px;
-  text-align: left;
-  float: left;
-}
-
-.item-detail-left-logo img {
-  width: 135px;
-  height: 40px;
-}
-
-.item-detail-right-logo {
-  width: 65px;
-  height: 80px;
-  margin-left: 16px;
-  float: left;
-}
-
-.item-detail-right-logo img {
-  width: 65px;
-  height: 65px;
+.box-right-item .item-des2 {
+  text-align: center;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+  color: #fff;
 }
 
 .bottom-btn-left {
