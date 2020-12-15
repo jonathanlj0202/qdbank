@@ -9,7 +9,7 @@ const { ipcRenderer } = window.require("electron");
 Vue.config.productionTip = false;
 
 window.MAC = ipcRenderer.sendSync('mac');
-window.MAC = "cs001";
+// window.MAC = "cs001";
 
 new Vue({
   router,

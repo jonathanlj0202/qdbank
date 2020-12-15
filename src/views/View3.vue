@@ -126,7 +126,7 @@ export default {
   methods: {
     getGuide() {
       getGuideData({
-        terminal_no: "cs001",
+        terminal_no: window.MAC,
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.GuideUrl = res.data[0].guideimage;
@@ -153,9 +153,8 @@ export default {
 
 <style scoped>
 .container {
-  width: 780px;
-  height: 980px;
-  margin-right: 12px;
+  width: 900px;
+  height: 1200px;
   background: url("../assets/img/border.png") no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
@@ -166,8 +165,8 @@ export default {
   width: 320px;
   height: 40px;
   margin-left: 50px;
-  line-height: 50px;
-  font-size: 28px;
+  line-height: 60px;
+  font-size: 30px;
   color: #00ffd6;
   text-align: center;
 }
@@ -252,16 +251,16 @@ export default {
 
 /*rightview*/
 .content-box-right {
-  padding: 0 100px;
+  padding: 0 61px;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top: 150px;
+  margin: 90px auto 0px;
 }
 
 .box-right {
-  width: 280px;
-  height: 210px;
-  margin-bottom: 16px;
+  width: 380px;
+  height: 300px;
+  margin-bottom: 15px;
   float: left;
   overflow: hidden;
 }
@@ -271,8 +270,8 @@ export default {
 }
 
 .box-right-item {
-  width: 280px;
-  height: 210px;
+  width: 380px;
+  height: 300px;
   padding: 25px 0px;
   float: left;
   box-sizing: border-box;
@@ -282,31 +281,33 @@ export default {
 }
 
 .box-right-item .code-img {
-  width: 100px;
-  height: 100px;
-  margin-top: 10px;
+  width: 180px;
+  height: 180px;
+  margin-top: 20px;
 }
 
 .box-right-item .tips-text {
   color: #00ffd6;
-  font-size: 18px;
+  font-size: 26px;
   text-align: center;
+  margin-top: 10px;
 }
 
 .box-right-item .item-name {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 40px;
+  line-height: 40px;
   color: #00ffd6;
-  font-size: 14px;
+  font-size: 26px;
 }
 
 .box-right-item .item-type {
   text-align: center;
-  height: 20px;
-  line-height: 20px;
+  height: 30px;
+  line-height: 30px;
   color: #fff;
-  font-size: 10px;
+  font-size: 24px;
+  margin-top: 5px;
 }
 
 .box-right-item .item-num {
@@ -320,54 +321,55 @@ export default {
 
 .box-right-item .item-unit {
   text-align: center;
-  height: 15px;
-  line-height: 12px;
-  font-size: 10px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 22px;
   color: #fff;
+  margin-top: 10px;
 }
 
 .box-right-item .item-des1 {
   text-align: center;
-  height: 20px;
-  line-height: 20px;
-  font-size: 12px;
-  margin-top: 15px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 22px;
+  margin-top: 20px;
   color: #fff;
 }
 
 .box-right-item .item-des2 {
   text-align: center;
-  height: 20px;
-  line-height: 20px;
-  font-size: 12px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 22px;
   color: #fff;
 }
 
 .bottom-btn-left {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 235px;
+  right: 270px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
 
 .bottom-btn-right {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 40px;
+  right: 30px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;

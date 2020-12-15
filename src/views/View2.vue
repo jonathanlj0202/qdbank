@@ -58,7 +58,7 @@
               <div class="item-detail-name">{{ item.watergoodsname }}</div>
               <div class="item-detail-content" v-html="item.goodscontent"></div>
               <div class="item-detail-left-logo">
-                <img :src="item.watergoodsimage" />
+                <img :src="item.waterbusinessimage" />
               </div>
               <div class="item-detail-right-logo">
                 <img :src="item.watercodeimage" />
@@ -122,7 +122,6 @@ export default {
     this.getProductDataFn();
     this.getCultureDataFn();
     this.connectionSocket();
-    // this.swipershowFn();
   },
   methods: {
     connectionSocket() {
@@ -149,13 +148,13 @@ export default {
           });
         },
         (err) => {
-          console.log("连接失败", err);
+          console.log("连接失败1", err);
         }
       );
     },
     getCultureDataFn() {
       getCultureData({
-        terminal_no: "cs001",
+        terminal_no: window.MAC,
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.swiperArr = [];
@@ -197,13 +196,12 @@ export default {
           this.videoImgUrl = this.swiperArr[0].bgimg;
           this.swipertype = this.swiperArr[0].type;
           this.startvideo();
-          console.info(2121, this.swiperArr);
         }
       });
     },
     getProductDataFn() {
       getProductData({
-        terminal_no: "cs001",
+        terminal_no: window.MAC,
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.productArr = res.data;
@@ -214,14 +212,32 @@ export default {
       });
     },
     chanceVideoFn(index) {
-      if (this.videoSrc !== "") {
-        console.info(221 , "clear");
-        clearInterval(this.inter);
-      }
       if (index !== this.clickIndex) {
         this.videoBoo = false;
         this.videoSrc = "";
       }
+      if (this.inter) {
+        clearInterval(this.inter);
+      }
+      // if (!this.videoBoo) {
+      //   let timeval = setTimeout(() => {
+      //     console.info("nobody33");
+      //     this.startvideo();
+      //     clearTimeout(timeval);
+      //   }, 60000);
+      // } else {
+      //   this.$refs.videoRef.addEventListener(
+      //     "ended",
+      //     () => {
+      //       let timeval = setTimeout(() => {
+      //         console.info("nobody33");
+      //         this.startvideo();
+      //         clearTimeout(timeval);
+      //       }, 60000);
+      //     },
+      //     false
+      //   );
+      // }
       this.videoImgUrl = this.swiperArr[index].bgimg;
       this.swipertype = this.swiperArr[index].type;
       this.clickIndex = index;
@@ -241,67 +257,64 @@ export default {
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
     playVideo() {
-      this.videoBoo = true;
-      this.videoSrc = this.swiperArr[this.clickIndex].url;
-      this.$refs.videoRef.load();
-      this.$refs.videoRef.play();
-      this.$refs.videoRef.addEventListener(
-        "ended",
-        () => {
-          //结束
-          this.videoSrc = "";
-          this.startvideo();
-          console.log("播放结111束");
-        },
-        false
-      );
+      if (this.isLeft) {
+        this.videoBoo = true;
+        this.videoSrc = this.swiperArr[this.clickIndex].url;
+        this.$refs.videoRef.load();
+        this.$refs.videoRef.play();
+      }
     },
     startvideo() {
-      this.inter = setInterval(() => {
-        console.info(12);
-        if (this.swiperArr.length > 0) {
-          let clearinter = true;
-          this.swiperArr.forEach((element, index) => {
-            let timeStr = new Date().getTime();
-            if (
-              timeStr > element.time[0] &&
-              timeStr < element.time[1] &&
-              this.videoSrc === "" &&
-              element.type === 1
-            ) {
-              this.clickIndex = index;
-              this.playVideo();
-            }
+      if (this.isLeft) {
+        // if (this.inter) {
+        //   clearInterval(this.inter);
+        // }
+        this.inter = setInterval(() => {
+          // console.info(12);
+          if (this.swiperArr.length > 0) {
+            let clearinter = true;
+            this.swiperArr.forEach((element, index) => {
+              let timeStr = new Date().getTime();
+              if (
+                timeStr > element.time[0] &&
+                timeStr < element.time[1] &&
+                this.videoSrc === "" &&
+                element.type === 1
+              ) {
+                this.clickIndex = index;
+                this.videoBoo = true;
+                this.videoSrc = this.swiperArr[this.clickIndex].url;
+                this.$refs.videoRef.load();
+                this.$refs.videoRef.play();
+                this.$refs.videoRef.addEventListener(
+                  "ended",
+                  () => {
+                    this.$refs.videoRef.load();
+                    this.$refs.videoRef.play();
+                  },
+                  false
+                );
+              }
 
-            if (element.time[1] > timeStr && element.type === 1) {
-              clearinter = false;
+              if (element.time[1] > timeStr && element.type === 1) {
+                clearinter = false;
+              }
+            });
+            if (clearinter) {
+              clearInterval(this.inter);
             }
-          });
-          if (clearinter) {
-            clearInterval(this.inter);
           }
-        }
-      }, 1000);
-    },
-    swipershowFn() {
-      setInterval(() => {
-        if (this.clickIndex < this.swiperArr.length) {
-          ++this.clickIndex;
-          this.chanceVideoFn(this.clickIndex);
-          console.info(11, this.clickIndex, this.swiperArr);
-        }
-      }, 3000);
+        }, 1000);
+      }
     },
   },
 };
 </script>
-<style src="vue-flipper/dist/vue-flipper.css">
-</style>
+<style src="vue-flipper/dist/vue-flipper.css"></style>
 <style scoped>
 .container {
-  width: 780px;
-  height: 980px;
-  margin-right: 12px;
+  width: 900px;
+  height: 1200px;
   background: url("../assets/img/border.png") no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
@@ -312,8 +325,8 @@ export default {
   width: 320px;
   height: 40px;
   margin-left: 50px;
-  line-height: 50px;
-  font-size: 28px;
+  line-height: 60px;
+  font-size: 30px;
   color: #00ffd6;
   text-align: center;
 }
@@ -325,48 +338,48 @@ export default {
 }
 
 .box {
-  width: 700px;
-  height: 500px;
-  margin: 200px auto 0px;
+  width: 800px;
+  height: 660px;
+  margin: 210px auto 0px;
   position: relative;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .video-box {
-  width: 700px;
-  height: 400px;
+  width: 800px;
+  height: 500px;
 }
 
 .video-box .video {
-  width: 700px;
-  height: 400px;
+  width: 800px;
+  height: 500px;
   border: none;
   outline: 0;
 }
 
 .video-bg {
-  width: 700px;
-  height: 400px;
+  width: 800px;
+  height: 500px;
   overflow: hidden;
   position: relative;
 }
 
 .video-bg img {
-  width: 700px;
-  height: 400px;
+  width: 800px;
+  height: 500px;
 }
 
 .video-btn-box {
-  width: 700px;
-  height: 100px;
-  padding: 10px 50px;
+  width: 800px;
+  height: 160px;
+  padding: 20px 40px;
   box-sizing: border-box;
 }
 
 .video-btn {
-  width: 100px;
-  height: 80px;
+  width: 170px;
+  height: 120px;
   margin-right: 20px;
   background-size: 100% 100%;
   background-repeat: no-repeat;
@@ -374,16 +387,16 @@ export default {
 }
 
 .video-btn img {
-  width: 100px;
-  height: 80px;
+  width: 170px;
+  height: 120px;
 }
 
 .video-play-btn {
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 700px;
-  height: 400px;
+  width: 800px;
+  height: 500px;
   background-color: rgba(0, 0, 0, 0.6);
   background-image: url("../assets/img/videoplay.png");
   background-repeat: no-repeat;
@@ -391,39 +404,30 @@ export default {
   background-position: center center;
 }
 
-.close-video {
-  width: 50px;
-  height: 50px;
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: url("../assets/img/closevideo.png") no-repeat;
-  background-size: 100% 100%;
-}
-
 /*rightview*/
 
 .product-box {
-  width: 575px;
+  width: 775px;
+  height: 960px;
   overflow: hidden;
-  margin: 90px auto 0px;
+  margin: 100px auto 0px;
 }
 
 .product {
-  width: 280px;
-  height: 225px;
+  width: 380px;
+  height: 300px;
+  margin-bottom: 20px;
   overflow: hidden;
 }
 
 .product:nth-child(odd) {
   margin-right: 15px;
   float: left;
-  margin-bottom: 20px;
 }
 
 .product-item {
-  width: 280px;
-  height: 225px;
+  width: 380px;
+  height: 300px;
   background: url("../assets/img/border4.png") no-repeat;
   background-size: 100% 100%;
   text-align: center;
@@ -431,57 +435,59 @@ export default {
 }
 
 .item-logo {
-  width: 210px;
-  height: 110px;
+  width: 320px;
+  height: 167px;
   margin-top: 22px;
   margin-bottom: 5px;
 }
 
 .item-name {
-  width: 280px;
-  height: 30px;
-  line-height: 30px;
-  font-size: 18px;
+  width: 350px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 25px;
+  margin: 0 auto;
   text-align: center;
 }
 
 .item-text {
-  width: 210px;
+  width: 350px;
   height: 40px;
   margin: 0 auto;
-  line-height: 15px;
-  font-size: 10px;
+  line-height: 25px;
+  font-size: 20px;
   overflow: hidden;
 }
 
 .item-mini-logo {
-  width: 95px;
-  height: 30px;
+  width: 150px;
+  height: 40px;
 }
 
 .item-detail-name {
-  width: 210px;
-  height: 30px;
+  width: 350px;
+  height: 60px;
   line-height: 30px;
   overflow: hidden;
-  font-size: 18px;
+  font-size: 22px;
   margin: 0 auto;
-  padding-top: 12px;
-  padding-bottom: 5px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .item-detail-content {
-  width: 210px;
-  height: 90px;
+  width: 350px;
+  height: 150px;
   margin: 0 auto;
-  line-height: 18px;
-  font-size: 10px;
+  line-height: 28px;
+  font-size: 20px;
   overflow: hidden;
 }
 
 .item-detail-left-logo {
-  width: 135px;
-  height: 65px;
+  width: 235px;
+  height: 70px;
   margin-left: 36px;
   text-align: left;
   float: left;
@@ -493,42 +499,42 @@ export default {
 }
 
 .item-detail-right-logo {
-  width: 65px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
   margin-left: 16px;
   float: left;
 }
 
 .item-detail-right-logo img {
-  width: 65px;
-  height: 65px;
+  width: 70px;
+  height: 70px;
 }
 
 .bottom-btn-left {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 235px;
+  right: 270px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
 
 .bottom-btn-right {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 40px;
+  right: 30px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;

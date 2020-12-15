@@ -8,7 +8,8 @@ import { getCultureData } from "./api";
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
-const pathName = 'D:/software/wamp/wamp/www';
+// const pathName = 'C:/wamp/www';
+const pathName = 'C:/wamp/www';
 let win = "";
 
 let dirs = [];
@@ -55,7 +56,7 @@ function downloadfile() {
           item.setSavePath(filePath);
         });
         getCultureData({
-          terminal_no: "cs001",
+          terminal_no: getMAC(),
         }).then((res) => {
           if (res.data && res.code === "0000") {
             res.data.forEach((ele, index) => {

@@ -3,69 +3,12 @@
     <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
       <div class="content-left">
-        <div class="content-title">利率</div>
-        <div class="content-top">
-          <div class="top-left">
-            <div class="mini-title">整存整取</div>
-            <div class="mini-box">
-              <div
-                class="mini-item"
-                v-for="(item, index) of lilvLeftArr"
-                :key="index"
-              >
-                <div class="item-left">{{ item.priect }}</div>
-                <div class="item-right">{{ item.data }}</div>
-              </div>
-            </div>
-          </div>
-          <div class="top-right">
-            <div class="mini-title">零存整取/整存零取/存本取息</div>
-            <div class="mini-box">
-              <div
-                class="mini-item"
-                v-for="(item, index) of lilvRightArr"
-                :key="index"
-              >
-                <div class="item-left">{{ item.priect }}</div>
-                <div class="item-right">{{ item.data }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="content-bottom">
-          <div class="content-title">贵金属</div>
-          <div class="bottom-box">
-            <div class="header-box">
-              <div class="item">品种</div>
-              <div class="item">客户卖出价</div>
-              <div class="item">客户买入价</div>
-              <div class="item">报价时间</div>
-            </div>
-            <div class="box-wrapper">
-              <div class="item-content-box">
-                <div
-                  class="item-box"
-                  v-for="(item, index) of goldArr"
-                  :key="index"
-                >
-                  <div class="item">{{ item.ProdName }}</div>
-                  <div class="item">{{ item.CustomerBuy }}</div>
-                  <div class="item">{{ item.CustomerSell }}</div>
-                  <div class="item">{{ item.UpdateTime }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="content-right">
         <div class="content-title">汇率</div>
         <div class="content-box">
           <div class="header-box">
-            <div class="item">名称</div>
-            <div class="item">现汇买入价</div>
-            <div class="item">现汇卖出价</div>
+            <div class="item">品种</div>
+            <div class="item">客户卖出价</div>
+            <div class="item">客户买入价</div>
             <div class="item">报价时间</div>
           </div>
           <div class="box-wrapper">
@@ -89,9 +32,57 @@
             </div>
           </div>
         </div>
+
+        <div class="content-title">贵金属</div>
+        <div class="content-box">
+          <div class="header-box">
+            <div class="item">品种</div>
+            <div class="item">客户卖出价</div>
+            <div class="item">客户买入价</div>
+            <div class="item">报价时间</div>
+          </div>
+          <div class="box-wrapper">
+            <div class="item-content-box">
+              <div
+                class="item-box"
+                v-for="(item, index) of goldArr"
+                :key="index"
+              >
+                <div class="item">{{ item.ProdName }}</div>
+                <div class="item">{{ item.CustomerBuy }}</div>
+                <div class="item">{{ item.CustomerSell }}</div>
+                <div class="item">{{ item.UpdateTime }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="content-right">
+        <div class="content-title">利率</div>
+        <div class="mini-title">整存整取</div>
+        <div class="mini-box">
+          <div
+            class="mini-item"
+            v-for="(item, index) of lilvLeftArr"
+            :key="index"
+          >
+            <div class="item-left">{{ item.priect }}</div>
+            <div class="item-right">{{ item.data }}</div>
+          </div>
+        </div>
+        <div class="mini-title bottom-title">零存整取、整存零取、存本取息</div>
+        <div class="mini-box bottom-box">
+          <div
+            class="mini-item"
+            v-for="(item, index) of lilvRightArr"
+            :key="index"
+          >
+            <div class="item-left">{{ item.priect }}</div>
+            <div class="item-right">{{ item.data }}</div>
+          </div>
+        </div>
       </div>
     </div>
-    <!--  -->
 
     <div class="content-box-right" v-show="isRight">
       <div class="user-item" v-for="(item, i) in personArr" :key="i">
@@ -199,7 +190,7 @@ export default {
     },
     getPerson() {
       getPersonData({
-        terminal_no: "cs001",
+        terminal_no: window.MAC,
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.personArr = res.data;
@@ -223,12 +214,10 @@ export default {
 
 <style scoped>
 .container {
-  width: 780px;
-  height: 980px;
-  margin-right: 12px;
+  width: 900px;
+  height: 1200px;
   background: url("../assets/img/border.png") no-repeat;
   background-size: 100% 100%;
-  /* padding: 0px 40px; */
   box-sizing: border-box;
   overflow: hidden;
   position: relative;
@@ -238,16 +227,17 @@ export default {
   width: 320px;
   height: 40px;
   margin-left: 10px;
-  margin-bottom: 150px;
-  line-height: 50px;
-  font-size: 28px;
+  margin-bottom: 100px;
+  line-height: 60px;
+  font-size: 30px;
   color: #00ffd6;
   text-align: center;
 }
 
 .content-box-left,
 .content-box-right {
-  width: 100%;
+  width: 900px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -256,40 +246,28 @@ export default {
   padding: 0px 40px;
 }
 
-.content-left,
-.content-right {
-  width: 335px;
+/*content-left*/
+
+.content-left {
+  width: 600px;
+  padding: 0 20px;
+  box-sizing: border-box;
   overflow: hidden;
   float: left;
 }
 
-.content-left {
-  margin-right: 25px;
-}
-
-.content-left .content-title,
-.content-right .content-title {
+.content-left .content-title {
   text-align: left;
-  height: 40px;
-  line-height: 40px;
-  font-size: 22px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 26px;
   letter-spacing: 5px;
   color: #00ffd6;
 }
 
-.content-left .content-top,
-.content-left .content-bottom {
-  width: 335px;
-  overflow: hidden;
-}
-
-.content-left .content-bottom {
-  margin-top: 20px;
-}
-
-.content-bottom .bottom-box {
-  width: 335px;
-  height: 310px;
+.content-left .content-box {
+  width: 560px;
+  height: 400px;
   margin-top: 12px;
   box-sizing: border-box;
   border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
@@ -297,47 +275,47 @@ export default {
   overflow: hidden;
 }
 
-.bottom-box .header-box {
-  width: 335px;
+.content-box .header-box {
+  width: 560px;
   padding: 0 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-.bottom-box .header-box .item {
+.content-box .header-box .item {
   color: #00ffd6 !important;
-  font-size: 14px !important;
+  font-size: 22px !important;
 }
 
-.bottom-box .item-box {
-  width: 335px;
-  height: 40px;
+.content-box .item-box {
+  width: 560px;
+  height: 50px;
   padding: 0 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
-.content-bottom .box-wrapper {
-  width: 335px;
-  height: 270px;
+.content-box .box-wrapper {
+  width: 560px;
+  height: 350px;
   overflow: hidden;
 }
 
-.bottom-box .item-content-box {
-  width: 335px;
-  height: 270px;
+.content-box .item-content-box {
+  width: 560px;
+  height: 350px;
   box-sizing: border-box;
 }
 
-.bottom-box .item-content-box::-webkit-scrollbar {
+.content-box .item-content-box::-webkit-scrollbar {
   display: none;
 }
 
-.bottom-box .item-content-box {
+.content-box .item-content-box {
   -webkit-animation: bottomrowup 10s 1s linear infinite;
   animation: bottomrowup 10s 1s linear infinite;
 }
 
-.bottom-box .item-content-box:hover {
+.content-box .item-content-box:hover {
   animation-play-state: paused;
   -webkit-animation-play-state: paused;
 }
@@ -347,7 +325,7 @@ export default {
     -webkit-transform: translate3d(0, 0, 0);
   }
   100% {
-    -webkit-transform: translate3d(0, -200px, 0);
+    -webkit-transform: translate3d(0, -300px, 0);
   }
 }
 
@@ -356,189 +334,17 @@ export default {
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(0, -200px, 0);
+    transform: translate3d(0, -300px, 0);
   }
-}
-
-.bottom-box .item-box .item:nth-child(1),
-.bottom-box .header-box .item:nth-child(1) {
-  width: 90px;
-  height: 40px;
-  line-height: 40px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-  float: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.bottom-box .item-box .item:nth-child(2),
-.bottom-box .header-box .item:nth-child(2) {
-  width: 78px;
-  height: 40px;
-  line-height: 40px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-  float: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.bottom-box .item-box .item:nth-child(3),
-.bottom-box .header-box .item:nth-child(3) {
-  width: 76px;
-  height: 40px;
-  line-height: 40px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-  float: left;
-}
-
-.bottom-box .item-box .item:nth-child(4),
-.bottom-box .header-box .item:nth-child(4) {
-  width: 70px;
-  height: 40px;
-  line-height: 40px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-  float: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.top-left,
-.top-right {
-  width: 152px;
-  float: left;
-}
-
-.top-left {
-  margin-right: 30px;
-}
-
-.content-top .mini-title {
-  height: 30px;
-  line-height: 45px;
-  font-size: 12px;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 10px;
-}
-.content-top .mini-box {
-  width: 152px;
-  height: 163px;
-  padding: 6px 0px;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
-  background-color: rgba(41, 68, 183, 0.5);
-}
-
-.mini-box .mini-item {
-  width: 152px;
-  color: #fff;
-  overflow: hidden;
-}
-
-.mini-item .item-left,
-.mini-item .item-right {
-  width: 76px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  font-size: 14px;
-  float: left;
-}
-
-.content-right .content-box::-webkit-scrollbar {
-  display: none;
-}
-
-.content-right .content-box {
-  width: 335px;
-  height: 565px;
-  margin-top: 20px;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
-  background-color: rgba(41, 68, 183, 0.5);
-  overflow: hidden;
-}
-
-.content-box .header-box {
-  width: 335px;
-  padding: 0 10px;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.content-box .header-box .item {
-  color: #00ffd6 !important;
-  font-size: 14px !important;
-}
-.content-right .box-wrapper {
-  width: 335px;
-  height: 520px;
-  overflow: hidden;
-}
-
-.content-box .item-content-box {
-  width: 335px;
-  height: 520px;
-  box-sizing: border-box;
-}
-
-.content-box .item-content-box {
-  -webkit-animation: rowup 10s 1s linear infinite;
-  animation: rowup 10s 1s linear infinite;
-}
-
-.content-box .item-content-box:hover {
-  animation-play-state: paused;
-  -webkit-animation-play-state: paused;
-}
-
-@-webkit-keyframes rowup {
-  0% {
-    -webkit-transform: translate3d(0, 0, 0);
-  }
-  100% {
-    -webkit-transform: translate3d(0, -520px, 0);
-  }
-}
-
-@keyframes rowup {
-  0% {
-    transform: translate3d(0, 0, 0);
-  }
-  100% {
-    transform: translate3d(0, -520px, 0);
-  }
-}
-
-.content-box .item-content-box::-webkit-scrollbar {
-  display: none;
-}
-
-.content-box .item-box {
-  width: 335px;
-  padding: 0 10px;
-  box-sizing: border-box;
-  overflow: hidden;
 }
 
 .content-box .item-box .item:nth-child(1),
 .content-box .header-box .item:nth-child(1) {
-  width: 60px;
-  height: 40px;
-  line-height: 40px;
+  width: 160px;
+  height: 50px;
+  line-height: 50px;
   color: #fff;
-  font-size: 12px;
+  font-size: 22px;
   text-align: center;
   float: left;
   text-overflow: ellipsis;
@@ -548,11 +354,11 @@ export default {
 
 .content-box .item-box .item:nth-child(2),
 .content-box .header-box .item:nth-child(2) {
-  width: 90px;
-  height: 40px;
-  line-height: 40px;
+  width: 130px;
+  height: 50px;
+  line-height: 50px;
   color: #fff;
-  font-size: 12px;
+  font-size: 22px;
   text-align: center;
   float: left;
   text-overflow: ellipsis;
@@ -562,11 +368,22 @@ export default {
 
 .content-box .item-box .item:nth-child(3),
 .content-box .header-box .item:nth-child(3) {
-  width: 90px;
-  height: 40px;
-  line-height: 40px;
+  width: 130px;
+  height: 50px;
+  line-height: 50px;
   color: #fff;
-  font-size: 12px;
+  font-size: 22px;
+  text-align: center;
+  float: left;
+}
+
+.content-box .item-box .item:nth-child(4),
+.content-box .header-box .item:nth-child(4) {
+  width: 120px;
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+  font-size: 22px;
   text-align: center;
   float: left;
   text-overflow: ellipsis;
@@ -574,31 +391,81 @@ export default {
   overflow: hidden;
 }
 
-.content-box .item-box .item:nth-child(4),
-.content-box .header-box .item:nth-child(4) {
-  width: 70px;
-  height: 40px;
-  line-height: 40px;
-  color: #fff;
-  font-size: 12px;
-  text-align: center;
-  float: left;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/*content-right*/
+
+.content-right {
+  width: 220px;
+  padding: 0 20px;
+  box-sizing: border-box;
   overflow: hidden;
+  float: left;
+}
+
+.content-right .content-title {
+  text-align: left;
+  height: 50px;
+  line-height: 50px;
+  font-size: 26px;
+  letter-spacing: 5px;
+  color: #00ffd6;
+}
+
+.content-right .mini-title {
+  height: 30px;
+  line-height: 50px;
+  font-size: 22px;
+  color: #fff;
+  text-align: left;
+  margin-bottom: 31px;
+}
+
+.bottom-title {
+  line-height: 30px !important;
+}
+
+.content-right .mini-box {
+  width: 180px;
+  height: 350px;
+  padding: 6px 0px;
+  box-sizing: border-box;
+  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
+  background-color: rgba(41, 68, 183, 0.5);
+  overflow: hidden;
+  margin-bottom: 50px;
+}
+
+.bottom-box {
+  height: 330px !important;
+  margin-top: 53px;
+}
+
+.mini-box .mini-item {
+  width: 180px;
+  color: #fff;
+  overflow: hidden;
+}
+.mini-item .item-left,
+.mini-item .item-right {
+  width: 90px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 22px;
+  float: left;
 }
 
 /*rightview*/
 
 .content-box-right {
   box-sizing: border-box;
-  padding: 0 100px;
-  margin-top: 200px;
+  padding: 0 50px;
+  height: 760px;
+  margin-top: 170px;
   overflow: hidden;
 }
 
 .user-item {
-  width: 103px;
+  width: 160px;
   float: left;
   margin: 0 20px 18px;
   color: #fff;
@@ -607,57 +474,62 @@ export default {
 }
 
 .avatar-box {
-  width: 103px;
-  height: 103px;
+  width: 135px;
+  height: 135px;
   background: url("../assets/img/userBorder.png") no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .user-avatar {
-  width: 84px;
-  height: 84px;
+  width: 116px;
+  height: 116px;
+  border-radius: 58px;
   margin-top: 9.5px;
 }
 
 .user-name {
-  font-size: 16px;
-  height: 25px;
-  line-height: 25px;
-  margin-top: 8px;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  margin-top: 15px;
+  overflow: hidden;
 }
 
 .user-desc {
-  font-size: 12px;
-  height: 20px;
-  line-height: 20px;
+  font-size: 20px;
+  height: 30px;
+  line-height: 30px;
+  overflow: hidden;
 }
 
 .bottom-btn-left {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 235px;
+  right: 270px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
 
 .bottom-btn-right {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  height: 50px;
   text-align: center;
-  font-size: 26px;
-  line-height: 40px;
+  font-size: 28px;
+  line-height: 50px;
   color: #ffffff;
   position: absolute;
   bottom: 0px;
-  right: 40px;
+  right: 30px;
   letter-spacing: 4px;
   background-repeat: no-repeat;
   background-size: 100% 100%;

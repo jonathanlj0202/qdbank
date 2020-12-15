@@ -9,7 +9,7 @@
       <router-view name="v1" class="view"></router-view>
       <router-view name="v2" class="view"></router-view>
       <router-view name="v3" class="view"></router-view>
-      <router-view name="v4" class="view"></router-view>
+      <!-- <router-view name="v4" class="view"></router-view> -->
     </div>
   </div>
 </template>
@@ -59,8 +59,10 @@ export default {
 }
 
 .top-logo {
-  width: 217px;
-  height: 42px;
+  width: 284px;
+  height: 55px;
+  /* width: 217px;
+  height: 42px; */
   position: absolute;
   top: 50px;
   left: 60px;
@@ -79,30 +81,34 @@ export default {
 }
 
 .top-time .time {
-  font-size: 30px;
+  font-size: 36px;
 }
 
 .top-time .date {
-  font-size: 20px;
+  font-size: 30px;
 }
 
 .view-box {
   width: 3240px;
-  height: 1000px;
-  padding-left: 42px;
-  padding-right: 30px;
+  height: 1200px;
+  padding: 0 135px;
   box-sizing: border-box;
   overflow: hidden;
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -500px;
+  margin-top: -600px;
   margin-left: -1620px;
 }
 
 .view {
-  width: 800px;
-  height: 1000px;
+  width: 900px;
+  height: 1200px;
   float: left;
+  overflow: hidden;
+}
+
+.view:nth-child(2) {
+  margin: 0 135px;
 }
 </style>
