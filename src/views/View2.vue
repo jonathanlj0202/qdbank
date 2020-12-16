@@ -44,15 +44,9 @@
           >
             <div class="product-item" slot="front">
               <img class="item-logo" :src="item.waterbusiness" />
-              <div class="item-name" v-show="item.waterbusinessname === '商圈'">
+              <div class="item-name">
                 {{ item.watergoodsname }}
               </div>
-              <div class="item-text" v-html="item.businesscontent"></div>
-              <img
-                v-show="item.waterbusinessname === '商品'"
-                class="item-mini-logo"
-                :src="item.waterbusinessimage"
-              />
             </div>
             <div class="product-item" slot="back">
               <div class="item-detail-name">{{ item.watergoodsname }}</div>
@@ -250,6 +244,8 @@ export default {
       } else {
         this.isLeft = false;
         this.isRight = true;
+        this.videoBoo = false;
+        this.videoSrc = "";
         this.titleText = "互动营销";
       }
     },
@@ -339,8 +335,8 @@ export default {
 
 .box {
   width: 800px;
-  height: 660px;
-  margin: 210px auto 0px;
+  height: 760px;
+  margin: 180px auto 0px;
   position: relative;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
@@ -348,26 +344,27 @@ export default {
 
 .video-box {
   width: 800px;
-  height: 500px;
+  height: 600px;
 }
 
 .video-box .video {
   width: 800px;
-  height: 500px;
+  height: 600px;
   border: none;
+  background-color: rgba(0, 0, 0, 0.8);
   outline: 0;
 }
 
 .video-bg {
   width: 800px;
-  height: 500px;
+  height: 600px;
   overflow: hidden;
   position: relative;
 }
 
 .video-bg img {
   width: 800px;
-  height: 500px;
+  height: 600px;
 }
 
 .video-btn-box {
@@ -396,7 +393,7 @@ export default {
   top: 0px;
   left: 0px;
   width: 800px;
-  height: 500px;
+  height: 600px;
   background-color: rgba(0, 0, 0, 0.6);
   background-image: url("../assets/img/videoplay.png");
   background-repeat: no-repeat;
@@ -436,16 +433,17 @@ export default {
 
 .item-logo {
   width: 320px;
-  height: 167px;
+  height: 180px;
   margin-top: 22px;
-  margin-bottom: 5px;
+  margin-bottom: 22px;
+  border-radius: 8px;
 }
 
 .item-name {
   width: 350px;
   height: 40px;
   line-height: 40px;
-  font-size: 25px;
+  font-size: 32px;
   margin: 0 auto;
   text-align: center;
 }
@@ -486,16 +484,17 @@ export default {
 }
 
 .item-detail-left-logo {
-  width: 235px;
-  height: 70px;
-  margin-left: 36px;
+  width: 240px;
+  height: 90px;
+  margin-left: 30px;
   text-align: left;
   float: left;
 }
 
 .item-detail-left-logo img {
-  width: 135px;
-  height: 40px;
+  width: 160px;
+  height: 70px;
+  border-radius: 5px;
 }
 
 .item-detail-right-logo {

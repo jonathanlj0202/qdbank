@@ -56,7 +56,7 @@
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="box-right" v-for="(item, index) of 6" :key="index">
+      <div class="box-right" v-for="(item, index) of productArr" :key="index">
         <flipper
           width="100%"
           height="100%"
@@ -64,15 +64,15 @@
           @click="onClick(index)"
         >
           <div class="box-right-item" slot="front">
-            <div class="item-name">万家行业优选(161903）</div>
-            <div class="item-type">基金产品</div>
-            <div class="item-num">0.686%</div>
-            <div class="item-unit">单位净值</div>
-            <div class="item-des1">季涨幅：24.65%</div>
-            <div class="item-des2">投资类型：股票型</div>
+            <div class="item-name">{{ item.name }}</div>
+            <div class="item-type">{{ item.type }}</div>
+            <div class="item-num">{{ item.num }}</div>
+            <div class="item-unit">{{ item.unit }}</div>
+            <div class="item-des1">{{ item.dsc1 }}</div>
+            <div class="item-des2">{{ item.dsc2 }}</div>
           </div>
           <div class="box-right-item" slot="back">
-            <img class="code-img" src="../assets/img/code.png" />
+            <img class="code-img" :src="item.url" />
             <div class="tips-text">扫码购买</div>
           </div>
         </flipper>
@@ -115,6 +115,62 @@ export default {
       titleText: "热销产品",
       GuideUrl: "",
       flippedArr: [],
+      productArr: [
+        {
+          name: "安心·灵动·20天",
+          type: "定期理财",
+          num: "2.15%-2.85%",
+          unit: "业绩基准",
+          dsc1: "投资期限：最低持有20天",
+          dsc2: "起购金额：10000.00元",
+          url: require("../assets/img/pd1.png"),
+        },
+        {
+          name: "安心·灵动·45天",
+          type: "定期理财",
+          num: "2.15%-2.95%",
+          unit: "业绩基准",
+          dsc1: "投资期限：最低持有45天",
+          dsc2: "起购金额：10000.00元",
+          url: require("../assets/img/pd2.png"),
+        },
+        {
+          name: "安心·灵动·75天",
+          type: "定期理财",
+          num: "2.15%-3.05%",
+          unit: "业绩基准",
+          dsc1: "投资期限：最低持有75天",
+          dsc2: "起购金额：10000.00元",
+          url: require("../assets/img/pd3.png"),
+        },
+        {
+          name: "农银私行·农银时时付",
+          type: "定期理财",
+          num: "3.05%",
+          unit: "业绩基准",
+          dsc1: "投资期限：7303天",
+          dsc2: "起购金额：100.00元",
+          url: require("../assets/img/pd4.png"),
+        },
+        {
+          name: "农银私行·安心快线天天利",
+          type: "定期理财",
+          num: "2.35%-2.45%",
+          unit: "业绩基准",
+          dsc1: "投资期限：最短持有1天",
+          dsc2: "起购金额：1000000.00元",
+          url: require("../assets/img/pd5.png"),
+        },
+        {
+          name: "安心快线天天利第２期",
+          type: "定期理财",
+          num: "2.15%",
+          unit: "业绩基准",
+          dsc1: "投资期限：最短持有1天",
+          dsc2: "起购金额：10000.00元",
+          url: require("../assets/img/pd6.png"),
+        },
+      ],
     };
   },
   created() {
@@ -312,9 +368,9 @@ export default {
 
 .box-right-item .item-num {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
-  font-size: 30px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 40px;
   margin-top: 10px;
   color: #00ffd6;
 }
@@ -333,7 +389,7 @@ export default {
   height: 30px;
   line-height: 30px;
   font-size: 22px;
-  margin-top: 20px;
+  margin-top: 10px;
   color: #fff;
 }
 
@@ -343,6 +399,7 @@ export default {
   line-height: 30px;
   font-size: 22px;
   color: #fff;
+  margin-top: 5px;
 }
 
 .bottom-btn-left {
