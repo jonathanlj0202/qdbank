@@ -100,7 +100,7 @@
 </template>
 <script>
 import Flipper from "vue-flipper";
-import { getGuideData } from "../api";
+import { getGuideData, getBankData } from "../api";
 
 export default {
   name: "View3",
@@ -174,10 +174,15 @@ export default {
     };
   },
   created() {
-    this.getGuide();
+    // this.getGuide();
     for (let index = 0; index < 6; index++) {
       this.flippedArr.push(false);
     }
+    getBankData({
+      terminal_no: window.MAC,
+    }).then((res) => {
+      console.info(2233, res);
+    });
   },
   methods: {
     getGuide() {

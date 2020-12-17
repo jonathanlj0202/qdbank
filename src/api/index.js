@@ -9,3 +9,5 @@ export const getbranches = p => get('loadNetworkByterminalNo', p);
 export const getCultureData = p => get('sendCultureData', p);
 
 export const getProductData = p => get('sendProductData', p);
+
+export const getBankData = p => get('sendBankData', p);
