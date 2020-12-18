@@ -56,7 +56,10 @@
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="box-right" v-for="(item, index) of productArr" :key="index">
+      <slider :pages="pages" :sliderinit="sliderinit">
+        <!-- slot  -->
+      </slider>
+      <!-- <div class="box-right" v-for="(item, index) of productArr" :key="index">
         <flipper
           width="100%"
           height="100%"
@@ -72,11 +75,15 @@
             <div class="item-des2">{{ item.dsc2 }}</div>
           </div>
           <div class="box-right-item" slot="back">
-            <img class="code-img" :src="item.url" />
+            <vue-qr
+              :logoSrc="imageUrl"
+              :text="item.url"
+              class="url-code"
+            ></vue-qr>
             <div class="tips-text">扫码购买</div>
           </div>
         </flipper>
-      </div>
+      </div> -->
     </div>
     <!-- <div
       :class="{
@@ -99,13 +106,17 @@
   </div>
 </template>
 <script>
-import Flipper from "vue-flipper";
+// import vueQr from "vue-qr";
+// import Flipper from "vue-flipper";
+import slider from "vue-concise-slider";
 import { getGuideData, getBankData } from "../api";
 
 export default {
   name: "View3",
   components: {
-    Flipper,
+    // vueQr,
+    // Flipper,
+    slider,
   },
   data() {
     return {
@@ -114,63 +125,40 @@ export default {
       clickNum: 4,
       titleText: "热销产品",
       GuideUrl: "",
+      imageUrl: require("../assets/img/abclogo.png"),
       flippedArr: [],
-      productArr: [
+      productArr: [],
+      pages: [
         {
-          name: "安心·灵动·20天",
-          type: "定期理财",
-          num: "2.15%-2.85%",
-          unit: "业绩基准",
-          dsc1: "投资期限：最低持有20天",
-          dsc2: "起购金额：10000.00元",
-          url: require("../assets/img/pd1.png"),
+          title: "",
+          style: {
+            backgroundColor: "#0ff",
+          },
         },
         {
-          name: "安心·灵动·45天",
-          type: "定期理财",
-          num: "2.15%-2.95%",
-          unit: "业绩基准",
-          dsc1: "投资期限：最低持有45天",
-          dsc2: "起购金额：10000.00元",
-          url: require("../assets/img/pd2.png"),
+          title: "",
+          style: {
+            backgroundColor: "#0f0",
+          },
         },
         {
-          name: "安心·灵动·75天",
-          type: "定期理财",
-          num: "2.15%-3.05%",
-          unit: "业绩基准",
-          dsc1: "投资期限：最低持有75天",
-          dsc2: "起购金额：10000.00元",
-          url: require("../assets/img/pd3.png"),
-        },
-        {
-          name: "农银私行·农银时时付",
-          type: "定期理财",
-          num: "3.05%",
-          unit: "业绩基准",
-          dsc1: "投资期限：7303天",
-          dsc2: "起购金额：100.00元",
-          url: require("../assets/img/pd4.png"),
-        },
-        {
-          name: "农银私行·安心快线天天利",
-          type: "定期理财",
-          num: "2.35%-2.45%",
-          unit: "业绩基准",
-          dsc1: "投资期限：最短持有1天",
-          dsc2: "起购金额：1000000.00元",
-          url: require("../assets/img/pd5.png"),
-        },
-        {
-          name: "安心快线天天利第２期",
-          type: "定期理财",
-          num: "2.15%",
-          unit: "业绩基准",
-          dsc1: "投资期限：最短持有1天",
-          dsc2: "起购金额：10000.00元",
-          url: require("../assets/img/pd6.png"),
+          title: "slide3",
+          style: {
+            background: "#4bbfc3",
+          },
         },
       ],
+      //滑动配置[obj]
+      sliderinit: {
+        currentPage: 0, //当前页码
+        thresholdDistance: 500, //滑动判定距离
+        thresholdTime: 100, //滑动判定时间
+        autoplay: 1000, //自动滚动[ms]
+        loop: true, //循环滚动
+        direction: "vertical", //方向设置，垂直滚动
+        infinite: 1, //无限滚动前后遍历数
+        slidesToScroll: 1, //每次滑动项数
+      },
     };
   },
   created() {
@@ -182,6 +170,23 @@ export default {
       terminal_no: window.MAC,
     }).then((res) => {
       console.info(2233, res);
+      if (res.retCode === "0" && res.data) {
+        this.productArr = [];
+        res.data.forEach((ele) => {
+          this.productArr.push({
+            name: ele.title.substring(
+              ele.title.indexOf(`“`) + 1,
+              ele.title.indexOf(`”`)
+            ),
+            type: "定期理财",
+            num: ele.interest,
+            unit: "业绩基准",
+            dsc1: `投资期限：${ele.prodLimit}`,
+            dsc2: `起购金额：${ele.amtStart}`,
+            url: `https://webank.abchina.com/mmsp-xs/customer/product/view/financeDetail?moduleId=${ele.moduleId}&moduleType=20003000&storeId=103638&employeeOrder=1&logId=20201218092254396001&_t=34037&_t=75422`,
+          });
+        });
+      }
     });
   },
   methods: {
@@ -313,6 +318,7 @@ export default {
 /*rightview*/
 .content-box-right {
   padding: 0 61px;
+  height: 945px;
   box-sizing: border-box;
   overflow: hidden;
   margin: 90px auto 0px;
@@ -321,6 +327,7 @@ export default {
 .box-right {
   width: 380px;
   height: 300px;
+  overflow: hidden;
   margin-bottom: 15px;
   float: left;
   overflow: hidden;
@@ -341,7 +348,7 @@ export default {
   text-align: center;
 }
 
-.box-right-item .code-img {
+.box-right-item .url-code {
   width: 180px;
   height: 180px;
   margin-top: 20px;
@@ -355,10 +362,14 @@ export default {
 }
 
 .box-right-item .item-name {
-  text-align: center;
+  width: 380px;
   height: 40px;
   line-height: 40px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   color: #00ffd6;
+  text-align: center;
   font-size: 26px;
 }
 
