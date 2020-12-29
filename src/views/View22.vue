@@ -1,27 +1,25 @@
 <template>
   <div class="container">
+    <div class="top-title">{{ titleText }}</div>
     <div class="content-box-left" v-show="isLeft">
-      <div class="content-wrapper">
-        <div class="abc-logo"></div>
-        <div class="video-wrapper">
-          <div class="video-box" v-show="videoBoo">
-            <video
-              class="video"
-              :src="videoSrc"
-              autoplay="autoplay"
-              type="video/mp4"
-              controls="controls"
-              ref="videoRef"
-            ></video>
-          </div>
-          <div class="video-bg" v-show="!videoBoo">
-            <img :src="videoImgUrl" />
-            <div
-              class="video-play-btn"
-              @click="playVideo()"
-              v-show="swipertype === 1"
-            ></div>
-          </div>
+      <div class="box">
+        <div class="video-box" v-show="videoBoo">
+          <video
+            class="video"
+            :src="videoSrc"
+            autoplay="autoplay"
+            type="video/mp4"
+            controls="controls"
+            ref="videoRef"
+          ></video>
+        </div>
+        <div class="video-bg" v-show="!videoBoo">
+          <img :src="videoImgUrl" />
+          <div
+            class="video-play-btn"
+            @click="playVideo()"
+            v-show="swipertype === 1"
+          ></div>
         </div>
         <div class="video-btn-box">
           <div
@@ -30,23 +28,37 @@
             :key="index"
             @click="chanceVideoFn(index)"
           >
-            <div
-              class="btn-item"
-              :style="{ backgroundImage: 'url(' + item.bgimg + ')' }"
-            ></div>
+            <img :src="item.bgimg" />
           </div>
         </div>
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
-      <div class="person-wrapper">
-        <div class="user-item" v-for="(item, i) in personArr" :key="i">
-          <div class="avatar-box">
-            <img class="user-avatar" :src="item.personimage" />
-          </div>
-          <div class="user-name">{{ item.personname }}</div>
-          <div class="user-desc">职位：{{ item.position }}</div>
-          <div class="user-desc">工龄：{{ item.workeyear }}年</div>
+      <div class="product-box">
+        <div class="product" v-for="(item, index) of productArr" :key="index">
+          <flipper
+            width="100%"
+            height="100%"
+            :flipped="flippedArr[index]"
+            @click="onClick(index)"
+          >
+            <div class="product-item" slot="front">
+              <img class="item-logo" :src="item.waterbusiness" />
+              <div class="item-name">
+                {{ item.watergoodsname }}
+              </div>
+            </div>
+            <div class="product-item" slot="back">
+              <div class="item-detail-name">{{ item.watergoodsname }}</div>
+              <div class="item-detail-content" v-html="item.goodscontent"></div>
+              <div class="item-detail-left-logo">
+                <img :src="item.waterbusinessimage" />
+              </div>
+              <div class="item-detail-right-logo">
+                <img :src="item.watercodeimage" />
+              </div>
+            </div>
+          </flipper>
         </div>
       </div>
     </div>
@@ -69,14 +81,17 @@
   </div>
 </template>
 <script>
+import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
-import { getCultureData, getPersonData } from "../api";
+import { getProductData, getCultureData } from "../api";
 const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "View2",
-  components: {},
+  components: {
+    Flipper,
+  },
   data() {
     return {
       isLeft: true,
@@ -84,31 +99,23 @@ export default {
       videoBoo: false,
       baseUrl: "http://localhost/",
       videoSrc: "",
+      titleText: "文化剧场",
       videoImgUrl: null,
       clickIndex: null,
       swipertype: null,
       swiperArr: [],
+      flippedArr: [],
+      productArr: [],
       startvideoboo: false,
       inter: null,
-      personArr: [],
     };
   },
   created() {
-    this.getPerson();
-    
+    this.getProductDataFn();
     this.getCultureDataFn();
     this.connectionSocket();
   },
   methods: {
-    getPerson() {
-      getPersonData({
-        terminal_no: window.MAC,
-      }).then((res) => {
-        if (res.data && res.code === "0000") {
-          this.personArr = res.data;
-        }
-      });
-    },
     connectionSocket() {
       //连接SockJS的endpoint名称为"endpoint-websocket"
       const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
@@ -184,6 +191,18 @@ export default {
         }
       });
     },
+    getProductDataFn() {
+      getProductData({
+        terminal_no: window.MAC,
+      }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.productArr = res.data;
+          this.productArr.forEach(() => {
+            this.flippedArr.push(false);
+          });
+        }
+      });
+    },
     chanceVideoFn(index) {
       if (index !== this.clickIndex) {
         this.videoBoo = false;
@@ -219,11 +238,13 @@ export default {
       if (str === "isLeft") {
         this.isLeft = true;
         this.isRight = false;
+        this.titleText = "文化剧场";
       } else {
         this.isLeft = false;
         this.isRight = true;
         this.videoBoo = false;
         this.videoSrc = "";
+        this.titleText = "互动营销";
       }
     },
     onClick(number) {
@@ -283,6 +304,7 @@ export default {
   },
 };
 </script>
+<style src="vue-flipper/dist/vue-flipper.css"></style>
 <style scoped>
 .container {
   width: 1040px;
@@ -294,71 +316,83 @@ export default {
   overflow: hidden;
 }
 
+.top-title {
+  width: 320px;
+  height: 40px;
+  margin-left: 50px;
+  line-height: 60px;
+  font-size: 30px;
+  color: #00ffd6;
+  text-align: center;
+}
+
 .content-box-left,
 .content-box-right {
   width: 100%;
-  padding-top: 80px; /*no*/
-  box-sizing: border-box;
   overflow: hidden;
 }
 
-.content-wrapper {
-  width: 1040px;
-  height: 1730px; /*no*/
-  border: 1px solid #00ffd6; /*no*/
-  padding-top: 80px; /*no*/
-  box-sizing: border-box;
-}
-
-.abc-logo {
-  width: 484px;
-  height: 94px;
-  background: url("../assets/img/banklogo.png") no-repeat;
-  background-size: contain;
-  margin: 0px auto 100px; /*no*/
-}
-
-.video-wrapper {
-  width: 1036px;
-  height: 580px; /*no*/
-  margin: 0 auto 60px; /*no*/
+.box {
+  width: 800px;
+  height: 760px;
+  margin: 180px auto 0px;
   position: relative;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .video-box {
-  width: 1036px;
-  height: 580px; /*no*/
+  width: 800px;
+  height: 600px;
 }
 
 .video-box .video {
-  width: 1036px;
-  height: 580px; /*no*/
+  width: 800px;
+  height: 600px;
   border: none;
   background-color: rgba(0, 0, 0, 0.8);
   outline: 0;
-  margin: 0 auto;
 }
 
 .video-bg {
-  width: 1036px;
-  height: 580px; /*no*/
+  width: 800px;
+  height: 600px;
   overflow: hidden;
   position: relative;
 }
 
 .video-bg img {
-  width: 1036px;
-  height: 580px; /*no*/
+  width: 800px;
+  height: 600px;
+}
+
+.video-btn-box {
+  width: 800px;
+  height: 160px;
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
+.video-btn {
+  width: 170px;
+  height: 120px;
+  margin-right: 20px;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  float: left;
+}
+
+.video-btn img {
+  width: 170px;
+  height: 120px;
 }
 
 .video-play-btn {
   position: absolute;
   top: 0px;
   left: 0px;
-  width: 1036px;
-  height: 580px; /*no*/
+  width: 800px;
+  height: 600px;
   background-color: rgba(0, 0, 0, 0.6);
   background-image: url("../assets/img/videoplay.png");
   background-repeat: no-repeat;
@@ -366,89 +400,112 @@ export default {
   background-position: center center;
 }
 
-.video-btn-box {
-  width: 960px;
-  height: 620px; /*no*/
-  margin: 0 auto;
-  margin-top: 60px; /*no*/
-  overflow: hidden;
-}
-
-.video-btn {
-  width: 430px;
-  height: 281px; /*no*/
-  margin-left: 25px;
-  margin-right: 25px;
-  margin-bottom: 30px; /*no*/
-  float: left;
-  background: url("../assets/img/btnbg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.btn-item {
-  width: 360px;
-  height: 220px; /*no*/
-  margin: 0 auto;
-  margin-top: 30px; /*no*/
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  overflow: hidden;
-}
-
 /*rightview*/
-.person-wrapper {
-  width: 1040px;
-  height: 1730px; /*no*/
-  background-image: url("../assets/img/centerbg.png");
-  background-repeat: no-repeat;
+
+.product-box {
+  width: 775px;
+  height: 960px;
+  overflow: hidden;
+  margin: 100px auto 0px;
+}
+
+.product {
+  width: 380px;
+  height: 300px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.product:nth-child(odd) {
+  margin-right: 15px;
+  float: left;
+}
+
+.product-item {
+  width: 380px;
+  height: 300px;
+  background: url("../assets/img/border4.png") no-repeat;
   background-size: 100% 100%;
-  padding: 0px 100px;
-  padding-top: 155px !important; /*no*/
-  padding-bottom: 260px !important; /*no*/
+  text-align: center;
+  color: #fff;
+}
+
+.item-logo {
+  width: 320px;
+  height: 180px;
+  margin-top: 22px;
+  margin-bottom: 22px;
+  border-radius: 8px;
+}
+
+.item-name {
+  width: 350px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 32px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.item-text {
+  width: 350px;
+  height: 40px;
+  margin: 0 auto;
+  line-height: 25px;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+.item-mini-logo {
+  width: 150px;
+  height: 40px;
+}
+
+.item-detail-name {
+  width: 350px;
+  height: 60px;
+  line-height: 30px;
+  overflow: hidden;
+  font-size: 22px;
+  margin: 0 auto;
+  padding-top: 20px;
+  padding-bottom: 10px;
   box-sizing: border-box;
 }
 
-.user-item {
-  width: 180px;
-  float: left;
-  margin: 0 50px;
-  margin-bottom: 55px !important; /*no*/
-  color: #fff;
-  overflow: hidden;
-  text-align: center;
-}
-
-.avatar-box {
-  width: 180px;
-  height: 180px;
-  background: url("../assets/img/userBorder.png") no-repeat;
-  background-size: 100% 100%;
-  overflow: hidden;
+.item-detail-content {
+  width: 350px;
+  height: 150px;
   margin: 0 auto;
-  text-align: center;
+  line-height: 28px;
+  font-size: 20px;
+  overflow: hidden;
 }
 
-.user-avatar {
+.item-detail-left-logo {
+  width: 240px;
+  height: 90px;
+  margin-left: 30px;
+  text-align: left;
+  float: left;
+}
+
+.item-detail-left-logo img {
   width: 160px;
-  height: 160px;
-  border-radius: 80px;
-  margin-top: 10px;
+  height: 70px;
+  border-radius: 5px;
 }
 
-.user-name {
-  font-size: 20px;
-  height: 30px;
-  line-height: 30px;
-  margin-top: 15px;
-  overflow: hidden;
+.item-detail-right-logo {
+  width: 70px;
+  height: 70px;
+  margin-left: 16px;
+  float: left;
 }
 
-.user-desc {
-  font-size: 20px;
-  height: 30px;
-  line-height: 30px;
-  overflow: hidden;
+.item-detail-right-logo img {
+  width: 70px;
+  height: 70px;
 }
 
 /*bottomview*/
@@ -475,25 +532,21 @@ export default {
   width: 405px;
   float: left;
   font-size: 32px;
-  color: #00ffd6;
 }
 
 .left-choose {
   width: 225px !important;
   font-size: 26px !important;
-  color: #fff !important;
 }
 
 .btn-right {
   width: 405px;
   float: right;
   font-size: 32px;
-  color: #00ffd6;
 }
 
 .right-choose {
   width: 225px !important;
   font-size: 26px !important;
-  color: #fff !important;
 }
 </style>

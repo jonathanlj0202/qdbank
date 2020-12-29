@@ -1,72 +1,18 @@
 <template>
   <div class="container">
-    <div class="top-title">{{ titleText }}</div>
-    <div class="content-box-left" v-show="isLeft">
-      <div class="map-content">
-        <img v-show="GuideUrl" :src="GuideUrl" />
-      </div>
+    <div class="content-box">
       <div
-        :class="[
-          clickNum === 1 ? 'map-btn map-choose-btn first' : 'map-btn first',
-        ]"
+        class="hotproduct-item-wrapper"
+        v-for="(item, index) of productArr"
+        :key="index"
       >
-        现金<br />服务区
-      </div>
-      <div
-        :class="[
-          clickNum === 2 ? 'map-btn map-choose-btn second' : 'map-btn second',
-        ]"
-      >
-        个贷<br />业务区
-      </div>
-      <div
-        :class="[
-          clickNum === 3 ? 'map-btn map-choose-btn third' : 'map-btn third',
-        ]"
-      >
-        智能<br />服务区
-      </div>
-      <div
-        :class="[
-          clickNum === 4 ? 'map-btn map-choose-btn fourth' : 'map-btn fourth',
-        ]"
-      >
-        引导区
-      </div>
-      <div
-        :class="[
-          clickNum === 5 ? 'map-btn map-choose-btn fifth' : 'map-btn fifth',
-        ]"
-      >
-        等候区
-      </div>
-      <div
-        :class="[
-          clickNum === 6 ? 'map-btn map-choose-btn sixth' : 'map-btn sixth',
-        ]"
-      >
-        非<br />现金区
-      </div>
-      <div
-        :class="[
-          clickNum === 7 ? 'map-btn map-choose-btn seventh' : 'map-btn seventh',
-        ]"
-      >
-        理财<br />业务区
-      </div>
-    </div>
-    <div class="content-box-right" v-show="isRight">
-      <slider :pages="pages" :sliderinit="sliderinit">
-        <!-- slot  -->
-      </slider>
-      <!-- <div class="box-right" v-for="(item, index) of productArr" :key="index">
         <flipper
           width="100%"
           height="100%"
           :flipped="flippedArr[index]"
           @click="onClick(index)"
         >
-          <div class="box-right-item" slot="front">
+          <div class="hotproduct-item" slot="front">
             <div class="item-name">{{ item.name }}</div>
             <div class="item-type">{{ item.type }}</div>
             <div class="item-num">{{ item.num }}</div>
@@ -74,95 +20,42 @@
             <div class="item-des1">{{ item.dsc1 }}</div>
             <div class="item-des2">{{ item.dsc2 }}</div>
           </div>
-          <div class="box-right-item" slot="back">
-            <vue-qr
-              :logoSrc="imageUrl"
-              :text="item.url"
-              class="url-code"
-            ></vue-qr>
-            <div class="tips-text">扫码购买</div>
+          <div class="hotproduct-item" slot="back">
+            <div class="back-box">
+              <vue-qr
+                :logoSrc="imageUrl"
+                :text="item.url"
+                class="url-code"
+              ></vue-qr>
+              <div class="tips-text">扫码购买</div>
+            </div>
           </div>
         </flipper>
-      </div> -->
+      </div>
     </div>
-    <!-- <div
-      :class="{
-        'bottom-btn-left choose': isLeft,
-        'bottom-btn-left nochoose': isRight,
-      }"
-      @click="chooseFn('isLeft')"
-    >
-      网点导览
-    </div> -->
-    <div
-      :class="{
-        'bottom-btn-right nochoose': isLeft,
-        'bottom-btn-right choose': isRight,
-      }"
-      @click="chooseFn('isRight')"
-    >
-      热销产品
-    </div>
+
+    <div class="bottom-btn-box">热销产品</div>
   </div>
 </template>
 <script>
-// import vueQr from "vue-qr";
-// import Flipper from "vue-flipper";
-import slider from "vue-concise-slider";
-import { getGuideData, getBankData } from "../api";
+import vueQr from "vue-qr";
+import Flipper from "vue-flipper";
+import { getBankData } from "../api";
 
 export default {
   name: "View3",
   components: {
-    // vueQr,
-    // Flipper,
-    slider,
+    vueQr,
+    Flipper,
   },
   data() {
     return {
-      isLeft: false,
-      isRight: true,
-      clickNum: 4,
-      titleText: "热销产品",
-      GuideUrl: "",
       imageUrl: require("../assets/img/abclogo.png"),
       flippedArr: [],
       productArr: [],
-      pages: [
-        {
-          title: "",
-          style: {
-            backgroundColor: "#0ff",
-          },
-        },
-        {
-          title: "",
-          style: {
-            backgroundColor: "#0f0",
-          },
-        },
-        {
-          title: "slide3",
-          style: {
-            background: "#4bbfc3",
-          },
-        },
-      ],
-      //滑动配置[obj]
-      sliderinit: {
-        currentPage: 0, //当前页码
-        thresholdDistance: 500, //滑动判定距离
-        thresholdTime: 100, //滑动判定时间
-        autoplay: 1000, //自动滚动[ms]
-        loop: true, //循环滚动
-        direction: "vertical", //方向设置，垂直滚动
-        infinite: 1, //无限滚动前后遍历数
-        slidesToScroll: 1, //每次滑动项数
-      },
     };
   },
   created() {
-    // this.getGuide();
     for (let index = 0; index < 6; index++) {
       this.flippedArr.push(false);
     }
@@ -190,181 +83,83 @@ export default {
     });
   },
   methods: {
-    getGuide() {
-      getGuideData({
-        terminal_no: window.MAC,
-      }).then((res) => {
-        if (res.data && res.code === "0000") {
-          this.GuideUrl = res.data[0].guideimage;
-        }
-      });
-    },
-    chooseFn(str) {
-      if (str === "isLeft") {
-        this.isLeft = true;
-        this.isRight = false;
-        this.titleText = "网点导览";
-      } else {
-        this.isLeft = false;
-        this.isRight = true;
-        this.titleText = "热销产品";
-      }
-    },
     onClick(number) {
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
   },
 };
 </script>
-
+<style src="vue-flipper/dist/vue-flipper.css"></style>
 <style scoped>
 .container {
-  width: 900px;
-  height: 1200px;
-  background: url("../assets/img/border.png") no-repeat;
-  background-size: 100% 100%;
+  width: 1100px;
+  height: 1920px; /*no*/
+  position: absolute;
+  top: 50%;
+  left: 2140px;
+  margin-top: -960px; /*no*/
   overflow: hidden;
+}
+
+.content-box {
+  width: 1025px;
+  margin: 0px auto 35px;
+  padding-top: 80px; /*no*/
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.hotproduct-item-wrapper {
+  width: 500px;
+  height: 330px; /*no*/
+  float: left;
+  margin-bottom: 20px; /*no*/
+}
+
+.hotproduct-item-wrapper:nth-child(odd) {
+  margin-right: 20px;
+}
+
+.hotproduct-item {
+  width: 500px;
+  height: 330px; /*no*/
+  padding: 25px 0px; /*no*/
+  margin: 0 auto;
+  box-sizing: border-box;
+  text-align: center;
+  background: url("../assets/img/hotproductbg.png") no-repeat;
+  background-size: 100% 100%;
   position: relative;
 }
 
-.top-title {
-  width: 320px;
-  height: 40px;
-  margin-left: 50px;
-  line-height: 60px;
-  font-size: 30px;
-  color: #00ffd6;
-  text-align: center;
-}
-
-.content-box-left,
-.content-box-right {
-  width: 100%;
-  overflow: hidden;
-}
-
-/*leftview*/
-.map-content {
-  width: 468px;
-  height: 296px;
-  margin: 220px auto 0px;
-  overflow: hidden;
-  text-align: center;
-}
-
-.map-content img {
-  width: 468px;
-  height: 296px;
-}
-
-.map-btn {
-  width: 82px;
-  height: 60px;
-  overflow: hidden;
-  text-align: center;
-  background-image: url("../assets/img/ncbtn.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  color: #20c9b8;
-  font-size: 14px;
-}
-
-.map-choose-btn {
-  background-image: url("../assets/img/cbtn.png") !important;
-}
-
-.first {
-  top: 445px;
-  left: 55px;
+.hotproduct-item .back-box {
+  width: 200px;
+  height: 250px;
   position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -125px;
+  margin-left: -100px;
 }
 
-.second {
-  top: 550px;
-  left: 100px;
-  position: absolute;
+.hotproduct-item .url-code {
+  width: 200px;
+  height: 200px;
 }
 
-.third {
-  top: 615px;
-  left: 210px;
-  position: absolute;
-}
-
-.fourth {
-  top: 635px;
-  left: 360px;
-  position: absolute;
-}
-
-.fifth {
-  top: 615px;
-  left: 510px;
-  position: absolute;
-}
-
-.sixth {
-  top: 550px;
-  left: 620px;
-  position: absolute;
-}
-
-.seventh {
-  top: 445px;
-  left: 655px;
-  position: absolute;
-}
-
-/*rightview*/
-.content-box-right {
-  padding: 0 61px;
-  height: 945px;
-  box-sizing: border-box;
-  overflow: hidden;
-  margin: 90px auto 0px;
-}
-
-.box-right {
-  width: 380px;
-  height: 300px;
-  overflow: hidden;
-  margin-bottom: 15px;
-  float: left;
-  overflow: hidden;
-}
-
-.box-right:nth-child(odd) {
-  margin-right: 18px;
-}
-
-.box-right-item {
-  width: 380px;
-  height: 300px;
-  padding: 25px 0px;
-  float: left;
-  box-sizing: border-box;
-  border: 1px solid rgba(0, 255, 214, 0.3); /*no*/
-  background-color: rgba(41, 68, 183, 0.5);
-  text-align: center;
-}
-
-.box-right-item .url-code {
-  width: 180px;
-  height: 180px;
-  margin-top: 20px;
-}
-
-.box-right-item .tips-text {
+.hotproduct-item .tips-text {
+  height: 30px;
+  line-height: 30px;
   color: #00ffd6;
   font-size: 26px;
   text-align: center;
   margin-top: 10px;
 }
 
-.box-right-item .item-name {
-  width: 380px;
-  height: 40px;
-  line-height: 40px;
+.hotproduct-item .item-name {
+  width: 450px;
+  height: 40px; /*no*/
+  line-height: 40px; /*no*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -373,86 +168,66 @@ export default {
   font-size: 26px;
 }
 
-.box-right-item .item-type {
+.hotproduct-item .item-type {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 30px; /*no*/
+  line-height: 30px; /*no*/
   color: #fff;
   font-size: 24px;
-  margin-top: 5px;
+  margin-top: 5px; /*no*/
 }
 
-.box-right-item .item-num {
+.hotproduct-item .item-num {
   text-align: center;
-  height: 50px;
-  line-height: 50px;
+  height: 50px; /*no*/
+  line-height: 50px; /*no*/
   font-size: 40px;
-  margin-top: 10px;
+  margin-top: 10px; /*no*/
   color: #00ffd6;
 }
 
-.box-right-item .item-unit {
+.hotproduct-item .item-unit {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 30px; /*no*/
+  line-height: 30px; /*no*/
   font-size: 22px;
   color: #fff;
-  margin-top: 10px;
+  margin-top: 10px; /*no*/
 }
 
-.box-right-item .item-des1 {
+.hotproduct-item .item-des1 {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 30px; /*no*/
+  line-height: 30px; /*no*/
   font-size: 22px;
-  margin-top: 10px;
+  margin-top: 10px; /*no*/
   color: #fff;
 }
 
-.box-right-item .item-des2 {
+.hotproduct-item .item-des2 {
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 30px; /*no*/
+  line-height: 30px; /*no*/
   font-size: 22px;
   color: #fff;
-  margin-top: 5px;
+  margin-top: 5px; /*no*/
 }
 
-.bottom-btn-left {
-  width: 250px;
-  height: 50px;
-  text-align: center;
-  font-size: 28px;
-  line-height: 50px;
-  color: #ffffff;
+/*bottomview*/
+
+.bottom-btn-box {
   position: absolute;
-  bottom: 0px;
-  right: 270px;
-  letter-spacing: 4px;
+  bottom: 25px; /*no*/
+  left: 205px;
+  width: 690px;
+  height: 60px; /*no*/
+  line-height: 60px; /*no*/
+  background-image: url("../assets/img/3.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-}
-
-.bottom-btn-right {
-  width: 250px;
-  height: 50px;
   text-align: center;
-  font-size: 28px;
-  line-height: 50px;
-  color: #ffffff;
-  position: absolute;
-  bottom: 0px;
-  right: 30px;
-  letter-spacing: 4px;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-.choose {
-  background-image: url("../assets/img/choose.png");
-}
-
-.nochoose {
-  background-image: url("../assets/img/nochoose.png");
+  color: #00ffd6;
+  letter-spacing: 2px;
+  font-size: 32px;
 }
 </style>
