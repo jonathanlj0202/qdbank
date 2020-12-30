@@ -5,6 +5,10 @@ import View1 from "../views/View1.vue";
 import View2 from "../views/View2.vue";
 import View3 from "../views/View3.vue";
 import View4 from "../views/View4.vue";
+import Bview1 from "../views/Bview1.vue";
+import Bview2 from "../views/Bview2.vue";
+import Bview3 from "../views/Bview3.vue";
+import Bview4 from "../views/Bview4.vue";
 import Notfound from "../views/Notfound.vue";
 import { getbranches } from "../api";
 
@@ -13,7 +17,7 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
+    path: "/111",
     name: "ViewBox",
     component: ViewBox,
     children: [{
@@ -25,6 +29,22 @@ const routes = [
         v4: View4
       }
     }]
+  }, {
+    path: '/bview1',
+    name: 'Bview1',
+    component: Bview1
+  }, {
+    path: '/bview2',
+    name: 'Bview2',
+    component: Bview2
+  }, {
+    path: '/bview3',
+    name: 'Bview3',
+    component: Bview3
+  }, {
+    path: '/',
+    name: 'Bview4',
+    component: Bview4
   }, {
     path: '/notfound',
     name: 'NotFound',

@@ -1,37 +1,44 @@
 <template>
   <div class="container">
-    <div class="content-box">
-      <div
-        class="hotproduct-item-wrapper"
-        v-for="(item, index) of productArr"
-        :key="index"
+    <div class="content-wrapper">
+      <!-- <div class="content-box"> -->
+      <vueSeamlessScroll
+        :data="productArr"
+        class="content-box"
+        :class-option="classOption"
       >
-        <flipper
-          width="100%"
-          height="100%"
-          :flipped="flippedArr[index]"
-          @click="onClick(index)"
+        <div
+          class="hotproduct-item-wrapper"
+          v-for="(item, index) of productArr"
+          :key="index"
         >
-          <div class="hotproduct-item" slot="front">
-            <div class="item-name">{{ item.name }}</div>
-            <div class="item-type">{{ item.type }}</div>
-            <div class="item-num">{{ item.num }}</div>
-            <div class="item-unit">{{ item.unit }}</div>
-            <div class="item-des1">{{ item.dsc1 }}</div>
-            <div class="item-des2">{{ item.dsc2 }}</div>
-          </div>
-          <div class="hotproduct-item" slot="back">
-            <div class="back-box">
-              <vue-qr
-                :logoSrc="imageUrl"
-                :text="item.url"
-                class="url-code"
-              ></vue-qr>
-              <div class="tips-text">扫码购买</div>
+          <flipper
+            width="100%"
+            height="100%"
+            :flipped="flippedArr[index]"
+            @click="onClick(index)"
+          >
+            <div class="hotproduct-item" slot="front">
+              <div class="item-name">{{ item.name }}</div>
+              <div class="item-type">{{ item.type }}</div>
+              <div class="item-num">{{ item.num }}</div>
+              <div class="item-unit">{{ item.unit }}</div>
+              <div class="item-des1">{{ item.dsc1 }}</div>
+              <div class="item-des2">{{ item.dsc2 }}</div>
             </div>
-          </div>
-        </flipper>
-      </div>
+            <div class="hotproduct-item" slot="back">
+              <div class="back-box">
+                <vue-qr
+                  :logoSrc="imageUrl"
+                  :text="item.url"
+                  class="url-code"
+                ></vue-qr>
+                <div class="tips-text">扫码购买</div>
+              </div>
+            </div>
+          </flipper>
+        </div>
+      </vueSeamlessScroll>
     </div>
 
     <div class="bottom-btn-box">热销产品</div>
@@ -40,6 +47,7 @@
 <script>
 import vueQr from "vue-qr";
 import Flipper from "vue-flipper";
+import vueSeamlessScroll from "vue-seamless-scroll";
 import { getBankData } from "../api";
 
 export default {
@@ -47,6 +55,7 @@ export default {
   components: {
     vueQr,
     Flipper,
+    vueSeamlessScroll,
   },
   data() {
     return {
@@ -59,18 +68,22 @@ export default {
     for (let index = 0; index < 6; index++) {
       this.flippedArr.push(false);
     }
+  },
+  mounted() {
     getBankData({
       terminal_no: window.MAC,
     }).then((res) => {
-      console.info(2233, res);
       if (res.retCode === "0" && res.data) {
         this.productArr = [];
         res.data.forEach((ele) => {
           this.productArr.push({
-            name: ele.title.substring(
-              ele.title.indexOf(`“`) + 1,
-              ele.title.indexOf(`”`)
-            ),
+            name:
+              ele.title.indexOf(`“`) > -1
+                ? ele.title.substring(
+                    ele.title.indexOf(`“`) + 1,
+                    ele.title.indexOf(`”`)
+                  )
+                : ele.title,
             type: "定期理财",
             num: ele.interest,
             unit: "业绩基准",
@@ -79,8 +92,27 @@ export default {
             url: `https://webank.abchina.com/mmsp-xs/customer/product/view/financeDetail?moduleId=${ele.moduleId}&moduleType=20003000&storeId=103638&employeeOrder=1&logId=20201218092254396001&_t=34037&_t=75422`,
           });
         });
+        let length = this.productArr.length;
+        length = length % 2 === 0 ? length : --length;
+        for (let i = 0; i < length; i++) {
+          this.productArr.push(this.productArr[i]);
+        }
       }
     });
+  },
+  computed: {
+    classOption() {
+      return {
+        step: 1, // 数值越大速度滚动越快
+        limitMoveNum: 10, // 开始无缝滚动的数据量 this.dataList.length
+        hoverStop: true, // 是否开启鼠标悬停stop
+        direction: 1, // 0向下 1向上 2向左 3向右
+        openWatch: true, // 开启数据实时监控刷新dom
+        singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
+    },
   },
   methods: {
     onClick(number) {
@@ -101,13 +133,19 @@ export default {
   overflow: hidden;
 }
 
-.content-box {
+.content-wrapper {
   width: 1025px;
-  margin: 0px auto 35px;
-  padding-top: 80px; /*no*/
-  box-sizing: border-box;
+  height: 1750px; /*no*/
+  margin: 80px auto 0px; /*no*/
   overflow: hidden;
 }
+
+.content-box {
+  width: 1025px;
+  height: 1750px; /*no*/
+}
+
+/*no*/
 
 .hotproduct-item-wrapper {
   width: 500px;

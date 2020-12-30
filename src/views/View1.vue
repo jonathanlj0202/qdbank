@@ -70,19 +70,19 @@
           <div class="gold-item-box">
             <div
               class="gold-item"
-              v-for="(item, index) of exchangeArr"
+              v-for="(item, index) of goldArr"
               :key="index"
             >
               <div class="name">
-                {{ item.CurrName.substring(0, item.CurrName.indexOf("(")) }}
+                {{ item.ProdName }}
               </div>
               <div class="buy">
-                {{ parseFloat(item.BuyingPrice).toFixed(2) }}
+                {{ item.CustomerBuy }}
               </div>
               <div class="sell">
-                {{ parseFloat(item.SellPrice).toFixed(2) }}
+                {{ item.CustomerSell }}
               </div>
-              <div class="time">{{ item.PublishTime }}</div>
+              <div class="time">{{ item.UpdateTime }}</div>
             </div>
           </div>
         </div>
@@ -279,21 +279,24 @@ export default {
   padding-right: 20px;
   box-sizing: border-box;
   color: #00ffd6;
-  border: 1px solid #00ffd6; /*no*/
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
   /*width: 985px*/
 }
-
 .lilv-box {
+  background-image: url("../assets/img/databg1.png");
   height: 395px; /*no*/
   overflow: hidden;
 }
 
 .exchange-box {
+  background-image: url("../assets/img/databg3.png");
   height: 780px; /*no*/
   overflow: hidden;
 }
 
 .gold-box {
+  background-image: url("../assets/img/databg2.png");
   height: 485px; /*no*/
   overflow: hidden;
 }
@@ -497,8 +500,8 @@ export default {
   height: 245px; /*no*/
   margin: 50px auto 10px; /*no*/
   background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center center;
+  background-size: cover;
+  background-position: top center;
   border-radius: 8px !important;
   overflow: hidden;
 }
@@ -512,45 +515,32 @@ export default {
   text-align: center;
 }
 
-.item-text {
-  width: 350px;
-  height: 40px;
-  margin: 0 auto;
-  line-height: 25px;
-  font-size: 20px;
-  overflow: hidden;
-}
-
-.item-mini-logo {
-  width: 150px;
-  height: 40px;
-}
-
 .item-detail-name {
   width: 350px;
-  height: 60px;
-  line-height: 30px;
+  height: 60px; /*no*/
+  line-height: 30px; /*no*/
   overflow: hidden;
   font-size: 22px;
   margin: 0 auto;
-  padding-top: 20px;
-  padding-bottom: 10px;
+  padding-top: 20px; /*no*/
+  padding-bottom: 10px; /*no*/
+  margin-top: 50px; /*no*/
   box-sizing: border-box;
 }
 
 .item-detail-content {
   width: 350px;
-  height: 150px;
+  height: 160px; /*no*/
   margin: 0 auto;
-  line-height: 28px;
+  line-height: 28px; /*no*/
   font-size: 20px;
   overflow: hidden;
 }
 
 .item-detail-left-logo {
   width: 240px;
-  height: 90px;
-  margin-left: 30px;
+  height: 90px; /*no*/
+  margin-left: 90px;
   text-align: left;
   float: left;
 }

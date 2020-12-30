@@ -12,30 +12,9 @@ export default {
   components: {},
   data() {
     return {
-      nowDate: "", // 当前日期
-      nowTime: "", // 当前时间
     };
   },
-  methods: {
-    currentTime() {
-      setInterval(this.getDate, 500);
-    },
-    getDate() {
-      let yy = new Date().getFullYear();
-      let mm = new Date().getMonth() + 1;
-      let dd = new Date().getDate();
-      let hh = new Date().getHours();
-      let mf =
-        new Date().getMinutes() < 10
-          ? "0" + new Date().getMinutes()
-          : new Date().getMinutes();
-      this.nowTime = hh + ":" + mf;
-      this.nowDate = yy + "/" + mm + "/" + dd;
-    },
-  },
-  mounted() {
-    this.currentTime();
-  },
+  methods: {}
 };
 </script>
 
