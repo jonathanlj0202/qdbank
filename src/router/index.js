@@ -17,7 +17,7 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/111",
+    path: "/",
     name: "ViewBox",
     component: ViewBox,
     children: [{
@@ -42,7 +42,7 @@ const routes = [
     name: 'Bview3',
     component: Bview3
   }, {
-    path: '/',
+    path: '/bview4',
     name: 'Bview4',
     component: Bview4
   }, {
