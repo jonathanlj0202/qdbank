@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import SockJS from "sockjs-client";
+import { Stomp } from "./assets/js/stomp.js";
 export default {
   name: "App",
   components: {},
@@ -40,7 +42,43 @@ export default {
       numberClass: "number-item",
     };
   },
+  created() {
+    this.connectionSocket();
+  },
   methods: {
+    connectionSocket() {
+      //连接SockJS的endpoint名称为"endpoint-websocket"
+      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
+      // 获取STOMP子协议的客户端对象
+      let stompClient = Stomp.over(socket);
+      stompClient.debug = null;
+      // 向服务器发起websocket连接
+      stompClient.connect(
+        {},
+        () => {
+          //页面选择器
+          stompClient.subscribe("/topic/service_Model", (response) => {
+            let result = JSON.parse(response.body);
+            if (result.content.indexOf("DataByKanban") > -1) {
+              this.$router.push("/bview1");
+            } else if (result.content.indexOf("DataByMarket") > -1) {
+              this.$router.push("/bview2");
+            } else if (result.content.indexOf("DataByCulture") > -1) {
+              this.$router.push("/bview3");
+            } else if (result.content.indexOf("DataByPerson") > -1) {
+              this.$router.push("/bview4");
+            } else if (result.content.indexOf("DataByProduct") > -1) {
+              this.$router.push("/bview5");
+            } else {
+              this.$router.push("/");
+            }
+          });
+        },
+        (err) => {
+          console.log("连接失败", err);
+        }
+      );
+    },
     closeDialogFn() {
       this.closeDialogBoo = true;
     },

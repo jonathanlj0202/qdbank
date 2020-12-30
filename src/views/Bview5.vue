@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <div class="content-wrapper">
-      <!-- <div class="content-box"> -->
       <vueSeamlessScroll
         :data="productArr"
         class="content-box"
@@ -40,8 +39,6 @@
         </div>
       </vueSeamlessScroll>
     </div>
-
-    <div class="bottom-btn-box">热销产品</div>
   </div>
 </template>
 <script>
@@ -51,7 +48,7 @@ import vueSeamlessScroll from "vue-seamless-scroll";
 import { getBankData } from "../api";
 
 export default {
-  name: "View3",
+  name: "Bview5",
   components: {
     vueQr,
     Flipper,
@@ -124,43 +121,41 @@ export default {
 <style src="vue-flipper/dist/vue-flipper.css"></style>
 <style scoped>
 .container {
-  width: 1100px;
-  height: 1920px; /*no*/
-  position: absolute;
-  top: 50%;
-  left: 2140px;
-  margin-top: -960px; /*no*/
+  width: 100%;
+  height: 100vh;
+  position: relative;
   overflow: hidden;
+  background: url("../assets/img/bg.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 .content-wrapper {
-  width: 1025px;
-  height: 1750px; /*no*/
-  margin: 80px auto 0px; /*no*/
+  width: 3120px;
+  height: 1600px; /*no*/
   overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -800px;
+  margin-left: -1560px; /*no*/
 }
 
 .content-box {
-  width: 1025px;
-  height: 1750px; /*no*/
+  width: 3120px;
+  height: 1600px; /*no*/
 }
-
-/*no*/
 
 .hotproduct-item-wrapper {
-  width: 500px;
-  height: 330px; /*no*/
+  width: 720px;
+  height: 480px; /*no*/
   float: left;
-  margin-bottom: 20px; /*no*/
-}
-
-.hotproduct-item-wrapper:nth-child(odd) {
-  margin-right: 20px;
+  margin: 0 30px;
+  margin-bottom: 60px; /*no*/
 }
 
 .hotproduct-item {
-  width: 500px;
-  height: 330px; /*no*/
+  width: 720px;
+  height: 480px; /*no*/
   padding: 25px 0px; /*no*/
   margin: 0 auto;
   box-sizing: border-box;
@@ -170,102 +165,84 @@ export default {
   position: relative;
 }
 
-.hotproduct-item .back-box {
-  width: 200px;
-  height: 250px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -125px;
-  margin-left: -100px;
-}
-
-.hotproduct-item .url-code {
-  width: 200px;
-  height: 200px;
-}
-
-.hotproduct-item .tips-text {
-  height: 30px;
-  line-height: 30px;
-  color: #00ffd6;
-  font-size: 26px;
-  text-align: center;
-  margin-top: 10px;
-}
-
 .hotproduct-item .item-name {
-  width: 450px;
-  height: 40px; /*no*/
-  line-height: 40px; /*no*/
+  width: 720px;
+  height: 60px; /*no*/
+  line-height: 60px; /*no*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #00ffd6;
   text-align: center;
-  font-size: 26px;
+  font-size: 42px;
 }
 
 .hotproduct-item .item-type {
   text-align: center;
-  height: 30px; /*no*/
-  line-height: 30px; /*no*/
+  height: 35px; /*no*/
+  line-height: 35px; /*no*/
   color: #fff;
-  font-size: 24px;
-  margin-top: 5px; /*no*/
+  font-size: 28px;
+  margin-top: 10px; /*no*/
 }
 
 .hotproduct-item .item-num {
   text-align: center;
-  height: 50px; /*no*/
-  line-height: 50px; /*no*/
-  font-size: 40px;
-  margin-top: 10px; /*no*/
+  height: 110px; /*no*/
+  line-height: 110px; /*no*/
+  font-size: 92px;
+  margin-top: 20px; /*no*/
   color: #00ffd6;
 }
 
 .hotproduct-item .item-unit {
   text-align: center;
-  height: 30px; /*no*/
-  line-height: 30px; /*no*/
-  font-size: 22px;
+  height: 35px; /*no*/
+  line-height: 35px; /*no*/
+  font-size: 28px;
   color: #fff;
-  margin-top: 10px; /*no*/
+  margin-top: 20px; /*no*/
 }
 
 .hotproduct-item .item-des1 {
   text-align: center;
-  height: 30px; /*no*/
-  line-height: 30px; /*no*/
-  font-size: 22px;
-  margin-top: 10px; /*no*/
+  height: 50px; /*no*/
+  line-height: 50px; /*no*/
+  font-size: 36px;
+  margin-top: 15px; /*no*/
   color: #fff;
 }
 
 .hotproduct-item .item-des2 {
   text-align: center;
-  height: 30px; /*no*/
-  line-height: 30px; /*no*/
-  font-size: 22px;
+  height: 50px; /*no*/
+  line-height: 50px; /*no*/
+  font-size: 36px;
   color: #fff;
-  margin-top: 5px; /*no*/
+  margin-top: 15px; /*no*/
 }
 
-/*bottomview*/
-
-.bottom-btn-box {
+.hotproduct-item .back-box {
+  width: 300px;
+  height: 350px;
   position: absolute;
-  bottom: 25px; /*no*/
-  left: 205px;
-  width: 690px;
-  height: 60px; /*no*/
-  line-height: 60px; /*no*/
-  background-image: url("../assets/img/3.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  text-align: center;
+  top: 50%;
+  left: 50%;
+  margin-top: -170px;
+  margin-left: -150px;
+}
+
+.hotproduct-item .url-code {
+  width: 300px;
+  height: 300px;
+}
+
+.hotproduct-item .tips-text {
+  height: 50px;
+  line-height: 50px;
   color: #00ffd6;
-  letter-spacing: 2px;
-  font-size: 32px;
+  font-size: 36px;
+  text-align: center;
+  margin-top: 10px;
 }
 </style>

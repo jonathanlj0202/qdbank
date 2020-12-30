@@ -51,30 +51,30 @@ export default {
 
 /*rightview*/
 .person-wrapper {
-  width: 1040px;
-  height: 1730px; /*no*/
-  background-image: url("../assets/img/centerbg.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  padding: 0px 100px;
-  padding-top: 155px !important; /*no*/
-  padding-bottom: 260px !important; /*no*/
-  box-sizing: border-box;
+  width: 2700px;
+  height: 1640px; /*no*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -820px;
+  margin-left: -1350px; /*no*/
+  overflow: hidden;
 }
 
 .user-item {
-  width: 180px;
+  width: 300px;
+  height: 470px; /*no*/
   float: left;
-  margin: 0 50px;
-  margin-bottom: 55px !important; /*no*/
+  margin: 0 185px;
+  margin-bottom: 80px !important; /*no*/
   color: #fff;
   overflow: hidden;
   text-align: center;
 }
 
 .avatar-box {
-  width: 180px;
-  height: 180px;
+  width: 300px;
+  height: 300px;
   background: url("../assets/img/userBorder.png") no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
@@ -83,70 +83,26 @@ export default {
 }
 
 .user-avatar {
-  width: 160px;
-  height: 160px;
-  border-radius: 80px;
-  margin-top: 10px;
+  width: 250px;
+  height: 250px;
+  border-radius: 125px;
+  margin-top: 22.5px;
 }
 
 .user-name {
-  font-size: 20px;
-  height: 30px;
-  line-height: 30px;
-  margin-top: 15px;
+  font-size: 58px;
+  height: 60px; /*no*/
+  line-height: 60px; /*no*/
+  margin-top: 15px; /*no*/
   overflow: hidden;
+  letter-spacing: 5px;
 }
 
 .user-desc {
-  font-size: 20px;
-  height: 30px;
-  line-height: 30px;
+  font-size: 34px;
+  height: 50px; /*no*/
+  line-height: 50px; /*no*/
   overflow: hidden;
-}
-
-/*bottomview*/
-
-.bottom-btn-box {
-  position: absolute;
-  bottom: 25px; /*no*/
-  left: 205px;
-  width: 690px;
-  height: 60px; /*no*/
-  line-height: 60px; /*no*/
-  background-image: url("../assets/img/2.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  text-align: center;
-  color: #fff;
   letter-spacing: 2px;
-}
-.choose {
-  background-image: url("../assets/img/1.png") !important;
-}
-
-.btn-left {
-  width: 405px;
-  float: left;
-  font-size: 32px;
-  color: #00ffd6;
-}
-
-.left-choose {
-  width: 225px !important;
-  font-size: 26px !important;
-  color: #fff !important;
-}
-
-.btn-right {
-  width: 405px;
-  float: right;
-  font-size: 32px;
-  color: #00ffd6;
-}
-
-.right-choose {
-  width: 225px !important;
-  font-size: 26px !important;
-  color: #fff !important;
 }
 </style>
