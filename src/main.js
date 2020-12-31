@@ -1,8 +1,8 @@
 import Vue from "vue";
 import App from "./App.vue";
 import router from './router';
-import 'lib-flexible'
-import './assets/css/init.css'
+import 'lib-flexible';
+import './assets/css/init.css';
 
 const { ipcRenderer } = window.require("electron");
 

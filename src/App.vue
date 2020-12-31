@@ -59,19 +59,31 @@ export default {
           //页面选择器
           stompClient.subscribe("/topic/service_Model", (response) => {
             let result = JSON.parse(response.body);
-            if (result.content.indexOf("DataByKanban") > -1) {
-              this.$router.push("/bview1");
-            } else if (result.content.indexOf("DataByMarket") > -1) {
-              this.$router.push("/bview2");
-            } else if (result.content.indexOf("DataByCulture") > -1) {
-              this.$router.push("/bview3");
-            } else if (result.content.indexOf("DataByPerson") > -1) {
-              this.$router.push("/bview4");
-            } else if (result.content.indexOf("DataByProduct") > -1) {
-              this.$router.push("/bview5");
-            } else {
-              this.$router.push("/");
+            if (result.length <= 1) {
+              switch (result[0]) {
+                case "DataByKanban":
+                  this.$router.push("/bview1");
+                  break;
+                case "DataByMarket":
+                  this.$router.push("/bview2");
+                  break;
+                case "DataByCulture":
+                  this.$router.push("/bview3");
+                  break;
+                case "DataByPerson":
+                  this.$router.push("/bview4");
+                  break;
+                case "DataByProduct":
+                  this.$router.push("/bview5");
+                  break;
+                default:
+                  this.$router.push("/");
+                  break;
+              }
             }
+            //  else {
+
+            // }
           });
         },
         (err) => {

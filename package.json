@@ -19,7 +19,6 @@
     "lib-flexible": "^0.3.2",
     "sockjs-client": "^1.5.0",
     "vue": "^2.6.11",
-    "vue-concise-slider": "^3.4.4",
     "vue-flipper": "^1.0.0",
     "vue-qr": "^2.3.0",
     "vue-router": "^3.4.9",
