@@ -1,24 +1,15 @@
 <template>
   <div class="container">
     <div class="content-wrapper">
-      <!-- <div class="content-box"> -->
-      <vueSeamlessScroll
-        :data="productArr"
-        class="content-box"
-        :class-option="classOption"
-      >
+      <scroller :data="productArr" class="content-box" ref="scroller">
         <div
           class="hotproduct-item-wrapper"
           v-for="(item, index) of productArr"
           :key="index"
+          @click="onClick(index)"
         >
-          <flipper
-            width="100%"
-            height="100%"
-            :flipped="flippedArr[index]"
-            @click="onClick(index)"
-          >
-            <div class="hotproduct-item" slot="front">
+          <flipper width="100%" height="100%" :flipped="flippedArr[index]">
+            <div class="hotproduct-item" slot="front" :id="index">
               <div class="item-name">{{ item.name }}</div>
               <div class="item-type">{{ item.type }}</div>
               <div class="item-num">{{ item.num }}</div>
@@ -26,7 +17,7 @@
               <div class="item-des1">{{ item.dsc1 }}</div>
               <div class="item-des2">{{ item.dsc2 }}</div>
             </div>
-            <div class="hotproduct-item" slot="back">
+            <div class="hotproduct-item" slot="back" :id="index">
               <div class="back-box">
                 <vue-qr
                   :logoSrc="imageUrl"
@@ -38,7 +29,7 @@
             </div>
           </flipper>
         </div>
-      </vueSeamlessScroll>
+      </scroller>
     </div>
 
     <div class="bottom-btn-box">热销产品</div>
@@ -47,7 +38,7 @@
 <script>
 import vueQr from "vue-qr";
 import Flipper from "vue-flipper";
-import vueSeamlessScroll from "vue-seamless-scroll";
+import scroller from "vue-infinite-auto-scroll";
 import { getBankData } from "../api";
 
 export default {
@@ -55,13 +46,14 @@ export default {
   components: {
     vueQr,
     Flipper,
-    vueSeamlessScroll,
+    scroller,
   },
   data() {
     return {
       imageUrl: require("../assets/img/abclogo.png"),
       flippedArr: [],
       productArr: [],
+      cleaTime: null,
     };
   },
   created() {
@@ -100,23 +92,18 @@ export default {
       }
     });
   },
-  computed: {
-    classOption() {
-      return {
-        step: 1, // 数值越大速度滚动越快
-        limitMoveNum: 10, // 开始无缝滚动的数据量 this.dataList.length
-        hoverStop: true, // 是否开启鼠标悬停stop
-        direction: 1, // 0向下 1向上 2向左 3向右
-        openWatch: true, // 开启数据实时监控刷新dom
-        singleHeight: 0, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
-        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
-        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
-      };
-    },
-  },
   methods: {
     onClick(number) {
+      if (this.cleaTime) {
+        clearTimeout(this.cleaTime);
+        this.cleaTime = null;
+      }
+      this.$refs.scroller.stop();
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
+      this.cleaTime = setTimeout(() => {
+        this.$refs.scroller.start();
+        clearTimeout(this.cleaTime);
+      }, 15000);
     },
   },
 };
@@ -135,14 +122,14 @@ export default {
 
 .content-wrapper {
   width: 1025px;
-  height: 1750px; /*no*/
+  height: 1730px; /*no*/
   margin: 80px auto 0px; /*no*/
   overflow: hidden;
 }
 
 .content-box {
   width: 1025px;
-  height: 1750px; /*no*/
+  height: 1730px; /*no*/
 }
 
 /*no*/
@@ -161,7 +148,6 @@ export default {
 .hotproduct-item {
   width: 500px;
   height: 330px; /*no*/
-  padding: 25px 0px; /*no*/
   margin: 0 auto;
   box-sizing: border-box;
   text-align: center;
@@ -195,9 +181,9 @@ export default {
 }
 
 .hotproduct-item .item-name {
-  width: 450px;
   height: 40px; /*no*/
   line-height: 40px; /*no*/
+  padding-top: 30px; /*no*/
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -212,7 +198,7 @@ export default {
   line-height: 30px; /*no*/
   color: #fff;
   font-size: 24px;
-  margin-top: 5px; /*no*/
+  padding-top: 5px; /*no*/
 }
 
 .hotproduct-item .item-num {
@@ -220,7 +206,7 @@ export default {
   height: 50px; /*no*/
   line-height: 50px; /*no*/
   font-size: 40px;
-  margin-top: 10px; /*no*/
+  padding-top: 10px; /*no*/
   color: #00ffd6;
 }
 
@@ -230,7 +216,7 @@ export default {
   line-height: 30px; /*no*/
   font-size: 22px;
   color: #fff;
-  margin-top: 10px; /*no*/
+  padding-top: 10px; /*no*/
 }
 
 .hotproduct-item .item-des1 {
@@ -238,7 +224,7 @@ export default {
   height: 30px; /*no*/
   line-height: 30px; /*no*/
   font-size: 22px;
-  margin-top: 10px; /*no*/
+  padding-top: 10px; /*no*/
   color: #fff;
 }
 
@@ -248,7 +234,8 @@ export default {
   line-height: 30px; /*no*/
   font-size: 22px;
   color: #fff;
-  margin-top: 5px; /*no*/
+  padding-top: 5px; /*no*/
+  padding-bottom: 50px; /*no*/
 }
 
 /*bottomview*/

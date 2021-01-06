@@ -24,7 +24,11 @@
           </div>
         </div>
 
-        <Swiper v-if="swiperslideArr.length > 0" :autoPlay="false">
+        <Swiper
+          v-if="swiperslideArr.length > 0"
+          :showIndicator="swiperslideArr.length > 1"
+          :autoPlay="false"
+        >
           <Slide v-for="(objArr, key) in swiperslideArr" :key="key">
             <div class="video-btn-box">
               <div
@@ -41,17 +45,6 @@
             </div>
           </Slide>
         </Swiper>
-        <!-- <div
-            class="video-btn"
-            v-for="(item, index) of swiperArr"
-            :key="index"
-            @click="chanceVideoFn(index)"
-          >
-            <div
-              class="btn-item"
-              :style="{ backgroundImage: 'url(' + item.bgimg + ')' }"
-            ></div>
-          </div> -->
       </div>
     </div>
     <div class="content-box-right" v-show="isRight">
@@ -272,15 +265,22 @@ export default {
       if (str === "isLeft") {
         this.isLeft = true;
         this.isRight = false;
+        if (this.videoListInter) {
+          clearInterval(this.videoListInter);
+          this.videoListInter = null;
+        }
+        if (this.timingPlayBoo) {
+          this.videoList = this.timingArr;
+        } else {
+          this.videoList = this.videoArr;
+        }
+        this.videoListPlay();
       } else {
         this.isLeft = false;
         this.isRight = true;
         this.videoBoo = false;
         this.videoSrc = "";
       }
-    },
-    onClick(number) {
-      this.$set(this.flippedArr, number, !this.flippedArr[number]);
     },
     playVideo() {
       if (this.isLeft) {
@@ -333,21 +333,22 @@ export default {
     //监听定时播放
     timingPlay() {
       setInterval(() => {
+        
         this.swiperArr.forEach((element, index) => {
           let timeStr = new Date().getTime();
           if (
             timeStr > element.time[0] &&
             timeStr < element.time[1] &&
-            element.type === 1
+            element.type === 1 &&
+            element.url !== this.timingArr[0].url
           ) {
             this.timingArr = this.timingArr.push(this.swiperArr[index]);
           }
         });
-
         if (this.timingArr.length > 0) {
           this.timingPlayBoo = true;
         } else {
-          this.timingArr = [];
+          
           this.timingPlayBoo = false;
         }
       }, 1000);

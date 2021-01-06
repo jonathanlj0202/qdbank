@@ -24,32 +24,39 @@
           ></div>
         </div>
       </div>
-
-      <div class="video-btn-box">
-        <div
-          class="video-btn"
-          v-for="(item, index) of swiperArr"
-          :key="index"
-          @click="chanceVideoFn(index)"
-        >
-          <div
-            class="btn-item"
-            :style="{ backgroundImage: 'url(' + item.bgimg + ')' }"
-          ></div>
-        </div>
-      </div>
+      <Swiper v-if="swiperslideArr.length > 0" :showIndicator="swiperslideArr.length > 1" :autoPlay="false">
+        <Slide v-for="(objArr, key) in swiperslideArr" :key="key">
+          <div class="video-btn-box">
+            <div
+              class="video-btn"
+              v-for="(item, index) in objArr"
+              :key="index"
+              @click="chanceVideoFn(key * 5 + index)"
+            >
+              <div
+                class="btn-item"
+                :style="{ backgroundImage: 'url(' + item.bgimg + ')' }"
+              ></div>
+            </div>
+          </div>
+        </Slide>
+      </Swiper>
     </div>
   </div>
 </template>
 <script>
 import SockJS from "sockjs-client";
+import { Swiper, Slide } from "vue-swiper-component";
 import { Stomp } from "../assets/js/stomp.js";
 import { getCultureData } from "../api";
 const { ipcRenderer } = window.require("electron");
 
 export default {
   name: "Bview3",
-  components: {},
+  components: {
+    Swiper,
+    Slide,
+  },
   data() {
     return {
       videoBoo: false,
@@ -59,13 +66,20 @@ export default {
       clickIndex: null,
       swipertype: null,
       swiperArr: [],
-      startvideoboo: false,
-      inter: null,
+      videoArr: [],
+      videoList: [],
+      swiperslideArr: [],
+      personArr: [],
+      videoListInter: null,
+      timingPlayBoo: null,
+      timingArr: [],
+      chanceTime: null,
     };
   },
   created() {
-    this.connectionSocket();
+    this.timingPlay();
     this.getCultureDataFn();
+    this.connectionSocket();
   },
   methods: {
     connectionSocket() {
@@ -78,17 +92,10 @@ export default {
       stompClient.connect(
         {},
         () => {
-          stompClient.subscribe("/topic/service_change", (response) => {
-            let result = JSON.parse(response.body);
+          stompClient.subscribe("/topic/service_change", () => {
             let zz = ipcRenderer.sendSync("updatedownload");
             this.getCultureDataFn();
-            console.info(
-              51,
-              result,
-              zz,
-              "timerange",
-              "2020-12-10 00:00:00 ~ 2020-12-12 00:00:00"
-            );
+            console.info(zz);
           });
         },
         (err) => {
@@ -97,11 +104,16 @@ export default {
       );
     },
     getCultureDataFn() {
+      this.videoBoo = false;
+      this.videoSrc = "";
       getCultureData({
         terminal_no: window.MAC,
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.swiperArr = [];
+          this.swiperslideArr = [];
+          this.videoArr = [];
+          this.videoList = [];
           let result = ipcRenderer.sendSync("videolist");
           res.data.forEach((ele) => {
             let timeArr = "";
@@ -117,14 +129,16 @@ export default {
                   localurl = this.baseUrl + element;
                 }
               });
-              this.swiperArr.push({
+              let videoObj = {
                 //1为视频，2为图片
                 type: 1,
                 url: localurl ? localurl : ele.sources,
                 bgimg: ele.backgroundimages,
                 time: timeArr,
                 terminalno: ele.terminalno,
-              });
+              };
+              this.swiperArr.push(videoObj);
+              this.videoArr.push(videoObj);
             } else if (ele.sourcestype === "图片") {
               this.swiperArr.push({
                 //1为视频，2为图片
@@ -136,84 +150,120 @@ export default {
               });
             }
           });
-          this.clickIndex = 0;
+          let slideArr = [];
+          this.swiperArr.forEach((ele, index) => {
+            slideArr.push(ele);
+            if (++index % 5 === 0) {
+              this.swiperslideArr.push(slideArr);
+              slideArr = [];
+            }
+            if (
+              this.swiperArr.length % 5 !== 0 &&
+              this.swiperArr.length === ++index
+            ) {
+              this.swiperslideArr.push(slideArr);
+            }
+          });
           this.videoImgUrl = this.swiperArr[0].bgimg;
           this.swipertype = this.swiperArr[0].type;
-          this.startvideo();
+          if (this.timingPlayBoo) {
+            this.videoList = this.timingArr;
+          } else {
+            this.videoList = this.videoArr;
+          }
+          this.videoListPlay();
         }
       });
     },
     chanceVideoFn(index) {
+      if (this.chanceTime) {
+        clearTimeout(this.chanceTime);
+        this.chanceTime = null;
+      }
+      if (this.videoListInter) {
+        clearInterval(this.videoListInter);
+        this.videoListInter = null;
+      }
       if (index !== this.clickIndex) {
         this.videoBoo = false;
         this.videoSrc = "";
       }
-      if (this.inter) {
-        clearInterval(this.inter);
-      }
-      // if (!this.videoBoo) {
-      //   let timeval = setTimeout(() => {
-      //     console.info("nobody33");
-      //     this.startvideo();
-      //     clearTimeout(timeval);
-      //   }, 60000);
-      // } else {
-      //   this.$refs.videoRef.addEventListener(
-      //     "ended",
-      //     () => {
-      //       let timeval = setTimeout(() => {
-      //         console.info("nobody33");
-      //         this.startvideo();
-      //         clearTimeout(timeval);
-      //       }, 60000);
-      //     },
-      //     false
-      //   );
-      // }
       this.videoImgUrl = this.swiperArr[index].bgimg;
       this.swipertype = this.swiperArr[index].type;
       this.clickIndex = index;
+      this.chanceTime = setTimeout(() => {
+        clearTimeout(this.chanceTime);
+        if (this.timingPlayBoo) {
+          this.videoList = this.timingArr;
+        } else {
+          this.videoList = this.videoArr;
+        }
+        this.videoListPlay();
+      }, 30000);
     },
     playVideo() {
+      if (this.chanceTime) {
+        clearTimeout(this.chanceTime);
+        this.chanceTime = null;
+      }
       this.videoBoo = true;
       this.videoSrc = this.swiperArr[this.clickIndex].url;
       this.$refs.videoRef.load();
       this.$refs.videoRef.play();
+      this.$refs.videoRef.addEventListener(
+        "ended",
+        () => {
+          let timeval = setTimeout(() => {
+            clearTimeout(timeval);
+            if (this.timingPlayBoo) {
+              this.videoList = this.timingArr;
+            } else {
+              this.videoList = this.videoArr;
+            }
+            this.videoListPlay();
+          }, 15000);
+        },
+        false
+      );
     },
-    startvideo() {
-      this.inter = setInterval(() => {
-        if (this.swiperArr.length > 0) {
-          let clearinter = true;
-          this.swiperArr.forEach((element, index) => {
-            let timeStr = new Date().getTime();
-            if (
-              timeStr > element.time[0] &&
-              timeStr < element.time[1] &&
-              this.videoSrc === "" &&
-              element.type === 1
-            ) {
-              this.clickIndex = index;
-              this.videoBoo = true;
-              this.videoSrc = this.swiperArr[this.clickIndex].url;
-              this.$refs.videoRef.load();
-              this.$refs.videoRef.play();
-              this.$refs.videoRef.addEventListener(
-                "ended",
-                () => {
-                  this.$refs.videoRef.load();
-                  this.$refs.videoRef.play();
-                },
-                false
-              );
-            }
-
-            if (element.time[1] > timeStr && element.type === 1) {
-              clearinter = false;
-            }
-          });
-          if (clearinter) {
-            clearInterval(this.inter);
+    //实现播放列表轮播
+    videoListPlay() {
+      let number = 0;
+      this.videoBoo = true;
+      this.videoSrc = this.videoList[number].url;
+      this.$refs.videoRef.load();
+      this.$refs.videoRef.play();
+      this.videoListInter = setInterval(() => {
+        if (this.$refs.videoRef.ended) {
+          ++number;
+          if (number >= this.videoList.length) {
+            number = 0;
           }
+          this.videoSrc = this.videoList[number].url;
+          this.$refs.videoRef.load();
+          this.$refs.videoRef.play();
+        }
+      }, 500);
+    },
+    //监听定时播放
+    timingPlay() {
+      setInterval(() => {
+        this.swiperArr.forEach((element, index) => {
+          let timeStr = new Date().getTime();
+          if (
+            timeStr > element.time[0] &&
+            timeStr < element.time[1] &&
+            element.type === 1
+          ) {
+            this.timingArr = this.timingArr.push(this.swiperArr[index]);
+          }
+        });
+
+        if (this.timingArr.length > 0) {
+          this.timingPlayBoo = true;
+        } else {
+          this.timingArr = [];
+          this.timingPlayBoo = false;
         }
       }, 1000);
     },
@@ -299,16 +349,14 @@ export default {
 
 .video-btn-box {
   width: 2500px;
-  height: 281px; /*no*/
-  margin: 0 auto;
-  margin-top: 60px; /*no*/
+  height: 320px; /*no*/
   overflow: hidden;
 }
 
 .video-btn {
   width: 430px;
   height: 281px; /*no*/
-  margin-right: 25px;
+  margin-right: 70px;
   margin-bottom: 30px; /*no*/
   float: left;
   background: url("../assets/img/btnbg.png") no-repeat;

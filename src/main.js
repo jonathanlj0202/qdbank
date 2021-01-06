@@ -10,8 +10,6 @@ Vue.config.productionTip = false;
 
 window.MAC = ipcRenderer.sendSync('mac');
 
-window.MAC = "88:d7:f6:42:d6:dd";
-
 new Vue({
   router,
   render: h => h(App)
