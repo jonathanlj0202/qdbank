@@ -111,21 +111,6 @@ export default {
       chanceTime: null,
     };
   },
-  watch: {
-    timingPlayBoo(val, oldVal) {
-      console.info("watch", val, oldVal);
-      if (this.videoListInter) {
-        clearInterval(this.videoListInter);
-        this.videoListInter = null;
-      }
-      if (val) {
-        this.videoList = this.timingArr;
-      } else {
-        this.videoList = this.videoArr;
-      }
-      this.videoListPlay();
-    },
-  },
   created() {
     this.timingPlay();
     this.getPerson();
@@ -333,24 +318,34 @@ export default {
     //监听定时播放
     timingPlay() {
       setInterval(() => {
-        
+        let timeStr = new Date().getTime();
         this.swiperArr.forEach((element, index) => {
-          let timeStr = new Date().getTime();
           if (
             timeStr > element.time[0] &&
             timeStr < element.time[1] &&
-            element.type === 1 &&
-            element.url !== this.timingArr[0].url
+            element.type === 1
           ) {
-            this.timingArr = this.timingArr.push(this.swiperArr[index]);
+            if (
+              this.timingArr.length < 1 ||
+              this.timingArr[0].url !== element.url
+            ) {
+              this.timingArr = [];
+              this.timingArr.push(this.swiperArr[index]);
+              if (this.videoListInter) {
+                clearInterval(this.videoListInter);
+                this.videoListInter = null;
+              }
+              this.videoList = this.timingArr;
+              
+              this.videoListPlay();
+            }
+          }
+          if(this.timingArr.length > 0) {
+            this.timingPlayBoo = true;
+          } else {
+            this.timingPlayBoo = false;
           }
         });
-        if (this.timingArr.length > 0) {
-          this.timingPlayBoo = true;
-        } else {
-          
-          this.timingPlayBoo = false;
-        }
       }, 1000);
     },
   },
