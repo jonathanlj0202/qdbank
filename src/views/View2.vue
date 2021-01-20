@@ -276,7 +276,10 @@ export default {
         this.videoBoo = true;
         this.videoSrc = this.swiperArr[this.clickIndex].url;
         this.$refs.videoRef.load();
-        this.$refs.videoRef.play();
+        let videoval = setTimeout(() => {
+          this.$refs.videoRef.play();
+          clearTimeout(videoval);
+        }, 150);
         this.$refs.videoRef.addEventListener(
           "ended",
           () => {
@@ -301,16 +304,24 @@ export default {
         this.videoBoo = true;
         this.videoSrc = this.videoList[number].url;
         this.$refs.videoRef.load();
-        this.$refs.videoRef.play();
+        let videoval = setTimeout(() => {
+          this.$refs.videoRef.play();
+          clearTimeout(videoval);
+        }, 150);
         this.videoListInter = setInterval(() => {
-          if (this.$refs.videoRef.ended) {
-            ++number;
-            if (number >= this.videoList.length) {
-              number = 0;
+          if (this.$refs.videoRef) {
+            if (this.$refs.videoRef.ended) {
+              ++number;
+              if (number >= this.videoList.length) {
+                number = 0;
+              }
+              this.videoSrc = this.videoList[number].url;
+              this.$refs.videoRef.load();
+              let videoval = setTimeout(() => {
+                this.$refs.videoRef.play();
+                clearTimeout(videoval);
+              }, 150);
             }
-            this.videoSrc = this.videoList[number].url;
-            this.$refs.videoRef.load();
-            this.$refs.videoRef.play();
           }
         }, 500);
       }
@@ -336,11 +347,11 @@ export default {
                 this.videoListInter = null;
               }
               this.videoList = this.timingArr;
-              
+
               this.videoListPlay();
             }
           }
-          if(this.timingArr.length > 0) {
+          if (this.timingArr.length > 0) {
             this.timingPlayBoo = true;
           } else {
             this.timingPlayBoo = false;

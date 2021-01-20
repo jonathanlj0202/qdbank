@@ -1,10 +1,7 @@
 <template>
   <div class="container">
     <div class="content-wrapper">
-      <scroller
-        :data="productArr"
-        class="content-box"
-      >
+      <scroller :data="productArr" class="content-box">
         <div
           class="hotproduct-item-wrapper"
           v-for="(item, index) of productArr"
@@ -38,9 +35,12 @@
         </div>
       </scroller>
     </div>
+    <div class="dialog-wrapper" @click="clickdialog()" v-show="attr"></div>
   </div>
 </template>
 <script>
+import SockJS from "sockjs-client";
+import { Stomp } from "../assets/js/stomp.js";
 import vueQr from "vue-qr";
 import Flipper from "vue-flipper";
 import scroller from "vue-infinite-auto-scroll";
@@ -58,11 +58,21 @@ export default {
       imageUrl: require("../assets/img/abclogo.png"),
       flippedArr: [],
       productArr: [],
+      attr: null,
+      timeval: null,
     };
   },
   created() {
+    this.connectionSocket();
     for (let index = 0; index < 30; index++) {
       this.flippedArr.push(false);
+    }
+    this.attr = this.$route.query.attr;
+    if (this.attr === "standpage") {
+      this.timeval = setTimeout(() => {
+        this.$router.push({ path: "/bview1", query: { attr: "standpage" } });
+        clearTimeout(this.timeval);
+      }, 20000);
     }
   },
   mounted() {
@@ -97,8 +107,35 @@ export default {
     });
   },
   methods: {
+    connectionSocket() {
+      //连接SockJS的endpoint名称为"endpoint-websocket"
+      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
+      // 获取STOMP子协议的客户端对象
+      let stompClient = Stomp.over(socket);
+      stompClient.debug = null;
+      // 向服务器发起websocket连接
+      stompClient.connect(
+        {},
+        () => {
+          //页面选择
+          stompClient.subscribe("/topic/service_Model", (response) => {
+            let result = JSON.parse(response.body);
+            if (result[0] !== "StandByPage" && this.attr && this.timeval) {
+              clearTimeout(this.timeval);
+            }
+          });
+        },
+        (err) => {
+          console.log("连接失败", err);
+        }
+      );
+    },
     onClick(number) {
       this.$set(this.flippedArr, number, !this.flippedArr[number]);
+    },
+    clickdialog() {
+      clearTimeout(this.timeval);
+      this.$router.push("/");
     },
   },
 };
@@ -229,5 +266,14 @@ export default {
   font-size: 36px;
   text-align: center;
   margin-top: 10px;
+}
+
+.dialog-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
 }
 </style>

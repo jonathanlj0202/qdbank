@@ -24,7 +24,11 @@
           ></div>
         </div>
       </div>
-      <Swiper v-if="swiperslideArr.length > 0" :showIndicator="swiperslideArr.length > 1" :autoPlay="false">
+      <Swiper
+        v-if="swiperslideArr.length > 0"
+        :showIndicator="swiperslideArr.length > 1"
+        :autoPlay="false"
+      >
         <Slide v-for="(objArr, key) in swiperslideArr" :key="key">
           <div class="video-btn-box">
             <div
@@ -42,12 +46,13 @@
         </Slide>
       </Swiper>
     </div>
+    <div class="dialog-wrapper" @click="clickdialog()" v-show="attr"></div>
   </div>
 </template>
 <script>
 import SockJS from "sockjs-client";
-import { Swiper, Slide } from "vue-swiper-component";
 import { Stomp } from "../assets/js/stomp.js";
+import { Swiper, Slide } from "vue-swiper-component";
 import { getCultureData } from "../api";
 const { ipcRenderer } = window.require("electron");
 
@@ -74,12 +79,21 @@ export default {
       timingPlayBoo: null,
       timingArr: [],
       chanceTime: null,
+      attr: null,
+      timeval: null,
     };
   },
   created() {
     this.timingPlay();
     this.getCultureDataFn();
     this.connectionSocket();
+    this.attr = this.$route.query.attr;
+    if (this.attr === "standpage") {
+      this.timeval = setTimeout(() => {
+        this.$router.push({ path: "/bview5", query: { attr: "standpage" } });
+        clearTimeout(this.timeval);
+      }, 20000);
+    }
   },
   methods: {
     connectionSocket() {
@@ -96,6 +110,14 @@ export default {
             let zz = ipcRenderer.sendSync("updatedownload");
             this.getCultureDataFn();
             console.info(zz);
+          });
+
+          //页面选择
+          stompClient.subscribe("/topic/service_Model", (response) => {
+            let result = JSON.parse(response.body);
+            if (result[0] !== "StandByPage" && this.attr && this.timeval) {
+              clearTimeout(this.timeval);
+            }
           });
         },
         (err) => {
@@ -209,7 +231,10 @@ export default {
       this.videoBoo = true;
       this.videoSrc = this.swiperArr[this.clickIndex].url;
       this.$refs.videoRef.load();
-      this.$refs.videoRef.play();
+      let videoval = setTimeout(() => {
+        this.$refs.videoRef.play();
+        clearTimeout(videoval);
+      }, 150);
       this.$refs.videoRef.addEventListener(
         "ended",
         () => {
@@ -232,16 +257,24 @@ export default {
       this.videoBoo = true;
       this.videoSrc = this.videoList[number].url;
       this.$refs.videoRef.load();
-      this.$refs.videoRef.play();
+      let videoval = setTimeout(() => {
+        this.$refs.videoRef.play();
+        clearTimeout(videoval);
+      }, 150);
       this.videoListInter = setInterval(() => {
-        if (this.$refs.videoRef.ended) {
-          ++number;
-          if (number >= this.videoList.length) {
-            number = 0;
+        if (this.$refs.videoRef) {
+          if (this.$refs.videoRef.ended) {
+            ++number;
+            if (number >= this.videoList.length) {
+              number = 0;
+            }
+            this.videoSrc = this.videoList[number].url;
+            this.$refs.videoRef.load();
+            let videoval = setTimeout(() => {
+              this.$refs.videoRef.play();
+              clearTimeout(videoval);
+            }, 150);
           }
-          this.videoSrc = this.videoList[number].url;
-          this.$refs.videoRef.load();
-          this.$refs.videoRef.play();
         }
       }, 500);
     },
@@ -266,6 +299,10 @@ export default {
           this.timingPlayBoo = false;
         }
       }, 1000);
+    },
+    clickdialog() {
+      clearTimeout(this.timeval);
+      this.$router.push("/");
     },
   },
 };
@@ -372,5 +409,14 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
+}
+
+.dialog-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
 }
 </style>

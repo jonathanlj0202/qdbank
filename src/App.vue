@@ -59,6 +59,7 @@ export default {
           //页面选择器
           stompClient.subscribe("/topic/service_Model", (response) => {
             let result = JSON.parse(response.body);
+            console.info(23, result);
             if (result.length <= 1) {
               switch (result[0]) {
                 case "DataByKanban":
@@ -76,14 +77,14 @@ export default {
                 case "DataByProduct":
                   this.$router.push("/bview5");
                   break;
+                case "StandByPage":
+                  this.$router.push({ path: '/bview1', query: { attr: "standpage" }});
+                  break;
                 default:
                   this.$router.push("/");
                   break;
               }
             }
-            //  else {
-
-            // }
           });
         },
         (err) => {

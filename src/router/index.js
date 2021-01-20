@@ -10,6 +10,7 @@ import Bview2 from "../views/Bview2.vue";
 import Bview3 from "../views/Bview3.vue";
 import Bview4 from "../views/Bview4.vue";
 import Bview5 from "../views/Bview5.vue";
+// import Bview6 from "../views/Bview6.vue";
 import Notfound from "../views/Notfound.vue";
 import { getbranches } from "../api";
 

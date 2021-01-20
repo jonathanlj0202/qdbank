@@ -87,6 +87,7 @@
         </div>
       </div>
     </div>
+    <div class="dialog-wrapper" @click="clickdialog()" v-show="attr"></div>
   </div>
 </template>
 <script>
@@ -102,10 +103,19 @@ export default {
       lilvRightArr: [],
       exchangeArr: [],
       goldArr: [],
+      attr: null,
+      timeval: null,
     };
   },
   created() {
     this.connectionSocket();
+    this.attr = this.$route.query.attr;
+    if (this.attr === "standpage") {
+      this.timeval = setTimeout(() => {
+        this.$router.push({ path: "/bview2", query: { attr: "standpage" } });
+        clearTimeout(this.timeval);
+      }, 20000);
+    }
   },
   methods: {
     connectionSocket() {
@@ -151,11 +161,23 @@ export default {
               this.lilvRightArr.push(lilv[index]);
             }
           });
+
+          //页面选择
+          stompClient.subscribe("/topic/service_Model", (response) => {
+            let result = JSON.parse(response.body);
+            if (result[0] !== "StandByPage" && this.attr && this.timeval) {
+              clearTimeout(this.timeval);
+            }
+          });
         },
         (err) => {
           console.log("连接失败", err);
         }
       );
+    },
+    clickdialog() {
+      clearTimeout(this.timeval);
+      this.$router.push("/");
     },
   },
 };
@@ -375,5 +397,14 @@ export default {
   width: 800px;
   float: right;
   overflow: hidden;
+}
+
+.dialog-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
 }
 </style>
