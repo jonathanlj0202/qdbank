@@ -1,4 +1,7 @@
 module.exports = {
+    publicPath: './',
+    outputDir: '../myApp1/www',
+    productionSourceMap: false,
     pluginOptions: {
         electronBuilder: {
             preload: 'src/preload.js',

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container_b2">
     <div class="product-box">
       <div class="product" v-for="(item, index) of productArr" :key="index">
         <flipper
@@ -58,9 +58,9 @@ export default {
     this.attr = this.$route.query.attr;
     if (this.attr === "standpage") {
       this.timeval = setTimeout(() => {
-        this.$router.push({ path: "/bview3", query: { attr: "standpage" } });
+        this.$router.push({ path: "/bview31", query: { attr: "standpage" } });
         clearTimeout(this.timeval);
-      }, 20000);
+      }, 60000);
     }
   },
   methods: {
@@ -111,121 +111,5 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: url("../assets/img/bg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.product-box {
-  width: 3130px;
-  height: 1310px; /*no*/
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-left: -1565px;
-  margin-top: -655px; /*no*/
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-.product {
-  width: 740px;
-  height: 620px; /*no*/
-  margin: 0 20px;
-  margin-bottom: 40px; /*no*/
-  overflow: hidden;
-  float: left;
-}
-
-.product-item {
-  width: 750px;
-  padding-top: 1px; /*no*/
-  box-sizing: border-box;
-  height: 620px; /*no*/
-  background: url("../assets/img/bview2bg.png") no-repeat;
-  background-size: 100% 100%;
-  text-align: center;
-  color: #fff;
-}
-
-.item-logo {
-  width: 580px;
-  height: 370px; /*no*/
-  margin: 75px auto 10px; /*no*/
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center center;
-  border-radius: 8px !important;
-  overflow: hidden;
-}
-
-.item-name {
-  width: 580px;
-  height: 70px; /*no*/
-  line-height: 70px; /*no*/
-  font-size: 56px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.item-detail-name {
-  width: 680px;
-  height: 60px; /*no*/
-  line-height: 30px; /*no*/
-  overflow: hidden;
-  font-size: 46px;
-  margin: 0 auto;
-  padding-top: 20px; /*no*/
-  padding-bottom: 10px; /*no*/
-  margin-top: 50px; /*no*/
-  box-sizing: border-box;
-}
-
-.item-detail-content {
-  width: 680px;
-  height: 300px; /*no*/
-  margin: 10px auto 0px; /*no*/
-  line-height: 60px; /*no*/
-  font-size: 36px;
-  overflow: hidden;
-}
-
-.item-detail-left-logo {
-  width: 240px;
-  height: 90px; /*no*/
-  margin-left: 50px;
-  text-align: left;
-  float: left;
-}
-
-.item-detail-left-logo img {
-  width: 320px;
-  height: 140px;
-  border-radius: 5px;
-}
-
-.item-detail-right-logo {
-  width: 140px;
-  height: 140px;
-  margin-right: 50px;
-  float: right;
-}
-
-.item-detail-right-logo img {
-  width: 140px;
-  height: 140px;
-}
-
-.dialog-wrapper {
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 10;
-}
+@import '../assets/css/bview2_1920.css';
 </style>

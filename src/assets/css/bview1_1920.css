@@ -1,0 +1,235 @@
+/*w 0.59259 h 0.5625*/
+.container_b1 {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: url("../img/bg.png") no-repeat;
+    background-size: 100% 100%;
+}
+
+.container_b1 .view-wrapper {
+    width: 1795px;
+    height: 911px;
+    /*no*/
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -897px;
+    margin-top: -455px;
+    /*no*/
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.container_b1 .exchange-box {
+    width: 853px;
+    height: 911px;
+    /*no*/
+    float: left;
+    margin-right: 33px;
+    background: url("../img/databg3.png") no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
+}
+
+.container_b1 .lilv-box {
+    width: 900px;
+    height: 360px;
+    /*no*/
+    margin-bottom: 33px;
+    /*no*/
+    float: left;
+    background: url("../img/databg1.png") no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
+}
+
+.container_b1 .gold-box {
+    width: 900px;
+    height: 517px;
+    /*no*/
+    float: left;
+    background: url("../img/databg2.png") no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
+}
+
+.container_b1 .lilv-box .title, .container_b1 .exchange-box .title, .container_b1 .gold-box .title {
+    font-size: 40px;
+    height: 85px;
+    /*no*/
+    line-height: 85px;
+    /*no*/
+    color: #00ffd6;
+    padding: 0 30px;
+}
+
+.container_b1 .exchange-wrapper {
+    width: 853px;
+    height: 675px;
+    /*no*/
+    margin-top: 11px;
+    /*no*/
+    overflow: hidden;
+}
+
+.container_b1 .exchange-item-box {
+    width: 853px;
+    overflow: hidden;
+}
+
+.container_b1 .gold-wrapper {
+    width: 900px;
+    height: 337px;
+    /*no*/
+    overflow: hidden;
+}
+
+.container_b1 .gold-item-box {
+    width: 900px;
+    overflow: hidden;
+}
+
+.container_b1 .exchange-item,.container_b1 .gold-item {
+    width: 810px;
+    height: 84px;
+    /*no*/
+    line-height: 84px;
+    /*no*/
+    color: #fff;
+    text-align: center;
+    font-size: 25px;
+    overflow: hidden;
+}
+
+.container_b1 .exchange-item {
+    height: 90px !important;
+    /*no*/
+    line-height: 90px !important;
+    /*no*/
+}
+
+.container_b1 .exchange-title,.container_b1 .gold-title {
+    color: #00ffd6 !important;
+}
+
+.container_b1 .exchange-item .name,.container_b1 .gold-item .name {
+    width: 272px;
+    float: left;
+}
+
+.container_b1 .exchange-item .buy,.container_b1 .gold-item .buy {
+    width: 200px;
+    float: left;
+}
+
+.container_b1 .exchange-item .sell,.container_b1 .gold-item .sell {
+    width: 200px;
+    float: left;
+}
+
+.container_b1 .exchange-item .time,.container_b1 .gold-item .time {
+    width: 130px;
+    float: left;
+}
+
+.container_b1 .exchange-item-box::-webkit-scrollbar,.container_b1 .excgoldhange-item-box::-webkit-scrollbar {
+    display: none;
+}
+
+.container_b1 .exchange-item-box,.container_b1 .gold-item-box {
+    -webkit-animation: bottomrowup 10s 1s linear infinite;
+    animation: bottomrowup 10s 1s linear infinite;
+}
+
+.container_b1 .exchange-item-box:hover,.container_b1 .gold-item-box:hover {
+    animation-play-state: paused;
+    -webkit-animation-play-state: paused;
+}
+
+@-webkit-keyframes bottomrowup {
+    0% {
+        -webkit-transform: translate3d(0, 0, 0);
+    }
+    100% {
+        -webkit-transform: translate3d(0, -300px, 0);
+        /*no*/
+    }
+}
+
+@keyframes bottomrowup {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+    100% {
+        transform: translate3d(0, -300px, 0);
+        /*no*/
+    }
+}
+
+.container_b1 .lilv-box .mini-title {
+    height: 40px;
+    /*no*/
+    line-height: 30px;
+    /*no*/
+    font-size: 25px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #00ffd6;
+}
+
+.container_b1 .lilv-box .left {
+    width: 408px;
+    float: left;
+    overflow: hidden;
+}
+
+.container_b1 .lilv-item {
+    width: 408px;
+    overflow: hidden;
+}
+
+.container_b1 .lilv-item .item-left,.container_b1 .lilv-item .item-right {
+    width: 186px;
+    height: 36px;
+    /*no*/
+    line-height: 36px;
+    /*no*/
+    overflow: hidden;
+    float: left;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+}
+
+.container_b1 .lilv-item .item-left {
+    margin-left: 35px;
+}
+
+.container_b1 .lilv-box .line {
+    width: 1px;
+    float: left;
+    background-color: #00ffd6;
+    height: 210px;
+    /*no*/
+    margin: 40px auto 0px;
+    /*no*/
+}
+
+.container_b1 .lilv-box .right {
+    width: 474px;
+    float: right;
+    overflow: hidden;
+}
+
+.container_b1 .dialog-wrapper {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 10;
+}

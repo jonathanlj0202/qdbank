@@ -8,9 +8,9 @@ import View4 from "../views/View4.vue";
 import Bview1 from "../views/Bview1.vue";
 import Bview2 from "../views/Bview2.vue";
 import Bview3 from "../views/Bview3.vue";
+import Bview31 from "../views/Bview31.vue";
 import Bview4 from "../views/Bview4.vue";
 import Bview5 from "../views/Bview5.vue";
-// import Bview6 from "../views/Bview6.vue";
 import Notfound from "../views/Notfound.vue";
 import { getbranches } from "../api";
 
@@ -43,6 +43,10 @@ const routes = [
     path: '/bview3',
     name: 'Bview3',
     component: Bview3
+  }, {
+    path: '/bview31',
+    name: 'Bview31',
+    component: Bview31
   }, {
     path: '/bview4',
     name: 'Bview4',

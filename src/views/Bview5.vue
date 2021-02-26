@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container_b5">
     <div class="content-wrapper">
       <scroller :data="productArr" class="content-box">
         <div
@@ -72,7 +72,7 @@ export default {
       this.timeval = setTimeout(() => {
         this.$router.push({ path: "/bview1", query: { attr: "standpage" } });
         clearTimeout(this.timeval);
-      }, 20000);
+      }, 90000);
     }
   },
   mounted() {
@@ -142,138 +142,5 @@ export default {
 </script>
 <style src="vue-flipper/dist/vue-flipper.css"></style>
 <style scoped>
-.container {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: url("../assets/img/bg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.content-wrapper {
-  width: 3120px;
-  height: 1600px; /*no*/
-  overflow: hidden;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -800px;
-  margin-left: -1560px; /*no*/
-}
-
-.content-box {
-  width: 3120px;
-  height: 1600px; /*no*/
-}
-
-.hotproduct-item-wrapper {
-  width: 720px;
-  height: 480px; /*no*/
-  float: left;
-  margin: 0 30px;
-  margin-bottom: 60px; /*no*/
-}
-
-.hotproduct-item {
-  width: 720px;
-  height: 480px; /*no*/
-  padding: 25px 0px; /*no*/
-  margin: 0 auto;
-  box-sizing: border-box;
-  text-align: center;
-  background: url("../assets/img/hotproductbg.png") no-repeat;
-  background-size: 100% 100%;
-  position: relative;
-}
-
-.hotproduct-item .item-name {
-  width: 720px;
-  height: 60px; /*no*/
-  line-height: 60px; /*no*/
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #00ffd6;
-  text-align: center;
-  font-size: 42px;
-}
-
-.hotproduct-item .item-type {
-  text-align: center;
-  height: 35px; /*no*/
-  line-height: 35px; /*no*/
-  color: #fff;
-  font-size: 28px;
-  margin-top: 10px; /*no*/
-}
-
-.hotproduct-item .item-num {
-  text-align: center;
-  height: 110px; /*no*/
-  line-height: 110px; /*no*/
-  font-size: 92px;
-  margin-top: 20px; /*no*/
-  color: #00ffd6;
-}
-
-.hotproduct-item .item-unit {
-  text-align: center;
-  height: 35px; /*no*/
-  line-height: 35px; /*no*/
-  font-size: 28px;
-  color: #fff;
-  margin-top: 20px; /*no*/
-}
-
-.hotproduct-item .item-des1 {
-  text-align: center;
-  height: 50px; /*no*/
-  line-height: 50px; /*no*/
-  font-size: 36px;
-  margin-top: 15px; /*no*/
-  color: #fff;
-}
-
-.hotproduct-item .item-des2 {
-  text-align: center;
-  height: 50px; /*no*/
-  line-height: 50px; /*no*/
-  font-size: 36px;
-  color: #fff;
-  margin-top: 15px; /*no*/
-}
-
-.hotproduct-item .back-box {
-  width: 300px;
-  height: 350px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -170px;
-  margin-left: -150px;
-}
-
-.hotproduct-item .url-code {
-  width: 300px;
-  height: 300px;
-}
-
-.hotproduct-item .tips-text {
-  height: 50px;
-  line-height: 50px;
-  color: #00ffd6;
-  font-size: 36px;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.dialog-wrapper {
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 10;
-}
+@import '../assets/css/bview5_1920.css';
 </style>

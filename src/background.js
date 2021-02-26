@@ -9,7 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
 // const pathName = 'C:/wamp/www';
-const pathName = 'C:/wamp/www';
+const pathName = 'C:/nginx/html';
 let win = "";
 
 let dirs = [];

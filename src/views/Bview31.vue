@@ -12,39 +12,7 @@
             ref="videoRef"
           ></video>
         </div>
-        <div class="video-bg" v-show="!videoBoo">
-          <div
-            class="video-img"
-            :style="{ backgroundImage: 'url(' + videoImgUrl + ')' }"
-          ></div>
-          <div
-            class="video-play-btn"
-            @click="playVideo()"
-            v-show="swipertype === 1"
-          ></div>
-        </div>
       </div>
-      <Swiper
-        v-if="swiperslideArr.length > 0"
-        :showIndicator="swiperslideArr.length > 1"
-        :autoPlay="false"
-      >
-        <Slide v-for="(objArr, key) in swiperslideArr" :key="key">
-          <div class="video-btn-box">
-            <div
-              class="video-btn"
-              v-for="(item, index) in objArr"
-              :key="index"
-              @click="chanceVideoFn(key * 5 + index)"
-            >
-              <div
-                class="btn-item"
-                :style="{ backgroundImage: 'url(' + item.bgimg + ')' }"
-              ></div>
-            </div>
-          </div>
-        </Slide>
-      </Swiper>
     </div>
     <div class="dialog-wrapper" @click="clickdialog()" v-show="attr"></div>
   </div>
@@ -52,16 +20,12 @@
 <script>
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
-import { Swiper, Slide } from "vue-swiper-component";
 import { getCultureData } from "../api";
 const { ipcRenderer } = window.require("electron");
 
 export default {
-  name: "Bview3",
-  components: {
-    Swiper,
-    Slide,
-  },
+  name: "Bview31",
+  components: {},
   data() {
     return {
       videoBoo: false,
@@ -73,7 +37,6 @@ export default {
       swiperArr: [],
       videoArr: [],
       videoList: [],
-      swiperslideArr: [],
       personArr: [],
       videoListInter: null,
       timingPlayBoo: null,
@@ -87,6 +50,7 @@ export default {
     this.timingPlay();
     this.getCultureDataFn();
     this.connectionSocket();
+    this.attr = this.$route.query.attr;
   },
   methods: {
     connectionSocket() {
@@ -126,7 +90,6 @@ export default {
       }).then((res) => {
         if (res.data && res.code === "0000") {
           this.swiperArr = [];
-          this.swiperslideArr = [];
           this.videoArr = [];
           this.videoList = [];
           let result = ipcRenderer.sendSync("videolist");
@@ -165,20 +128,6 @@ export default {
               });
             }
           });
-          let slideArr = [];
-          this.swiperArr.forEach((ele, index) => {
-            slideArr.push(ele);
-            if (++index % 5 === 0) {
-              this.swiperslideArr.push(slideArr);
-              slideArr = [];
-            }
-            if (
-              this.swiperArr.length % 5 !== 0 &&
-              this.swiperArr.length === ++index
-            ) {
-              this.swiperslideArr.push(slideArr);
-            }
-          });
           this.videoImgUrl = this.swiperArr[0].bgimg;
           this.swipertype = this.swiperArr[0].type;
           if (this.timingPlayBoo) {
@@ -189,60 +138,6 @@ export default {
           this.videoListPlay();
         }
       });
-    },
-    chanceVideoFn(index) {
-      if (this.chanceTime) {
-        clearTimeout(this.chanceTime);
-        this.chanceTime = null;
-      }
-      if (this.videoListInter) {
-        clearInterval(this.videoListInter);
-        this.videoListInter = null;
-      }
-      if (index !== this.clickIndex) {
-        this.videoBoo = false;
-        this.videoSrc = "";
-      }
-      this.videoImgUrl = this.swiperArr[index].bgimg;
-      this.swipertype = this.swiperArr[index].type;
-      this.clickIndex = index;
-      this.chanceTime = setTimeout(() => {
-        clearTimeout(this.chanceTime);
-        if (this.timingPlayBoo) {
-          this.videoList = this.timingArr;
-        } else {
-          this.videoList = this.videoArr;
-        }
-        this.videoListPlay();
-      }, 30000);
-    },
-    playVideo() {
-      if (this.chanceTime) {
-        clearTimeout(this.chanceTime);
-        this.chanceTime = null;
-      }
-      this.videoBoo = true;
-      this.videoSrc = this.swiperArr[this.clickIndex].url;
-      this.$refs.videoRef.load();
-      let videoval = setTimeout(() => {
-        this.$refs.videoRef.play();
-        clearTimeout(videoval);
-      }, 150);
-      this.$refs.videoRef.addEventListener(
-        "ended",
-        () => {
-          let timeval = setTimeout(() => {
-            clearTimeout(timeval);
-            if (this.timingPlayBoo) {
-              this.videoList = this.timingArr;
-            } else {
-              this.videoList = this.videoArr;
-            }
-            this.videoListPlay();
-          }, 15000);
-        },
-        false
-      );
     },
     //实现播放列表轮播
     videoListPlay() {
@@ -259,7 +154,12 @@ export default {
           if (this.$refs.videoRef.ended) {
             ++number;
             if (number >= this.videoList.length) {
-              number = 0;
+              if (this.attr === "standpage") {
+                this.$router.push({ path: "/bview5", query: { attr: "standpage" } });
+                return;
+              } else {
+                number = 0;
+              }
             }
             this.videoSrc = this.videoList[number].url;
             this.$refs.videoRef.load();
@@ -301,115 +201,5 @@ export default {
 };
 </script>
 <style scoped>
-.container {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  overflow: hidden;
-  background: url("../assets/img/bg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.content-wrapper {
-  width: 2500px;
-  height: 1780px; /*no*/
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -890px; /*no*/
-  margin-left: -1250px;
-  overflow: hidden;
-}
-
-.video-wrapper {
-  width: 2500px;
-  height: 1440px; /*no*/
-  margin: 0 auto 30px; /*no*/
-  position: relative;
-  overflow: hidden;
-  background: url("../assets/img/bview3bg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.video-box {
-  width: 2400px;
-  height: 1350px; /*no*/
-  margin: 0 auto; /*no*/
-  margin-top: 45px; /*no*/
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.video-box .video {
-  width: 2400px;
-  height: 1350px; /*no*/
-  border: none;
-  outline: 0;
-  margin: 0 auto;
-}
-
-.video-bg {
-  width: 2400px;
-  height: 1350px; /*no*/
-  overflow: hidden;
-  position: relative;
-  margin: 0 auto; /*no*/
-  margin-top: 45px; /*no*/
-}
-
-.video-bg .video-img {
-  width: 2400px;
-  height: 1350px; /*no*/
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: top center;
-}
-
-.video-play-btn {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 2400px;
-  height: 1350px; /*no*/
-  background-color: rgba(0, 0, 0, 0.6);
-  background-image: url("../assets/img/videoplay.png");
-  background-repeat: no-repeat;
-  background-size: 100px 100px;
-  background-position: center center;
-}
-
-.video-btn-box {
-  width: 2500px;
-  height: 320px; /*no*/
-  overflow: hidden;
-}
-
-.video-btn {
-  width: 430px;
-  height: 281px; /*no*/
-  margin-right: 70px;
-  margin-bottom: 30px; /*no*/
-  float: left;
-  background: url("../assets/img/btnbg.png") no-repeat;
-  background-size: 100% 100%;
-}
-
-.btn-item {
-  width: 360px;
-  height: 220px; /*no*/
-  margin: 0 auto;
-  margin-top: 30px; /*no*/
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  overflow: hidden;
-}
-
-.dialog-wrapper {
-  width: 100%;
-  height: 100vh;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 10;
-}
+@import '../assets/css/bview3_1920.css';
 </style>
