@@ -169,7 +169,7 @@ export default {
   },
   methods: {
     connectionSocket() {
-      //连接SockJS的endpoint名称为"endpoint-websocket"
+      //连接SockJS的1endpoint名称为"endpoint-websocket"
       const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
       // 获取STOMP子协议的客户端对象
       let stompClient = Stomp.over(socket);
