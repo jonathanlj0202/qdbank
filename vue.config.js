@@ -18,5 +18,18 @@ module.exports = {
             .options({
                 remUnit: 324
             });
+    },
+    pluginOptions: {
+        electronBuilder: {
+            builderOptions: {
+                // options placed here will be merged with default configuration and passed to electron-builder
+                'appId': 'JBRH-PHJR',
+                'productName': '农业银行',
+                'win': {
+                    'target': 'nsis',
+                    'icon': 'public/favicon.ico'
+                }
+            }
+        }
     }
 }

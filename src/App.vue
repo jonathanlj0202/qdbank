@@ -29,8 +29,6 @@
 </template>
 
 <script>
-import SockJS from "sockjs-client";
-import { Stomp } from "./assets/js/stomp.js";
 export default {
   name: "App",
   components: {},
@@ -42,56 +40,8 @@ export default {
       numberClass: "number-item",
     };
   },
-  created() {
-    this.connectionSocket();
-  },
+  created() {},
   methods: {
-    connectionSocket() {
-      //连接SockJS的endpoint名称为"endpoint-websocket"
-      const socket = new SockJS(process.env.VUE_APP_SOCKETURL);
-      // 获取STOMP子协议的客户端对象
-      let stompClient = Stomp.over(socket);
-      stompClient.debug = null;
-      // 向服务器发起websocket连接
-      stompClient.connect(
-        {},
-        () => {
-          //页面选择器
-          stompClient.subscribe("/topic/service_Model", (response) => {
-            let result = JSON.parse(response.body);
-            console.info(23, result);
-            if (result.length <= 1) {
-              switch (result[0]) {
-                case "DataByKanban":
-                  this.$router.push("/bview1");
-                  break;
-                case "DataByMarket":
-                  this.$router.push("/bview2");
-                  break;
-                case "DataByCulture":
-                  this.$router.push("/bview3");
-                  break;
-                case "DataByPerson":
-                  this.$router.push("/bview4");
-                  break;
-                case "DataByProduct":
-                  this.$router.push("/bview5");
-                  break;
-                case "StandByPage":
-                  this.$router.push({ path: '/bview1', query: { attr: "standpage" }});
-                  break;
-                default:
-                  this.$router.push("/");
-                  break;
-              }
-            }
-          });
-        },
-        (err) => {
-          console.log("连接失败", err);
-        }
-      );
-    },
     closeDialogFn() {
       this.closeDialogBoo = true;
     },
@@ -141,12 +91,14 @@ export default {
   height: 100vh;
   overflow: hidden;
 }
+
 .close-dialog-box {
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 9;
   background-color: rgba(0, 0, 0, 0.8);
 }
 

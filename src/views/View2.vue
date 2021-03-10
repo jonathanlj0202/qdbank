@@ -363,5 +363,245 @@ export default {
 };
 </script>
 <style scoped>
-@import '../assets/css/view2_1920.css';
+/* @import '../assets/css/view2_1920.css'; */
+.container2 {
+    width: 1040px;
+    height: 1920px;
+    /*no*/
+    position: absolute;
+    top: 50%;
+    left: 1100px;
+    margin-top: -960px;
+    /*no*/
+    overflow: hidden;
+}
+
+.container2 .content-box-left, .content-box-right {
+    width: 100%;
+    padding-top: 80px;
+    /*no*/
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.container2 .content-wrapper {
+    width: 1040px;
+    height: 1730px;
+    /*no*/
+    border: 1px solid #00ffd6;
+    /*no*/
+    padding-top: 80px;
+    /*no*/
+    box-sizing: border-box;
+}
+
+.container2 .abc-logo {
+    width: 484px;
+    height: 94px;
+    background: url("../assets/img/banklogo.png") no-repeat;
+    background-size: contain;
+    margin: 0px auto 100px;
+    /*no*/
+}
+
+.container2 .video-wrapper {
+    width: 1036px;
+    height: 580px;
+    /*no*/
+    margin: 0 auto 60px;
+    /*no*/
+    position: relative;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.container2 .video-box {
+    width: 1036px;
+    height: 580px;
+    /*no*/
+}
+
+.container2 .video-box .video {
+    width: 1036px;
+    height: 580px;
+    /*no*/
+    border: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    outline: 0;
+    margin: 0 auto;
+}
+
+.container2 .video-bg {
+    width: 1036px;
+    height: 580px;
+    /*no*/
+    overflow: hidden;
+    position: relative;
+}
+
+.container2 .video-bg img {
+    width: 1036px;
+    height: 580px;
+    /*no*/
+}
+
+.container2 .video-play-btn {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 1036px;
+    height: 580px;
+    /*no*/
+    background-color: rgba(0, 0, 0, 0.6);
+    background-image: url("../assets/img/videoplay.png");
+    background-repeat: no-repeat;
+    background-size: 100px 100px;
+    background-position: center center;
+}
+
+.container2 .video-btn-box {
+    width: 960px;
+    height: 620px;
+    /*no*/
+    margin: 0 auto;
+    margin-top: 60px;
+    /*no*/
+    overflow: hidden;
+}
+
+.container2 .video-btn {
+    width: 430px;
+    height: 281px;
+    /*no*/
+    margin-left: 25px;
+    margin-right: 25px;
+    margin-bottom: 30px;
+    /*no*/
+    float: left;
+    background: url("../assets/img/btnbg.png") no-repeat;
+    background-size: 100% 100%;
+}
+
+.container2 .btn-item {
+    width: 360px;
+    height: 220px;
+    /*no*/
+    margin: 0 auto;
+    margin-top: 30px;
+    /*no*/
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    overflow: hidden;
+}
+
+/*rightview*/
+
+.container2 .person-wrapper {
+    width: 1040px;
+    height: 1730px;
+    /*no*/
+    background-image: url("../assets/img/centerbg.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 0px 100px;
+    padding-top: 155px !important;
+    /*no*/
+    padding-bottom: 260px !important;
+    /*no*/
+    box-sizing: border-box;
+}
+
+.container2 .user-item {
+    width: 180px;
+    float: left;
+    margin: 0 50px;
+    margin-bottom: 55px !important;
+    /*no*/
+    color: #fff;
+    overflow: hidden;
+    text-align: center;
+}
+
+.container2 .avatar-box {
+    width: 180px;
+    height: 180px;
+    background: url("../assets/img/userBorder.png") no-repeat;
+    background-size: 100% 100%;
+    overflow: hidden;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.container2 .user-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 80px;
+    margin-top: 10px;
+}
+
+.container2 .user-name {
+    font-size: 20px;
+    height: 30px;
+    line-height: 30px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.container2 .user-desc {
+    font-size: 20px;
+    height: 30px;
+    line-height: 30px;
+    overflow: hidden;
+}
+
+/*bottomview*/
+
+.container2 .bottom-btn-box {
+    position: absolute;
+    bottom: 25px;
+    /*no*/
+    left: 205px;
+    width: 690px;
+    height: 60px;
+    /*no*/
+    line-height: 60px;
+    /*no*/
+    background-image: url("../assets/img/2.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    text-align: center;
+    color: #fff;
+    letter-spacing: 2px;
+}
+
+.container2 .choose {
+    background-image: url("../assets/img/1.png") !important;
+}
+
+.container2 .btn-left {
+    width: 405px;
+    float: left;
+    font-size: 32px;
+    color: #00ffd6;
+}
+
+.container2 .left-choose {
+    width: 225px !important;
+    font-size: 26px !important;
+    color: #fff !important;
+}
+
+.container2 .btn-right {
+    width: 405px;
+    float: right;
+    font-size: 32px;
+    color: #00ffd6;
+}
+
+.container2 .right-choose {
+    width: 225px !important;
+    font-size: 26px !important;
+    color: #fff !important;
+}
 </style>

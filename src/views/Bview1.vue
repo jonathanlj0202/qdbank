@@ -87,7 +87,7 @@
         </div>
       </div>
     </div>
-    <div class="dialog-wrapper" @click="clickdialog()" v-show="attr"></div>
+    <div class="dialog-wrapper" @click="clickdialog()"></div>
   </div>
 </template>
 <script>
@@ -103,19 +103,15 @@ export default {
       lilvRightArr: [],
       exchangeArr: [],
       goldArr: [],
-      attr: null,
       timeval: null,
     };
   },
   created() {
     this.connectionSocket();
-    this.attr = this.$route.query.attr;
-    if (this.attr === "standpage") {
-      this.timeval = setTimeout(() => {
-        this.$router.push({ path: "/bview2", query: { attr: "standpage" } });
-        clearTimeout(this.timeval);
-      }, 90000);
-    }
+    this.timeval = setTimeout(() => {
+      this.$router.push({ path: "/bview2" });
+      clearTimeout(this.timeval);
+    }, 90000);
   },
   methods: {
     connectionSocket() {
@@ -161,14 +157,6 @@ export default {
               this.lilvRightArr.push(lilv[index]);
             }
           });
-
-          //页面选择
-          stompClient.subscribe("/topic/service_Model", (response) => {
-            let result = JSON.parse(response.body);
-            if (result[0] !== "StandByPage" && this.attr && this.timeval) {
-              clearTimeout(this.timeval);
-            }
-          });
         },
         (err) => {
           console.log("连接失败", err);
@@ -184,5 +172,251 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/css/bview1_1920.css';
+/* @import '../assets/css/bview1_1920.css'; */
+.container_b1 {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background: url("../assets/img/bg.png") no-repeat;
+  background-size: 100% 100%;
+}
+
+.container_b1 .view-wrapper {
+  width: 3030px;
+  height: 1620px;
+  /*no*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -1515px;
+  margin-top: -810px;
+  /*no*/
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.container_b1 .exchange-box {
+  width: 1440px;
+  height: 1620px;
+  /*no*/
+  float: left;
+  margin-right: 60px;
+  background: url("../assets/img/databg3.png") no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.container_b1 .lilv-box {
+  width: 1520px;
+  height: 640px;
+  /*no*/
+  margin-bottom: 60px;
+  /*no*/
+  float: left;
+  background: url("../assets/img/databg1.png") no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.container_b1 .gold-box {
+  width: 1520px;
+  height: 920px;
+  /*no*/
+  float: left;
+  background: url("../assets/img/databg2.png") no-repeat;
+  background-size: 100% 100%;
+  overflow: hidden;
+}
+
+.container_b1 .lilv-box .title,
+.container_b1 .exchange-box .title,
+.container_b1 .gold-box .title {
+  font-size: 72px;
+  height: 150px;
+  /*no*/
+  line-height: 180px;
+  /*no*/
+  color: #00ffd6;
+  padding: 0 50px;
+}
+
+.container_b1 .exchange-wrapper {
+  width: 1440px;
+  height: 1200px;
+  /*no*/
+  margin-top: 20px;
+  /*no*/
+  overflow: hidden;
+}
+
+.container_b1 .exchange-item-box {
+  width: 1440px;
+  overflow: hidden;
+}
+
+.container_b1 .gold-wrapper {
+  width: 1520px;
+  height: 600px;
+  /*no*/
+  overflow: hidden;
+}
+
+.container_b1 .gold-item-box {
+  width: 1520px;
+  overflow: hidden;
+}
+
+.container_b1 .exchange-item,
+.container_b1 .gold-item {
+  width: 1440px;
+  height: 150px;
+  /*no*/
+  line-height: 150px;
+  /*no*/
+  color: #fff;
+  text-align: center;
+  font-size: 48px;
+  overflow: hidden;
+}
+
+.container_b1 .exchange-item {
+  height: 150px !important;
+  /*no*/
+  line-height: 150px !important;
+  /*no*/
+}
+
+.container_b1 .exchange-title,
+.container_b1 .gold-title {
+  color: #00ffd6 !important;
+}
+
+.container_b1 .exchange-item .name,
+.container_b1 .gold-item .name {
+  width: 460px;
+  float: left;
+}
+
+.container_b1 .exchange-item .buy,
+.container_b1 .gold-item .buy {
+  width: 340px;
+  float: left;
+}
+
+.container_b1 .exchange-item .sell,
+.container_b1 .gold-item .sell {
+  width: 340px;
+  float: left;
+}
+
+.container_b1 .exchange-item .time,
+.container_b1 .gold-item .time {
+  width: 300px;
+  float: left;
+}
+
+.container_b1 .exchange-item-box::-webkit-scrollbar,
+.container_b1 .excgoldhange-item-box::-webkit-scrollbar {
+  display: none;
+}
+
+.container_b1 .exchange-item-box,
+.container_b1 .gold-item-box {
+  -webkit-animation: bottomrowup 10s 1s linear infinite;
+  animation: bottomrowup 10s 1s linear infinite;
+}
+
+.container_b1 .exchange-item-box:hover,
+.container_b1 .gold-item-box:hover {
+  animation-play-state: paused;
+  -webkit-animation-play-state: paused;
+}
+
+@-webkit-keyframes bottomrowup {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(0, -540px, 0);
+    /*no*/
+  }
+}
+
+@keyframes bottomrowup {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, -540px, 0);
+    /*no*/
+  }
+}
+
+.container_b1 .lilv-box .mini-title {
+  height: 70px;
+  /*no*/
+  line-height: 50px;
+  /*no*/
+  font-size: 50px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #00ffd6;
+}
+
+.container_b1 .lilv-box .left {
+  width: 690px;
+  float: left;
+  overflow: hidden;
+}
+
+.container_b1 .lilv-item {
+  width: 690px;
+  overflow: hidden;
+}
+
+.container_b1 .lilv-item .item-left,
+.container_b1 .lilv-item .item-right {
+  width: 315px;
+  height: 65px;
+  /*no*/
+  line-height: 65px;
+  /*no*/
+  overflow: hidden;
+  float: left;
+  text-align: center;
+  color: #fff;
+  font-size: 48px;
+}
+
+.container_b1 .lilv-item .item-left {
+  margin-left: 60px;
+}
+
+.container_b1 .lilv-box .line {
+  width: 1px;
+  float: left;
+  background-color: #00ffd6;
+  height: 375px;
+  /*no*/
+  margin: 70px auto 0px;
+  /*no*/
+}
+
+.container_b1 .lilv-box .right {
+  width: 800px;
+  float: right;
+  overflow: hidden;
+}
+
+.container_b1 .dialog-wrapper {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 10;
+}
 </style>
