@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="app-box">
     <router-view></router-view>
     <div class="close-dialog-box" v-show="closeDialogBoo">
       <div class="close-dialog">

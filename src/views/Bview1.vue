@@ -11,22 +11,27 @@
         </div>
         <div class="exchange-wrapper">
           <div class="exchange-item-box">
-            <div
-              class="exchange-item"
-              v-for="(item, index) of exchangeArr"
-              :key="index"
+            <vue-seamless-scroll
+              :data="exchangeArr"
+              :class-option="classOption"
             >
-              <div class="name">
-                {{ item.CurrName.substring(0, item.CurrName.indexOf("(")) }}
+              <div
+                class="exchange-item"
+                v-for="(item, index) of exchangeArr"
+                :key="index"
+              >
+                <div class="name">
+                  {{ item.CurrName.substring(0, item.CurrName.indexOf("(")) }}
+                </div>
+                <div class="buy">
+                  {{ parseFloat(item.BuyingPrice).toFixed(2) }}
+                </div>
+                <div class="sell">
+                  {{ parseFloat(item.SellPrice).toFixed(2) }}
+                </div>
+                <div class="time">{{ item.PublishTime }}</div>
               </div>
-              <div class="buy">
-                {{ parseFloat(item.BuyingPrice).toFixed(2) }}
-              </div>
-              <div class="sell">
-                {{ parseFloat(item.SellPrice).toFixed(2) }}
-              </div>
-              <div class="time">{{ item.PublishTime }}</div>
-            </div>
+            </vue-seamless-scroll>
           </div>
         </div>
       </div>
@@ -67,22 +72,24 @@
         </div>
         <div class="gold-wrapper">
           <div class="gold-item-box">
-            <div
-              class="gold-item"
-              v-for="(item, index) of goldArr"
-              :key="index"
-            >
-              <div class="name">
-                {{ item.ProdName }}
+            <vue-seamless-scroll :data="goldArr" :class-option="classOption">
+              <div
+                class="gold-item"
+                v-for="(item, index) of goldArr"
+                :key="index"
+              >
+                <div class="name">
+                  {{ item.ProdName }}
+                </div>
+                <div class="buy">
+                  {{ item.CustomerBuy }}
+                </div>
+                <div class="sell">
+                  {{ item.CustomerSell }}
+                </div>
+                <div class="time">{{ item.UpdateTime }}</div>
               </div>
-              <div class="buy">
-                {{ item.CustomerBuy }}
-              </div>
-              <div class="sell">
-                {{ item.CustomerSell }}
-              </div>
-              <div class="time">{{ item.UpdateTime }}</div>
-            </div>
+            </vue-seamless-scroll>
           </div>
         </div>
       </div>
@@ -93,10 +100,13 @@
 <script>
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
+import vueSeamlessScroll from "vue-seamless-scroll";
 
 export default {
   name: "Bview1",
-  components: {},
+  components: {
+    vueSeamlessScroll,
+  },
   data() {
     return {
       lilvLeftArr: [],
@@ -112,6 +122,20 @@ export default {
       this.$router.push({ path: "/bview2" });
       clearTimeout(this.timeval);
     }, 90000);
+  },
+  computed: {
+    classOption() {
+      return {
+        step: 0.8, // 数值越大速度滚动越快
+        limitMoveNum: 1, // 开始无缝滚动的数据量 this.dataList.length
+        hoverStop: true, // 是否开启鼠标悬停stop
+        direction: 1, // 0向下 1向上 2向左 3向右
+        openWatch: true, // 开启数据实时监控刷新dom
+        singleHeight: 150, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
+    },
   },
   methods: {
     connectionSocket() {
@@ -321,7 +345,7 @@ export default {
   display: none;
 }
 
-.container_b1 .exchange-item-box,
+/* .container_b1 .exchange-item-box,
 .container_b1 .gold-item-box {
   -webkit-animation: bottomrowup 10s 1s linear infinite;
   animation: bottomrowup 10s 1s linear infinite;
@@ -331,7 +355,7 @@ export default {
 .container_b1 .gold-item-box:hover {
   animation-play-state: paused;
   -webkit-animation-play-state: paused;
-}
+} */
 
 @-webkit-keyframes bottomrowup {
   0% {

@@ -3,7 +3,6 @@ import App from "./App.vue";
 import router from './router';
 import 'lib-flexible';
 import './assets/css/init.css';
-
 const { ipcRenderer } = window.require("electron");
 
 Vue.config.productionTip = false;
