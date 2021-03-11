@@ -1,13 +1,15 @@
 import { get } from './request';
 
-export const getGuideData = p => get('sendGuideData', p);
+export const getPageData = p => get('login/sendThreeData', p);
 
-export const getPersonData = p => get('sendPersonData', p);
+export const getGuideData = p => get('sys/sendGuideData', p);
 
-export const getbranches = p => get('loadNetworkByterminalNo', p);
+export const getPersonData = p => get('sys/sendPersonData', p);
 
-export const getCultureData = p => get('sendCultureData', p);
+export const getbranches = p => get('sys/loadNetworkByterminalNo', p);
 
-export const getProductData = p => get('sendProductData', p);
+export const getCultureData = p => get('sys/sendCultureData', p);
 
-export const getBankData = p => get('sendBankData', p);
+export const getProductData = p => get('sys/sendProductData', p);
+
+export const getBankData = p => get('sys/sendBankData', p);

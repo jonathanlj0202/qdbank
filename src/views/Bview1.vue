@@ -100,6 +100,7 @@
 <script>
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
+import { getPageData } from "../api";
 import vueSeamlessScroll from "vue-seamless-scroll";
 
 export default {
@@ -117,6 +118,7 @@ export default {
     };
   },
   created() {
+    this.getPageDataFn();
     this.connectionSocket();
     this.timeval = setTimeout(() => {
       this.$router.push({ path: "/bview2" });
@@ -186,6 +188,31 @@ export default {
           console.log("连接失败", err);
         }
       );
+    },
+    getPageDataFn() {
+      getPageData({ terminal_no: window.MAC }).then((res) => {
+        if (res.data && res.code === "0000") {
+          this.goldArr = [];
+          this.exchangeArr = [];
+          this.goldArr = JSON.parse(res.data.gold);
+          this.exchangeArr = JSON.parse(res.data.huilv);
+          let lilv = JSON.parse(res.data.lilv);
+          this.lilvLeftArr = [];
+          this.lilvRightArr = [];
+          this.goldArr.forEach((ele) => {
+            this.goldArr.push(ele);
+          });
+          this.exchangeArr.forEach((ele) => {
+            this.exchangeArr.push(ele);
+          });
+          for (let index = 5; index < 11; index++) {
+            this.lilvLeftArr.push(lilv[index]);
+          }
+          for (let index = 12; index < 15; index++) {
+            this.lilvRightArr.push(lilv[index]);
+          }
+        }
+      });
     },
     clickdialog() {
       clearTimeout(this.timeval);
