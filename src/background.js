@@ -1,14 +1,25 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import {
+  app,
+  protocol,
+  BrowserWindow,
+  ipcMain
+} from "electron";
 import getMAC from 'getmac'
-import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
+import {
+  createProtocol
+} from "vue-cli-plugin-electron-builder/lib";
 // import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
-import { getCultureData } from "./api";
+import {
+  getCultureData
+} from "./api";
+import {
+  autoUpdater
+} from 'electron-updater';
 const isDevelopment = process.env.NODE_ENV !== "production";
 const path = require('path');
 const fs = require("fs");
-// const pathName = 'C:/wamp/www';
 const pathName = 'C:/nginx/html';
 let win = "";
 
@@ -90,11 +101,66 @@ function downloadfile() {
   });
 }
 
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } }
-]);
+// 检测更新，在你想要检查更新的时候执行，renderer事件触发后的操作自行编写
+function updateHandle(uploadUrl) {
+  let message = {
+    error: '检查更新出错',
+    checking: '正在检查更新……',
+    updateAva: '检测到新版本，正在下载……',
+    updateNotAva: '现在使用的就是最新版本，不用更新',
+  };
+  const os = require('os');
 
+  autoUpdater.setFeedURL(uploadUrl);
+  autoUpdater.on('error', function (error) {
+    sendUpdateMessage(message.error)
+  });
+  autoUpdater.on('checking-for-update', function () {
+    sendUpdateMessage(message.checking)
+  });
+  autoUpdater.on('update-available', function (info) {
+    sendUpdateMessage(message.updateAva)
+  });
+  autoUpdater.on('update-not-available', function (info) {
+    sendUpdateMessage(message.updateNotAva)
+  });
+
+  // 更新下载进度事件
+  autoUpdater.on('download-progress', function (progressObj) {
+    win.webContents.send('downloadProgress', progressObj)
+  })
+  autoUpdater.on('update-downloaded', function (event, releaseNotes, releaseName, releaseDate, updateUrl, quitAndUpdate) {
+
+    ipcMain.on('isUpdateNow', (e, arg) => {
+      console.log(arguments);
+      console.log("开始更新");
+      //some code here to handle event
+      autoUpdater.quitAndInstall();
+    });
+
+    win.webContents.send('isUpdateNow')
+  });
+
+  ipcMain.on("checkForUpdate", () => {
+    //执行自动更新检查
+    autoUpdater.checkForUpdates();
+  })
+}
+
+// 通过main进程发送事件给renderer进程，提示更新信息
+function sendUpdateMessage(text) {
+  win.webContents.send('message', text)
+}
+
+
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([{
+  scheme: "app",
+  privileges: {
+    secure: true,
+    standard: true
+  }
+}]);
 
 
 async function createWindow() {
@@ -114,6 +180,12 @@ async function createWindow() {
 
   downloadfile();
 
+  //设置版本更新地址，即将打包后的latest.yml文件和exe文件同时放在    
+  //http://xxxx/test/version/对应的服务器目录下,该地址和package.json的publish中的url保持一致
+  let feedUrl = "https://tckl.tuozhanzhijia.cn/app/update";
+  //检测版本更新
+  updateHandle(feedUrl);
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
@@ -124,6 +196,8 @@ async function createWindow() {
     win.loadURL("app://./index.html");
   }
 }
+
+
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {

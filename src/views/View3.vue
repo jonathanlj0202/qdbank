@@ -56,9 +56,7 @@ export default {
   data() {
     return {
       imageUrl: require("../assets/img/abclogo.png"),
-      flippedArr: [],
       productArr: [],
-      cleaTime: null,
       codeImgArr: [],
     };
   },

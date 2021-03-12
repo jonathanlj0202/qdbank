@@ -20,6 +20,7 @@ export default {
       this.$router.push({ path: "/bview1" });
     }, 120000);
   },
+
   methods: {
     goStandPage() {
       if (this.timeVal) {

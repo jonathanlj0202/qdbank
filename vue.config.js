@@ -28,8 +28,13 @@ module.exports = {
                 'win': {
                     'target': 'nsis',
                     'icon': 'public/favicon.ico'
-                }
-            }
+                },
+                "publish": [{
+                    "provider": "generic",
+                    "url": "https://tckl.tuozhanzhijia.cn/app/update"
+                }]
+            },
+
         }
     }
 }

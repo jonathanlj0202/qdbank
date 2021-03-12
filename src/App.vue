@@ -1,6 +1,26 @@
 <template>
   <div id="app" class="app-box">
     <router-view></router-view>
+    <div class="update-box" v-show="updateBoo">
+      <div class="update-item">
+        <Progress
+          strokeColor="#00ffd6"
+          :transitionDuration="5000"
+          :radius="200"
+          :strokeWidth="10"
+          :value="downloadPercent"
+          class="update-item"
+        >
+          <div class="content">{{downloadPercent}}%</div>
+          <template v-slot:footer>
+            <p class="update-tips">
+              更新进度：{{ `${downloadPercent}%`
+              }}<br />软件正在更新，请不要关机断网。
+            </p>
+          </template>
+        </Progress>
+      </div>
+    </div>
     <div class="close-dialog-box" v-show="closeDialogBoo">
       <div class="close-dialog">
         <div class="number-box">
@@ -29,18 +49,41 @@
 </template>
 
 <script>
+const { ipcRenderer } = window.require("electron");
+import Progress from "easy-circular-progress";
 export default {
   name: "App",
-  components: {},
+  components: {
+    Progress,
+  },
   data() {
     return {
       closeDialogBoo: false,
+      updateBoo: false,
       pdArr: [],
       pdIndex: null,
       numberClass: "number-item",
+      downloadPercent: 0,
     };
   },
-  created() {},
+  created() {
+    ipcRenderer.send("checkForUpdate");
+  },
+  mounted() {
+    ipcRenderer.on("message", (event, text) => {
+      console.log(text);
+    });
+    ipcRenderer.on("downloadProgress", (event, progressObj) => {
+      if (!this.updateBoo) {
+        this.updateBoo = true;
+        this.closeDialogBoo = false;
+      }
+      this.downloadPercent = progressObj.percent.toFixed(2) || 0;
+    });
+    ipcRenderer.on("isUpdateNow", () => {
+      ipcRenderer.send("isUpdateNow");
+    });
+  },
   methods: {
     closeDialogFn() {
       this.closeDialogBoo = true;
@@ -79,6 +122,13 @@ export default {
       this.closeDialogBoo = false;
     },
   },
+  beforeDestroy() {
+    ipcRenderer.removeAllListeners([
+      "message",
+      "downloadProgress",
+      "isUpdateNow",
+    ]);
+  },
 };
 </script>
 
@@ -90,6 +140,32 @@ export default {
   width: 100%;
   height: 100vh;
   overflow: hidden;
+}
+
+.update-box {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 12;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.update-item {
+  width: 100%;
+  height: 800px;
+  position: absolute;
+  left: 0px;
+  top: 50%;
+  margin-top: -400px;
+  text-align: center;
+  color: #fff;
+  font-size: 50px;
+}
+
+.update-tips {
+  line-height: 100px;
 }
 
 .close-dialog-box {

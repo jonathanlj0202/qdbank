@@ -1,39 +1,36 @@
 <template>
   <div class="container_b4">
     <div class="content-wrapper">
-      <scroller :data="productArr" class="content-box">
-        <div
-          class="hotproduct-item-wrapper"
-          v-for="(item, index) of productArr"
-          :key="index"
-        >
-          <flipper
-            width="100%"
-            height="100%"
-            :flipped="flippedArr[index]"
-            @click="onClick(index)"
+      <div class="content-box">
+        <vue-seamless-scroll :data="productArr" :class-option="classOption">
+          <div
+            class="hotproduct-item-wrapper"
+            v-for="(item, index) of productArr"
+            :key="index"
           >
-            <div class="hotproduct-item" slot="front">
-              <div class="item-name">{{ item.name }}</div>
-              <div class="item-type">{{ item.type }}</div>
-              <div class="item-num">{{ item.num }}</div>
-              <div class="item-unit">{{ item.unit }}</div>
-              <div class="item-des1">{{ item.dsc1 }}</div>
-              <div class="item-des2">{{ item.dsc2 }}</div>
-            </div>
-            <div class="hotproduct-item" slot="back">
-              <div class="back-box">
-                <vue-qr
-                  :logoSrc="imageUrl"
-                  :text="item.url"
-                  class="url-code"
-                ></vue-qr>
-                <div class="tips-text">扫码购买</div>
+            <flipper width="100%" height="100%">
+              <div class="hotproduct-item" slot="front">
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-type">{{ item.type }}</div>
+                <div class="item-num">{{ item.num }}</div>
+                <div class="item-unit">{{ item.unit }}</div>
+                <div class="item-des1">{{ item.dsc1 }}</div>
+                <div class="item-des2">{{ item.dsc2 }}</div>
               </div>
-            </div>
-          </flipper>
-        </div>
-      </scroller>
+              <div class="hotproduct-item" slot="back">
+                <div class="back-box">
+                  <vue-qr
+                    :logoSrc="imageUrl"
+                    :text="item.url"
+                    class="url-code"
+                  ></vue-qr>
+                  <div class="tips-text">扫码购买</div>
+                </div>
+              </div>
+            </flipper>
+          </div>
+        </vue-seamless-scroll>
+      </div>
     </div>
     <div class="dialog-wrapper" @click="clickdialog()"></div>
   </div>
@@ -41,7 +38,8 @@
 <script>
 import vueQr from "vue-qr";
 import Flipper from "vue-flipper";
-import scroller from "vue-infinite-auto-scroll";
+// import scroller from "vue-infinite-auto-scroll";
+import vueSeamlessScroll from "vue-seamless-scroll";
 import { getBankData } from "../api";
 
 export default {
@@ -49,24 +47,34 @@ export default {
   components: {
     vueQr,
     Flipper,
-    scroller,
+    vueSeamlessScroll,
   },
   data() {
     return {
       imageUrl: require("../assets/img/abclogo.png"),
-      flippedArr: [],
       productArr: [],
       timeval: null,
     };
   },
   created() {
-    for (let index = 0; index < 30; index++) {
-      this.flippedArr.push(false);
-    }
     this.timeval = setTimeout(() => {
       this.$router.push({ path: "/bview1", query: { attr: "standpage" } });
       clearTimeout(this.timeval);
     }, 90000);
+  },
+  computed: {
+    classOption() {
+      return {
+        step: 0.8, // 数值越大速度滚动越快
+        limitMoveNum: 1, // 开始无缝滚动的数据量 this.dataList.length
+        hoverStop: true, // 是否开启鼠标悬停stop
+        direction: 1, // 0向下 1向上 2向左 3向右
+        openWatch: true, // 开启数据实时监控刷新dom
+        singleHeight: 540, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
+    },
   },
   mounted() {
     getBankData({
@@ -100,9 +108,6 @@ export default {
     });
   },
   methods: {
-    onClick(number) {
-      this.$set(this.flippedArr, number, !this.flippedArr[number]);
-    },
     clickdialog() {
       clearTimeout(this.timeval);
       this.$router.push("/");

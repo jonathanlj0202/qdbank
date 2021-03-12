@@ -9,46 +9,46 @@ import Bview2 from "../views/Bview2.vue";
 import Bview3 from "../views/Bview3.vue";
 import Bview4 from "../views/Bview4.vue";
 import Notfound from "../views/Notfound.vue";
-import { getbranches } from "../api";
+import {
+  getbranches
+} from "../api";
 
 
 Vue.use(VueRouter);
 
-const routes = [
-  {
+const routes = [{
+  path: "/",
+  name: "ViewBox",
+  component: ViewBox,
+  children: [{
     path: "/",
-    name: "ViewBox",
-    component: ViewBox,
-    children: [{
-      path: "/",
-      components: {
-        v1: View1,
-        v2: View2,
-        v3: View3
-      }
-    }]
-  }, {
-    path: '/bview1',
-    name: 'Bview1',
-    component: Bview1
-  }, {
-    path: '/bview2',
-    name: 'Bview2',
-    component: Bview2
-  }, {
-    path: '/bview3',
-    name: 'Bview3',
-    component: Bview3
-  }, {
-    path: '/bview4',
-    name: 'Bview4',
-    component: Bview4
-  }, {
-    path: '/notfound',
-    name: 'NotFound',
-    component: Notfound
-  }
-];
+    components: {
+      v1: View1,
+      v2: View2,
+      v3: View3
+    }
+  }]
+}, {
+  path: '/bview1',
+  name: 'Bview1',
+  component: Bview1
+}, {
+  path: '/bview2',
+  name: 'Bview2',
+  component: Bview2
+}, {
+  path: '/bview3',
+  name: 'Bview3',
+  component: Bview3
+}, {
+  path: '/bview4',
+  name: 'Bview4',
+  component: Bview4
+}, {
+  path: '/notfound',
+  name: 'NotFound',
+  component: Notfound
+}];
 
 const router = new VueRouter({
   mode: "hash",
