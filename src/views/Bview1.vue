@@ -2,7 +2,7 @@
   <div class="container_b1">
     <div class="view-wrapper">
       <div class="exchange-box">
-        <div class="title">汇率</div>
+        <div class="title">汇率 <span class="mini-logo"></span></div>
         <div class="exchange-item exchange-title">
           <div class="name">品种</div>
           <div class="buy">客户卖出价</div>
@@ -290,6 +290,14 @@ export default {
   /*no*/
   color: #00ffd6;
   padding: 0 50px;
+}
+
+.title .mini-logo {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url("../assets/img/datatitlelogo.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 .container_b1 .exchange-wrapper {

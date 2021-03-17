@@ -2,34 +2,21 @@
   <div class="container1">
     <div class="content-box-left" v-show="isLeft">
       <div class="lilv-box">
-        <div class="title">利率</div>
+        <div class="title">利率 <span class="mini-logo"></span></div>
         <div class="left">
           <div class="mini-title">整存整取</div>
-          <div
-            class="lilv-item"
-            v-for="(item, index) of lilvLeftArr"
-            :key="index"
-          >
-            <div class="item-left">{{ item.priect }}</div>
-            <div class="item-right">{{ item.data }}</div>
-          </div>
+          <ColumnChat :dataListArr="lilvLeftArr" />
         </div>
-        <div class="line"></div>
         <div class="right">
           <div class="mini-title">零存整取、整存零取、存本取息</div>
-          <div
-            class="lilv-item"
-            v-for="(item, index) of lilvRightArr"
-            :key="index"
-          >
-            <div class="item-left">{{ item.priect }}</div>
-            <div class="item-right">{{ item.data }}</div>
+          <div class="right-chat-box">
+            <ColumnChat :dataListArr="lilvRightArr" />
           </div>
         </div>
       </div>
 
       <div class="exchange-box">
-        <div class="title">汇率</div>
+        <div class="title">汇率 <span class="mini-logo"></span></div>
         <div class="exchange-item exchange-title">
           <div class="name">品种</div>
           <div class="buy">客户卖出价</div>
@@ -64,7 +51,7 @@
       </div>
 
       <div class="gold-box">
-        <div class="title">贵金属</div>
+        <div class="title">贵金属 <span class="mini-logo"></span></div>
         <div class="gold-item gold-title">
           <div class="name">品种</div>
           <div class="buy">客户卖出价</div>
@@ -73,7 +60,7 @@
         </div>
         <div class="gold-wrapper">
           <div class="gold-item-box">
-            <vue-seamless-scroll :data="goldArr" :class-option="classOption">
+            <vue-seamless-scroll :data="goldArr" :class-option="goldOption">
               <div
                 class="gold-item"
                 v-for="(item, index) of goldArr"
@@ -152,6 +139,7 @@ import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
 import { Stomp } from "../assets/js/stomp.js";
 import vueSeamlessScroll from "vue-seamless-scroll";
+import ColumnChat from "../components/columnChat.vue";
 import { getProductData, getPageData } from "../api";
 
 export default {
@@ -159,6 +147,7 @@ export default {
   components: {
     Flipper,
     vueSeamlessScroll,
+    ColumnChat,
   },
   data() {
     return {
@@ -185,7 +174,19 @@ export default {
         hoverStop: true, // 是否开启鼠标悬停stop
         direction: 1, // 0向下 1向上 2向左 3向右
         openWatch: true, // 开启数据实时监控刷新dom
-        singleHeight: 52, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleHeight: 60, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
+        waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
+      };
+    },
+    goldOption() {
+      return {
+        step: 0.8, // 数值越大速度滚动越快
+        limitMoveNum: 1, // 开始无缝滚动的数据量 this.dataList.length
+        hoverStop: true, // 是否开启鼠标悬停stop
+        direction: 1, // 0向下 1向上 2向左 3向右
+        openWatch: true, // 开启数据实时监控刷新dom
+        singleHeight: 68, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
         waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
       };
@@ -229,10 +230,18 @@ export default {
             this.lilvLeftArr = [];
             this.lilvRightArr = [];
             for (let index = 5; index < 11; index++) {
-              this.lilvLeftArr.push(lilv[index]);
+              this.lilvLeftArr.push({
+                name: lilv[index].priect,
+                number: lilv[index].data,
+                percentNum: 0,
+              });
             }
             for (let index = 12; index < 15; index++) {
-              this.lilvRightArr.push(lilv[index]);
+              this.lilvRightArr.push({
+                name: lilv[index].priect,
+                number: lilv[index].data,
+                percentNum: 0,
+              });
             }
           });
         },
@@ -258,10 +267,18 @@ export default {
             this.exchangeArr.push(ele);
           });
           for (let index = 5; index < 11; index++) {
-            this.lilvLeftArr.push(lilv[index]);
+            this.lilvLeftArr.push({
+              name: lilv[index].priect,
+              number: lilv[index].data,
+              percentNum: 0,
+            });
           }
           for (let index = 12; index < 15; index++) {
-            this.lilvRightArr.push(lilv[index]);
+            this.lilvRightArr.push({
+              name: lilv[index].priect,
+              number: lilv[index].data,
+              percentNum: 0,
+            });
           }
         }
       });
@@ -335,7 +352,6 @@ export default {
   padding-left: 20px;
   padding-right: 20px;
   box-sizing: border-box;
-  color: #00ffd6;
   background-repeat: no-repeat;
   background-size: 100% 100%;
   /*width: 985px*/
@@ -366,10 +382,19 @@ export default {
 .container1 .exchange-box .title,
 .container1 .gold-box .title {
   font-size: 36px;
+  color: #ffb400;
   height: 45px;
   /*no*/
   line-height: 45px;
   /*no*/
+}
+
+.title .mini-logo {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  background: url("../assets/img/datatitlelogo.png") no-repeat;
+  background-size: 100% 100%;
 }
 
 .container1 .lilv-box .mini-title {
@@ -384,6 +409,7 @@ export default {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+  color: #fff;
 }
 
 .container1 .lilv-box .left {
@@ -415,24 +441,21 @@ export default {
   margin-left: 55px;
 }
 
-.container1 .container1.lilv-box .line {
-  width: 1px;
-  float: left;
-  background-color: #00ffd6;
-  height: 265px;
-  /*no*/
-  margin: 30px auto 0px;
-}
-
 .container1 .lilv-box .right {
   width: 480px;
   float: right;
   overflow: hidden;
 }
 
+.container1 .lilv-box .right-chat-box {
+  width: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
 .container1 .exchange-wrapper {
   width: 985px;
-  height: 620px;
+  height: 610px;
   /*no*/
   margin-top: 20px;
   /*no*/
@@ -448,7 +471,7 @@ export default {
   width: 985px;
   margin-top: 10px;
   /*no*/
-  height: 320px;
+  height: 330px;
   /*no*/
   overflow: hidden;
 }
@@ -461,9 +484,9 @@ export default {
 .container1 .exchange-item,
 .container1 .gold-item {
   width: 985px;
-  height: 52px;
+  height: 60px;
   /*no*/
-  line-height: 52px;
+  line-height: 60px;
   /*no*/
   color: #fff;
   text-align: center;
@@ -471,9 +494,16 @@ export default {
   overflow: hidden;
 }
 
+.container1 .gold-item {
+  margin-bottom: 8px; /*no*/
+  background-color: #745e21;
+}
+
 .container1 .exchange-title,
 .container1 .gold-title {
-  color: #00ffd6 !important;
+  color: #fada8d !important;
+  font-size: 32px !important;
+  background-color: transparent !important;
 }
 
 .container1 .exchange-item .name,
@@ -649,7 +679,7 @@ export default {
   width: 405px;
   float: left;
   font-size: 32px;
-  color: #00ffd6;
+  color: #fff;
 }
 
 .container1 .left-choose {
@@ -662,7 +692,7 @@ export default {
   width: 405px;
   float: right;
   font-size: 32px;
-  color: #00ffd6;
+  color: #fff;
 }
 
 .container1 .right-choose {
