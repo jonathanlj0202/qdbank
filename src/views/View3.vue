@@ -1,9 +1,14 @@
 <template>
   <div class="container3">
     <div class="content-box-left" v-show="isLeft">
+      <div class="active-wrapper">
+        <img :class="classVal" :src="srcUrl" />
+      </div>
+    </div>
+    <div class="content-box-right" v-show="isRight">
       <div class="content-wrapper" @click="onClick">
         <vue-seamless-scroll
-          :data="productArr"
+          :data="isRight ? productArr : []"
           class="content-box"
           :class-option="classOption"
         >
@@ -42,32 +47,17 @@
         </vue-seamless-scroll>
       </div>
     </div>
-
-    <div class="content-box-center" v-show="isCenter">1111</div>
-
-    <div class="content-box-right" v-show="isRight">2222</div>
-
     <div
-      :class="{
-        'bottom-btn-box b-left': isLeft,
-        'bottom-btn-box b-center': isCenter,
-        'bottom-btn-box b-right': isRight,
-      }"
+      :class="{ 'bottom-btn-box': isLeft, 'bottom-btn-box choose': isRight }"
     >
       <div
-        :class="{ 'btn-item': !isLeft, 'btn-item btn-font': isLeft }"
+        :class="{ 'btn-left': isLeft, 'btn-left right-choose': isRight }"
         @click="chooseFn('isLeft')"
       >
-        基金
+        活动
       </div>
       <div
-        :class="{ 'btn-item': !isCenter, 'btn-item btn-font': isCenter }"
-        @click="chooseFn('isCenter')"
-      >
-        贵金属
-      </div>
-      <div
-        :class="{ 'btn-item': !isRight, 'btn-item btn-font': isRight }"
+        :class="{ 'btn-right left-choose': isLeft, 'btn-right': isRight }"
         @click="chooseFn('isRight')"
       >
         理财
@@ -92,11 +82,18 @@ export default {
   data() {
     return {
       isLeft: true,
-      isCenter: false,
       isRight: false,
+      index: 0,
+      classVal: `active-logo animate__animated animate__fadeIn`,
       imageUrl: require("../assets/img/abclogo.png"),
       productArr: [],
       codeImgArr: [],
+      srcUrl: require("../assets/img/a.jpg"),
+      imgArr: [
+        require("../assets/img/a.jpg"),
+        require("../assets/img/b.jpg"),
+        require("../assets/img/c.jpg"),
+      ],
     };
   },
   computed: {
@@ -113,51 +110,60 @@ export default {
       };
     },
   },
-  created() {},
-  mounted() {
-    getBankData({
-      terminal_no: window.MAC,
-    }).then((res) => {
-      if (res.retCode === "0" && res.data) {
-        this.productArr = [];
-        res.data.forEach((ele) => {
-          this.productArr.push({
-            name:
-              ele.title.indexOf(`“`) > -1
-                ? ele.title.substring(
-                    ele.title.indexOf(`“`) + 1,
-                    ele.title.indexOf(`”`)
-                  )
-                : ele.title,
-            type: "定期理财",
-            num: ele.interest,
-            defaultSlogon: ele.defaultSlogon,
-            dsc1: `起购金额：${ele.amtStart}`,
-            dsc2: `投资期限：${ele.prodLimit}`,
-            url: `https://webank.abchina.com/mmsp-xs/customer/product/view/financeDetail?moduleId=${ele.moduleId}&moduleType=20003000&storeId=103638&employeeOrder=1&logId=20201218092254396001&_t=34037&_t=75422`,
-          });
-        });
-        let length = this.productArr.length;
-        length = length % 2 === 0 ? length : --length;
-        for (let i = 0; i < length; i++) {
-          this.productArr.push(this.productArr[i]);
-        }
+  created() {
+    this.initView();
+    this.getBankDataFn();
+    setInterval(() => {
+      this.classVal = `active-logo animate__animated animate__fadeOut`;
+      if (this.index > 1) {
+        this.index = 0;
+      } else {
+        ++this.index;
       }
-    });
+      let timeVal = setTimeout(() => {
+        this.srcUrl = this.imgArr[this.index];
+        this.classVal = `active-logo animate__animated animate__fadeIn`;
+        clearTimeout(timeVal);
+      }, 1500);
+    }, 180000);
   },
   methods: {
+    initView() {
+      setInterval(() => {
+        let contentDom = document.getElementsByClassName("content-box")[0]
+          .children[0];
+        let contentDomHight = document.defaultView.getComputedStyle(
+          contentDom,
+          null
+        ).height;
+        let contentDomHightNum =
+          Number(contentDomHight.substring(0, contentDomHight.length - 2)) / 2;
+        let contentDomTransform = document.defaultView.getComputedStyle(
+          contentDom,
+          null
+        ).transform;
+        let transformNum = Number(
+          contentDomTransform.substring(23, contentDomTransform.length - 1)
+        );
+        if (transformNum > contentDomHightNum) {
+          let eleLength = document.getElementsByClassName(
+            "hotproduct-item-wrapper"
+          ).length;
+          for (let index = 0; index < eleLength; index++) {
+            let dom = document.getElementsByClassName(
+              "hotproduct-item-wrapper"
+            )[index].children[0];
+            dom.setAttribute("class", "Flipper");
+          }
+        }
+      }, 1000);
+    },
     chooseFn(str) {
       if (str === "isLeft") {
         this.isLeft = true;
-        this.isCenter = false;
-        this.isRight = false;
-      } else if (str === "isCenter") {
-        this.isLeft = false;
-        this.isCenter = true;
         this.isRight = false;
       } else {
         this.isLeft = false;
-        this.isCenter = false;
         this.isRight = true;
       }
     },
@@ -167,6 +173,39 @@ export default {
       } else {
         return false;
       }
+    },
+    getBankDataFn() {
+      this.productArr = JSON.parse(localStorage.getItem("productArr"));
+      getBankData({
+        terminal_no: window.MAC,
+      }).then((res) => {
+        if (res.retCode === "0" && res.data) {
+          this.productArr = [];
+          res.data.forEach((ele) => {
+            this.productArr.push({
+              name:
+                ele.title.indexOf(`“`) > -1
+                  ? ele.title.substring(
+                      ele.title.indexOf(`“`) + 1,
+                      ele.title.indexOf(`”`)
+                    )
+                  : ele.title,
+              type: "定期理财",
+              num: ele.interest,
+              defaultSlogon: ele.defaultSlogon,
+              dsc1: `起购金额：${ele.amtStart}`,
+              dsc2: `投资期限：${ele.prodLimit}`,
+              url: `https://webank.abchina.com/mmsp-xs/customer/product/view/financeDetail?moduleId=${ele.moduleId}&moduleType=20003000&storeId=103638&employeeOrder=1&logId=20201218092254396001&_t=34037&_t=75422`,
+            });
+          });
+          let length = this.productArr.length;
+          // length = length % 2 === 0 ? length : --length;
+          for (let i = 0; i < length; i++) {
+            this.productArr.push(this.productArr[i]);
+          }
+          localStorage.setItem("productArr", JSON.stringify(this.productArr));
+        }
+      });
     },
     getParent(ele, classStr) {
       let targetParent = ele.parentNode;
@@ -222,12 +261,12 @@ export default {
 }
 
 .container3 .content-box-left,
-.container3 .content-box-center,
 .container3 .content-box-right {
-  width: 100%;
+  width: 1025px;
   padding-top: 80px;
   /*no*/
   box-sizing: border-box;
+  margin: 0px auto;
   overflow: hidden;
 }
 
@@ -235,8 +274,19 @@ export default {
   width: 1025px;
   height: 1730px;
   /*no*/
-  margin: 0px auto;
   overflow: hidden;
+}
+
+.container3 .active-wrapper {
+  width: 1025px;
+  text-align: center;
+  height: 1730px;
+  /*no*/
+}
+
+.container3 .active-logo {
+  width: 100%;
+  height: 100%;
 }
 
 .container3 .content-box {
@@ -268,7 +318,7 @@ export default {
   padding-left: 40px;
   box-sizing: border-box;
   text-align: center;
-  background: url("../assets/img/31border.png") no-repeat;
+  background: url("../assets/img/hpBorder.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
   border-top: 1px solid transparent;
@@ -277,16 +327,19 @@ export default {
 .container3 .hotproduct-item .back-box {
   width: 200px;
   height: 250px;
+  /*no*/
   position: absolute;
   top: 50%;
   left: 50%;
   margin-top: -125px;
+  /*no*/
   margin-left: -100px;
 }
 
 .container3 .hotproduct-item .url-code {
   width: 200px;
   height: 200px;
+  /*no*/
 }
 
 .container3 .hotproduct-item .tips-text {
@@ -299,10 +352,10 @@ export default {
 }
 
 .container3 .hotproduct-item .item-logo {
-  width: 50px;
-  padding: 10px;
+  width: 60px;
   box-sizing: border-box;
   height: 80px; /*no*/
+  line-height: 80px; /*no*/
   background: url("../assets/img/31minilogo.png") no-repeat;
   background-size: 100% 100%;
   position: absolute;
@@ -310,9 +363,6 @@ export default {
   right: 60px;
   font-size: 22px;
   color: #6a5a00;
-  writing-mode: vertical-lr; /*从左向右 从右向左是 writing-mode: vertical-rl;*/
-  writing-mode: tb-lr;
-  text-align: justify;
   letter-spacing: 2px; /*no*/
 }
 
@@ -341,13 +391,14 @@ export default {
 }
 
 .hotproduct-item .item-label-box .item-label {
-  border: 1px solid #e8d87d;
+  border: 1px solid #e8d87d; /*no*/
   height: 28px; /*no*/
   padding: 0px 10px;
   line-height: 28px; /*no*/
   font-size: 20px;
   float: left;
   margin-right: 18px;
+  margin-left: 2px;
   color: #c3b66a;
 }
 
@@ -422,7 +473,7 @@ export default {
   position: absolute;
   bottom: 40px; /*no*/
   right: 30px;
-  background: url("../assets/img/31buybtn.png") no-repeat;
+  background: url("../assets/img/buybtn.png") no-repeat;
   background-size: 100% 100%;
 }
 
@@ -438,38 +489,41 @@ export default {
   /*no*/
   line-height: 60px;
   /*no*/
-  background-image: url("../assets/img/3_l.png");
+  background-image: url("../assets/img/2.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;
   color: #fff;
   letter-spacing: 2px;
-  font-size: 26px;
 }
 
-.container3 .b-left {
-  background-image: url("../assets/img/3_l.png") !important;
+.container3 .choose {
+  background-image: url("../assets/img/1.png") !important;
 }
 
-.container3 .b-center {
-  background-image: url("../assets/img/3_c.png") !important;
-}
-
-.container3 .b-right {
-  background-image: url("../assets/img/3_r.png") !important;
-}
-
-.container3 .bottom-btn-box .btn-item {
-  width: 230px;
-  height: 60px;
-  /*no*/
-  line-height: 60px;
-  /*no*/
+.container3 .btn-left {
+  width: 405px;
   float: left;
-  text-align: center;
+  font-size: 32px;
+  color: #fff;
 }
 
-.container3 .bottom-btn-box .btn-font {
+.container3 .left-choose {
+  width: 225px !important;
+  font-size: 26px !important;
+  color: #fff !important;
+}
+
+.container3 .btn-right {
+  width: 405px;
+  float: right;
   font-size: 32px;
+  color: #fff;
+}
+
+.container3 .right-choose {
+  width: 225px !important;
+  font-size: 26px !important;
+  color: #fff !important;
 }
 </style>

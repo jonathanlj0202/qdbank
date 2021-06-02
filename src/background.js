@@ -10,7 +10,6 @@ import getMAC from 'getmac'
 import {
   createProtocol
 } from "vue-cli-plugin-electron-builder/lib";
-// import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import {
   getCultureData
 } from "./api";

@@ -21,8 +21,8 @@
         </Progress>
       </div>
     </div>
-    <div class="close-dialog-box" v-show="closeDialogBoo">
-      <div class="close-dialog">
+    <div class="close-dialog-box animate__animated animate__fadeIn" v-show="closeDialogBoo">
+      <div class="close-dialog animate__animated animate__bounceIn">
         <div class="number-box">
           <div :class="numberClass" v-for="(item, index) of 4" :key="index">
             <div class="dot" v-show="pdArr[index] || pdArr[index] === 0"></div>
@@ -179,31 +179,31 @@ export default {
 }
 
 .close-dialog {
-  width: 600px;
-  height: 600px;
+  width: 800px;
+  height: 800px;
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -300px;
-  margin-left: -300px;
+  margin-top: -400px;
+  margin-left: -400px;
   z-index: 10;
-  border-radius: 30px;
   background: url("./assets/img/password.png") no-repeat;
   background-size: 100% 100%;
 }
 
 .number-box {
-  width: 100%;
-  margin: 0px 60px;
-  margin-top: 80px;
+  width: 640px;
+  margin: 0 auto;
+  margin-top: 100px;
   overflow: hidden;
 }
 
 .number-item {
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 100px;
   margin: 0px 30px;
   border: 1px solid #31f9fb; /*no*/
+  box-sizing: border-box;
   float: left;
 }
 
@@ -212,29 +212,29 @@ export default {
 }
 
 .dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
   background-color: #fff;
-  margin: 20px auto;
+  margin: 35px auto;
 }
 
 .number-btn-box {
-  width: 360px;
-  margin: 50px auto;
+  width: 480px;
+  margin: 80px auto 0px;
   overflow: hidden;
 }
 
 .number-btn {
-  width: 60px;
-  height: 60px;
-  font-size: 30px;
-  border-radius: 30px;
+  width: 90px;
+  height: 90px;
+  font-size: 40px;
+  border-radius: 45px;
   text-align: center;
-  line-height: 60px;
+  line-height: 90px;
   float: left;
-  margin: 0 30px;
-  margin-bottom: 20px;
+  margin: 0 35px;
+  margin-bottom: 25px;
   color: #fff;
   border: 1px solid #31f9fb; /*no*/
   box-sizing: border-box;
@@ -242,9 +242,10 @@ export default {
 
 .back-btn,
 .clear-btn {
-  font-size: 15px;
+  font-size: 18px;
 }
 
+/*右下加触发密码弹窗按钮*/
 .close-btn {
   width: 20px; /*no*/
   height: 20px; /*no*/

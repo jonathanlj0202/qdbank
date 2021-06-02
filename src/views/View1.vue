@@ -312,7 +312,6 @@ export default {
 </script>
 
 <style scoped>
-/* @import '../assets/css/view1_1920.css'; */
 .container1 {
   width: 1100px;
   height: 1920px;
@@ -566,7 +565,7 @@ export default {
   box-sizing: border-box;
   height: 410px;
   /*no*/
-  background: url("../assets/img/border4.png") no-repeat;
+  background: url("../assets/img/marketingBorder.png") no-repeat;
   background-size: 100% 100%;
   text-align: center;
   color: #fff;
@@ -576,7 +575,7 @@ export default {
   width: 320px;
   height: 245px;
   /*no*/
-  margin: 50px auto 10px;
+  margin: 50px auto 20px;
   /*no*/
   background-repeat: no-repeat;
   background-size: cover;
@@ -591,7 +590,8 @@ export default {
   /*no*/
   line-height: 40px;
   /*no*/
-  font-size: 32px;
+  font-size: 38px;
+  color: #00ffd6;
   margin: 0 auto;
   text-align: center;
 }

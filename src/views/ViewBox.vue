@@ -1,8 +1,11 @@
 <template>
-  <div class="container-box" @click="goStandPage()">
-    <router-view name="v1" class="view"></router-view>
-    <router-view name="v2" class="view"></router-view>
-    <router-view name="v3" class="view"></router-view>
+  <div class="container-box">
+    <div class="box1">
+      <router-view name="v1" class="view"></router-view>
+      <router-view name="v2" class="view"></router-view>
+      <router-view name="v3" class="view"></router-view>
+      <div class="bg" v-show="showBgBoo" @click="goIndex()"></div>
+    </div>
   </div>
 </template>
 
@@ -13,24 +16,27 @@ export default {
   data() {
     return {
       timeVal: null,
+      showBgBoo: false,
     };
   },
   created() {
-    this.timeVal = setTimeout(() => {
-      this.$router.push({ path: "/bview1" });
-    }, 120000);
+    setInterval(() => {
+      this.showBgBoo = true;
+      let timeVal = setTimeout(() => {
+        this.showBgBoo = false;
+        clearTimeout(timeVal);
+      }, 10000);
+    }, 300000);
+
+    window.addEventListener('offline',()=>{
+        console.info('望断了秋水');
+    })
   },
 
   methods: {
-    goStandPage() {
-      if (this.timeVal) {
-        clearTimeout(this.timeVal);
-        this.timeVal = null;
-      }
-      this.timeVal = setTimeout(() => {
-        this.$router.push({ path: "/bview1" });
-      }, 120000);
-    },
+    goIndex() {
+      this.showBgBoo = false;
+    }
   },
 };
 </script>
@@ -53,5 +59,16 @@ export default {
 
 .view:nth-child(2) {
   width: 1040px !important;
+}
+
+.bg {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 18;
+  width: 100%;
+  height: 100%;
+  background: url("../assets/img/bg.jpg") no-repeat;
+  background-size: 100% 100%;
 }
 </style>

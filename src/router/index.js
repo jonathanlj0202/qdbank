@@ -4,11 +4,8 @@ import ViewBox from "../views/ViewBox.vue";
 import View1 from "../views/View1.vue";
 import View2 from "../views/View2.vue";
 import View3 from "../views/View3.vue";
-import Bview1 from "../views/Bview1.vue";
-import Bview2 from "../views/Bview2.vue";
-import Bview3 from "../views/Bview3.vue";
-import Bview4 from "../views/Bview4.vue";
 import Notfound from "../views/Notfound.vue";
+import NotPermissions from "../views/NotPermissions.vue";
 import {
   getbranches
 } from "../api";
@@ -29,32 +26,20 @@ const routes = [{
     }
   }]
 }, {
-  path: '/bview1',
-  name: 'Bview1',
-  component: Bview1
-}, {
-  path: '/bview2',
-  name: 'Bview2',
-  component: Bview2
-}, {
-  path: '/bview3',
-  name: 'Bview3',
-  component: Bview3
-}, {
-  path: '/bview4',
-  name: 'Bview4',
-  component: Bview4
-}, {
   path: '/notfound',
   name: 'NotFound',
   component: Notfound
+}, {
+  path: '/notpermissions',
+  name: 'NotPermissions',
+  component: NotPermissions
 }];
 
 const router = new VueRouter({
   mode: "hash",
   base: process.env.BASE_URL,
   routes
-});
+}); 
 
 router.beforeEach((to, from, next) => {
   if (window.MAC) {
@@ -66,19 +51,25 @@ router.beforeEach((to, from, next) => {
         if (new Date().getTime() > new Date(res.data.terminaltime).getTime()) {
           expireBoo = true;
         }
-        if (expireBoo && to.path !== "/notfound") {
-          next("/notfound");
-        } else if (!expireBoo && to.path === "/notfound") {
+        if (expireBoo && to.path !== "/notpermissions") {
+          next("/notpermissions");
+        } else if (!expireBoo && (to.path === "/notpermissions" || to.path === "/notfound")) {
           next("/");
         } else {
           next();
         }
       } else {
-        if (to.path !== "/notfound") {
-          next("/notfound");
+        if (to.path !== "/notpermissions" && to.path !== "/notfound") {
+          next("/notpermissions");
         } else {
           next();
         }
+      }
+    }).catch(() => {
+      if (to.path !== "/notfound") {
+        next("/notfound");
+      } else {
+        next();
       }
     });
   } else {

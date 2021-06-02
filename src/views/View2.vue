@@ -10,7 +10,6 @@
               :src="videoSrc"
               autoplay="autoplay"
               type="video/mp4"
-              controls="controls"
               ref="videoRef"
             ></video>
           </div>
@@ -501,7 +500,7 @@ export default {
   width: 1040px;
   height: 1730px;
   /*no*/
-  background-image: url("../assets/img/centerbg.png");
+  /* background-image: url("../assets/img/centerbg.png"); */
   background-repeat: no-repeat;
   background-size: 100% 100%;
   padding: 0px 100px;

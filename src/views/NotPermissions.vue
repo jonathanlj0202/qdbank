@@ -2,7 +2,10 @@
   <div class="container">
     <div class="logo">
       <div class="logo-bg">
-        <div class="tips">网络连接错误,请检查网络</div>
+        <div class="tips">设备已到期,请联系管理员</div>
+        <div class="connet">
+          设备号:<span class="highlighted">{{ mac }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -10,7 +13,7 @@
 
 <script>
 export default {
-  name: "NotFound",
+  name: "NotPermissions",
   components: {},
   data() {
     return {
@@ -56,7 +59,16 @@ export default {
   margin-top: 650px;
   color: #fff;
   letter-spacing: 2px;
-  font-size: 35px;
+  font-size: 30px;
+}
+
+.connet {
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+  color: #fff;
+  letter-spacing: 2px;
+  margin-top: 20px;
 }
 
 .highlighted {
