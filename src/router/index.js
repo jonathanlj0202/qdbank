@@ -1,9 +1,13 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import ViewBox from "../views/ViewBox.vue";
-import View1 from "../views/View1.vue";
-import View2 from "../views/View2.vue";
-import View3 from "../views/View3.vue";
+import ViewBox from "../views/1920/ViewBox.vue";
+import View1 from "../views/1920/View1.vue";
+import View2 from "../views/1920/View2.vue";
+import View3 from "../views/1920/View3.vue";
+import ViewBox1 from "../views/1080/ViewBox.vue";
+import View11 from "../views/1080/View1.vue";
+import View21 from "../views/1080/View2.vue";
+import View31 from "../views/1080/View3.vue";
 import Notfound from "../views/Notfound.vue";
 import NotPermissions from "../views/NotPermissions.vue";
 import {
@@ -26,6 +30,18 @@ const routes = [{
     }
   }]
 }, {
+  path: "/1080",
+  name: "ViewBox",
+  component: ViewBox1,
+  children: [{
+    path: "/",
+    components: {
+      v1: View11,
+      v2: View21,
+      v3: View31
+    }
+  }]
+}, {
   path: '/notfound',
   name: 'NotFound',
   component: Notfound
@@ -39,7 +55,7 @@ const router = new VueRouter({
   mode: "hash",
   base: process.env.BASE_URL,
   routes
-}); 
+});
 
 router.beforeEach((to, from, next) => {
   if (window.MAC) {

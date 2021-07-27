@@ -70,7 +70,7 @@ import vueQr from "vue-qr";
 import Flipper from "vue-flipper";
 import vueSeamlessScroll from "vue-seamless-scroll";
 
-import { getBankData } from "../api";
+import { getBankData } from "../../api";
 
 export default {
   name: "View3",
@@ -85,14 +85,14 @@ export default {
       isRight: false,
       index: 0,
       classVal: `active-logo animate__animated animate__fadeIn`,
-      imageUrl: require("../assets/img/abclogo.png"),
+      imageUrl: require("../../assets/img/abclogo.png"),
       productArr: [],
       codeImgArr: [],
-      srcUrl: require("../assets/img/a.jpg"),
+      srcUrl: require("../../assets/img/a.jpg"),
       imgArr: [
-        require("../assets/img/a.jpg"),
-        require("../assets/img/b.jpg"),
-        require("../assets/img/c.jpg"),
+        require("../../assets/img/a.jpg"),
+        require("../../assets/img/b.jpg"),
+        require("../../assets/img/c.jpg"),
       ],
     };
   },
@@ -104,7 +104,7 @@ export default {
         hoverStop: true, // 是否开启鼠标悬停stop
         direction: 1, // 0向下 1向上 2向左 3向右
         openWatch: true, // 开启数据实时监控刷新dom
-        singleHeight: 350, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
+        singleHeight: 192, // 单步运动停止的高度(默认值0是无缝不停止的滚动) direction => 0/1
         singleWidth: 0, // 单步运动停止的宽度(默认值0是无缝不停止的滚动) direction => 2/3
         waitTime: 1000, // 单步运动停止的时间(默认值1000ms)
       };
@@ -250,12 +250,12 @@ export default {
 /* @import '../assets/css/view3_1920.css'; */
 .container3 {
   width: 1100px;
-  height: 1920px;
+  height: 1080px;
   /*no*/
   position: absolute;
   top: 50%;
   left: 2140px;
-  margin-top: -960px;
+  margin-top: -540px;
   /*no*/
   overflow: hidden;
 }
@@ -263,7 +263,7 @@ export default {
 .container3 .content-box-left,
 .container3 .content-box-right {
   width: 1025px;
-  padding-top: 80px;
+  padding-top: 45px;
   /*no*/
   box-sizing: border-box;
   margin: 0px auto;
@@ -272,7 +272,7 @@ export default {
 
 .container3 .content-wrapper {
   width: 1025px;
-  height: 1730px;
+  height: 973px;
   /*no*/
   overflow: hidden;
 }
@@ -280,7 +280,7 @@ export default {
 .container3 .active-wrapper {
   width: 1025px;
   text-align: center;
-  height: 1730px;
+  height: 973px;
   /*no*/
 }
 
@@ -291,7 +291,7 @@ export default {
 
 .container3 .content-box {
   width: 1025px;
-  height: 1730px;
+  height: 973px;
   /*no*/
 }
 
@@ -299,10 +299,10 @@ export default {
 
 .container3 .hotproduct-item-wrapper {
   width: 500px;
-  height: 330px;
+  height: 185px;
   /*no*/
   float: left;
-  margin-bottom: 20px;
+  margin-bottom: 11px;
   /*no*/
 }
 
@@ -312,13 +312,13 @@ export default {
 
 .container3 .hotproduct-item {
   width: 500px;
-  height: 330px;
+  height: 185px;
   /*no*/
   margin: 0 auto;
   padding-left: 40px;
   box-sizing: border-box;
   text-align: center;
-  background: url("../assets/img/hpBorder.png") no-repeat;
+  background: url("../../assets/img/hpBorder.png") no-repeat;
   background-size: 100% 100%;
   position: relative;
   border-top: 1px solid transparent;
@@ -326,21 +326,22 @@ export default {
 
 .container3 .hotproduct-item .back-box {
   width: 200px;
-  height: 250px;
+  height: 140px;
   /*no*/
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -125px;
+  margin-top: -70px;
   /*no*/
   margin-left: -100px;
 }
 
 .container3 .hotproduct-item .url-code {
   width: 200px;
-  height: 200px;
+  height: 112px;
   /*no*/
 }
+
 
 .container3 .hotproduct-item .tips-text {
   height: 30px;
@@ -354,12 +355,12 @@ export default {
 .container3 .hotproduct-item .item-logo {
   width: 60px;
   box-sizing: border-box;
-  height: 80px; /*no*/
-  line-height: 80px; /*no*/
-  background: url("../assets/img/31minilogo.png") no-repeat;
+  height: 45px; /*no*/
+  line-height: 45px; /*no*/
+  background: url("../../assets/img/31minilogo.png") no-repeat;
   background-size: 100% 100%;
   position: absolute;
-  top: 8px; /*no*/
+  top: 4.5px; /*no*/
   right: 60px;
   font-size: 22px;
   color: #6a5a00;
@@ -367,13 +368,13 @@ export default {
 }
 
 .container3 .hotproduct-item .item-name {
-  height: 40px;
+  height: 22px;
   /*no*/
-  line-height: 40px;
+  line-height: 22px;
   /*no*/
-  margin-top: 40px;
+  margin-top: 22px;
   /*no*/
-  margin-bottom: 10px;
+  margin-bottom: 5.6px;
   /*no*/
   overflow: hidden;
   text-overflow: ellipsis;
@@ -385,82 +386,83 @@ export default {
 
 .container3 .hotproduct-item .item-label-box {
   width: 100%;
-  height: 30px; /*no*/
+  height: 16px; /*no*/
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .hotproduct-item .item-label-box .item-label {
   border: 1px solid #e8d87d; /*no*/
-  height: 28px; /*no*/
+  height: 16px; /*no*/
   padding: 0px 10px;
-  line-height: 28px; /*no*/
+  line-height: 16px; /*no*/
   font-size: 20px;
   float: left;
   margin-right: 18px;
   margin-left: 2px;
   color: #c3b66a;
+  box-sizing: border-box;
 }
 
 .container3 .hotproduct-item .item-type {
   text-align: center;
-  height: 30px;
+  height: 16px;
   /*no*/
-  line-height: 30px;
+  line-height: 16px;
   /*no*/
   color: #fff;
   font-size: 24px;
-  padding-top: 5px;
+  padding-top: 3px;
   /*no*/
 }
 
 .container3 .hotproduct-item .item-num {
   text-align: center;
-  height: 50px;
+  height: 28px;
   /*no*/
-  line-height: 50px;
+  line-height: 28px;
   /*no*/
   font-size: 40px;
-  margin-top: 10px;
+  margin-top: 5.6px;
   /*no*/
   color: #ffb400;
 }
 
 .container3 .hotproduct-item .item-default-slogon {
   text-align: center;
-  height: 30px;
+  height: 16px;
   /*no*/
-  line-height: 30px;
+  line-height: 16px;
   /*no*/
   font-size: 22px;
   color: #fff;
-  padding-top: 10px;
+  padding-top: 5.6px;
   /*no*/
 }
 
 .container3 .hotproduct-item .item-des1 {
   text-align: left;
-  height: 30px;
+  height: 16px;
   /*no*/
-  line-height: 30px;
+  line-height: 16px;
   /*no*/
   font-size: 22px;
-  padding-top: 10px;
+  padding-top: 5.6px;
   /*no*/
   color: #fff;
 }
 
 .container3 .hotproduct-item .item-des2 {
   text-align: left;
-  height: 30px;
+  height: 16px;
   /*no*/
-  line-height: 30px;
+  line-height: 16px;
   /*no*/
   font-size: 22px;
   color: #fff;
-  padding-top: 5px;
+  padding-top: 3px;
   /*no*/
-  padding-bottom: 50px;
+  padding-bottom: 28px;
   /*no*/
 }
 
@@ -471,9 +473,9 @@ export default {
   font-size: 26px;
   color: #fff;
   position: absolute;
-  bottom: 40px; /*no*/
+  bottom: 22px; /*no*/
   right: 30px;
-  background: url("../assets/img/buybtn.png") no-repeat;
+  background: url("../../assets/img/buybtn.png") no-repeat;
   background-size: 100% 100%;
 }
 
@@ -481,15 +483,15 @@ export default {
 
 .container3 .bottom-btn-box {
   position: absolute;
-  bottom: 25px;
+  bottom: 14px;
   /*no*/
   left: 205px;
   width: 690px;
-  height: 60px;
+  height: 33px;
   /*no*/
-  line-height: 60px;
+  line-height: 33px;
   /*no*/
-  background-image: url("../assets/img/2.png");
+  background-image: url("../../assets/img/2.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;
@@ -498,7 +500,7 @@ export default {
 }
 
 .container3 .choose {
-  background-image: url("../assets/img/1.png") !important;
+  background-image: url("../../assets/img/1.png") !important;
 }
 
 .container3 .btn-left {

@@ -137,10 +137,10 @@
 <script>
 import Flipper from "vue-flipper";
 import SockJS from "sockjs-client";
-import { Stomp } from "../assets/js/stomp.js";
+import { Stomp } from "../../assets/js/stomp.js";
 import vueSeamlessScroll from "vue-seamless-scroll";
-import ColumnChat from "../components/columnChat.vue";
-import { getProductData, getPageData } from "../api";
+import ColumnChat from "../../components/columnChat.vue";
+import { getProductData, getPageData } from "../../api";
 
 export default {
   name: "View1",
@@ -357,21 +357,21 @@ export default {
 }
 
 .container1 .lilv-box {
-  background-image: url("../assets/img/databg1.png");
+  background-image: url("../../assets/img/databg1.png");
   height: 395px;
   /*no*/
   overflow: hidden;
 }
 
 .container1 .exchange-box {
-  background-image: url("../assets/img/databg3.png");
+  background-image: url("../../assets/img/databg3.png");
   height: 780px;
   /*no*/
   overflow: hidden;
 }
 
 .container1 .gold-box {
-  background-image: url("../assets/img/databg2.png");
+  background-image: url("../../assets/img/databg2.png");
   height: 485px;
   /*no*/
   overflow: hidden;
@@ -392,7 +392,7 @@ export default {
   display: inline-block;
   width: 30px;
   height: 30px;
-  background: url("../assets/img/datatitlelogo.png") no-repeat;
+  background: url("../../assets/img/datatitlelogo.png") no-repeat;
   background-size: 100% 100%;
 }
 
@@ -565,7 +565,7 @@ export default {
   box-sizing: border-box;
   height: 410px;
   /*no*/
-  background: url("../assets/img/marketingBorder.png") no-repeat;
+  background: url("../../assets/img/marketingBorder.png") no-repeat;
   background-size: 100% 100%;
   text-align: center;
   color: #fff;
@@ -664,7 +664,7 @@ export default {
   /*no*/
   line-height: 60px;
   /*no*/
-  background-image: url("../assets/img/2.png");
+  background-image: url("../../assets/img/2.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;
@@ -672,7 +672,7 @@ export default {
 }
 
 .container1 .choose {
-  background-image: url("../assets/img/1.png") !important;
+  background-image: url("../../assets/img/1.png") !important;
 }
 
 .container1 .btn-left {

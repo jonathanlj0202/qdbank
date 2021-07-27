@@ -13,3 +13,5 @@ export const getCultureData = p => get('sys/sendCultureData', p);
 export const getProductData = p => get('sys/sendProductData', p);
 
 export const getBankData = p => get('sys/sendBankData', p);
+
+export const getScreenData = p => get('sys/quaryScreensByterminalNo', p);

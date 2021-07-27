@@ -11,7 +11,11 @@ const {
 Vue.config.productionTip = false;
 Vue.use(animated);
 
-window.MAC = ipcRenderer.sendSync('mac');
+if (process.env.NODE_ENV === "development") {
+  window.MAC = "00:15:5d:a9:fa:0c"
+} else {
+  window.MAC = ipcRenderer.sendSync('mac');
+}
 
 new Vue({
   router,

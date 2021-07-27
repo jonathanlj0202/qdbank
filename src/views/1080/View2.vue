@@ -79,8 +79,8 @@
 <script>
 import { Swiper, Slide } from "vue-swiper-component";
 import SockJS from "sockjs-client";
-import { Stomp } from "../assets/js/stomp.js";
-import { getCultureData, getPersonData } from "../api";
+import { Stomp } from "../../assets/js/stomp.js";
+import { getCultureData, getPersonData } from "../../api";
 const { ipcRenderer } = window.require("electron");
 
 export default {
@@ -365,12 +365,12 @@ export default {
 /* @import '../assets/css/view2_1920.css'; */
 .container2 {
   width: 1040px;
-  height: 1920px;
+  height: 1080px;
   /*no*/
   position: absolute;
   top: 50%;
   left: 1100px;
-  margin-top: -960px;
+  margin-top: -540px;
   /*no*/
   overflow: hidden;
 }
@@ -378,7 +378,7 @@ export default {
 .container2 .content-box-left,
 .content-box-right {
   width: 100%;
-  padding-top: 80px;
+  padding-top: 45px;
   /*no*/
   box-sizing: border-box;
   overflow: hidden;
@@ -386,9 +386,9 @@ export default {
 
 .container2 .content-wrapper {
   width: 1040px;
-  height: 1730px;
+  height: 973px;
   /*no*/
-  padding-top: 80px;
+  padding-top: 45px;
   /*no*/
   box-sizing: border-box;
 }
@@ -396,18 +396,18 @@ export default {
 .container2 .abc-logo {
   width: 484px;
   height: 94px;
-  background: url("../assets/img/banklogo.png") no-repeat;
+  background: url("../../assets/img/banklogo.png") no-repeat;
   background-size: contain;
-  margin: 0px auto 100px;
+  margin: 0px auto 56px;
   /*no*/
 }
 
 .container2 .video-wrapper {
   width: 1026px;
   border: 5px solid #916f0e; /*no*/
-  height: 580px;
+  height: 326px;
   /*no*/
-  margin: 0 auto 60px;
+  margin: 0 auto 33px;
   /*no*/
   position: relative;
   overflow: hidden;
@@ -416,13 +416,13 @@ export default {
 
 .container2 .video-box {
   width: 1026px;
-  height: 580px;
+  height: 326px;
   /*no*/
 }
 
 .container2 .video-box .video {
   width: 1026px;
-  height: 580px;
+  height: 326px;
   /*no*/
   border: none;
   background-color: rgba(0, 0, 0, 0.8);
@@ -432,7 +432,7 @@ export default {
 
 .container2 .video-bg {
   width: 1036px;
-  height: 580px;
+  height: 326px;
   /*no*/
   overflow: hidden;
   position: relative;
@@ -440,7 +440,7 @@ export default {
 
 .container2 .video-bg img {
   width: 1036px;
-  height: 580px;
+  height: 326px;
   /*no*/
 }
 
@@ -449,10 +449,10 @@ export default {
   top: 0px;
   left: 0px;
   width: 1036px;
-  height: 580px;
+  height: 326px;
   /*no*/
   background-color: rgba(0, 0, 0, 0.6);
-  background-image: url("../assets/img/videoplay.png");
+  background-image: url("../../assets/img/videoplay.png");
   background-repeat: no-repeat;
   background-size: 100px 100px;
   background-position: center center;
@@ -460,33 +460,33 @@ export default {
 
 .container2 .video-btn-box {
   width: 960px;
-  height: 620px;
+  height: 348px;
   /*no*/
   margin: 0 auto;
-  margin-top: 60px;
+  margin-top: 33px;
   /*no*/
   overflow: hidden;
 }
 
 .container2 .video-btn {
   width: 430px;
-  height: 281px;
+  height: 158px;
   /*no*/
   margin-left: 25px;
   margin-right: 25px;
-  margin-bottom: 30px;
+  margin-bottom: 17px;
   /*no*/
   float: left;
-  background: url("../assets/img/btnbg.png") no-repeat;
+  background: url("../../assets/img/btnbg.png") no-repeat;
   background-size: 100% 100%;
 }
 
 .container2 .btn-item {
   width: 360px;
-  height: 220px;
+  height: 123px;
   /*no*/
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 17px;
   /*no*/
   background-position: center center;
   background-repeat: no-repeat;
@@ -498,15 +498,15 @@ export default {
 
 .container2 .person-wrapper {
   width: 1040px;
-  height: 1730px;
+  height: 973px;
   /*no*/
   /* background-image: url("../assets/img/centerbg.png"); */
   background-repeat: no-repeat;
   background-size: 100% 100%;
   padding: 0px 100px;
-  padding-top: 155px !important;
+  padding-top: 87px !important;
   /*no*/
-  padding-bottom: 260px !important;
+  padding-bottom: 146px !important;
   /*no*/
   box-sizing: border-box;
 }
@@ -515,7 +515,7 @@ export default {
   width: 180px;
   float: left;
   margin: 0 50px;
-  margin-bottom: 55px !important;
+  margin-bottom: 31px !important;
   /*no*/
   color: #fff;
   overflow: hidden;
@@ -525,7 +525,7 @@ export default {
 .container2 .avatar-box {
   width: 180px;
   height: 180px;
-  background: url("../assets/img/userBorder.png") no-repeat;
+  background: url("../../assets/img/userBorder.png") no-repeat;
   background-size: 100% 100%;
   overflow: hidden;
   margin: 0 auto;
@@ -558,15 +558,15 @@ export default {
 
 .container2 .bottom-btn-box {
   position: absolute;
-  bottom: 25px;
+  bottom: 14px;
   /*no*/
   left: 205px;
   width: 690px;
-  height: 60px;
+  height: 33px;
   /*no*/
-  line-height: 60px;
+  line-height: 33px;
   /*no*/
-  background-image: url("../assets/img/2.png");
+  background-image: url("../../assets/img/2.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   text-align: center;
@@ -575,7 +575,7 @@ export default {
 }
 
 .container2 .choose {
-  background-image: url("../assets/img/1.png") !important;
+  background-image: url("../../assets/img/1.png") !important;
 }
 
 .container2 .btn-left {

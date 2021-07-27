@@ -23,15 +23,19 @@ module.exports = {
         electronBuilder: {
             builderOptions: {
                 // options placed here will be merged with default configuration and passed to electron-builder
-                'appId': 'JBRH-PHJR',
+                'appId': 'JBRH-ABC',
                 'productName': '农业银行',
                 'win': {
                     'target': 'nsis',
                     'icon': 'public/favicon.ico'
                 },
+                'nsis': {
+                    "oneClick": false,
+                    "allowToChangeInstallationDirectory": true
+                },
                 "publish": [{
                     "provider": "generic",
-                    "url": "https://tckl.tuozhanzhijia.cn/app/update"
+                    "url": "http://10.176.1.10/update/qdabc"
                 }]
             },
 

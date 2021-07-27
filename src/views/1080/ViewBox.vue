@@ -28,9 +28,7 @@ export default {
       }, 10000);
     }, 300000);
 
-    window.addEventListener('offline',()=>{
-        console.info('望断了秋水');
-    })
+    
   },
 
   methods: {
@@ -47,7 +45,7 @@ export default {
   height: 100vh;
   position: relative;
   overflow: hidden;
-  background: url("../assets/img/bg.png") no-repeat;
+  background: url("../../assets/img/bg.png") no-repeat;
   background-size: 100% 100%;
 }
 
@@ -68,7 +66,7 @@ export default {
   z-index: 18;
   width: 100%;
   height: 100%;
-  background: url("../assets/img/bg.jpg") no-repeat;
+  background: url("../../assets/img/bg.jpg") no-repeat;
   background-size: 100% 100%;
 }
 </style>

@@ -67,6 +67,10 @@ export default {
     };
   },
   created() {
+    let cHeight = document.body.clientHeight;
+    let pushUrl = "/";
+    if (cHeight <= 1800) pushUrl = "/1080";
+    this.$router.push(pushUrl);
     ipcRenderer.send("checkForUpdate");
   },
   mounted() {
@@ -216,7 +220,7 @@ export default {
   height: 30px;
   border-radius: 15px;
   background-color: #fff;
-  margin: 35px auto;
+  margin: 32px auto;
 }
 
 .number-btn-box {
@@ -226,12 +230,12 @@ export default {
 }
 
 .number-btn {
-  width: 90px;
-  height: 90px;
+  width: 88px;
+  height: 88px;
   font-size: 40px;
   border-radius: 45px;
   text-align: center;
-  line-height: 90px;
+  line-height: 88px;
   float: left;
   margin: 0 35px;
   margin-bottom: 25px;

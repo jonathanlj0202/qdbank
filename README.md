@@ -1,4 +1,6 @@
-# qdbank
+# qdabc
+
+青岛农行 分辨率 3240 * 1920
 
 ## Project setup
 ```
